@@ -1,25 +1,16 @@
-## Metodologia di sviluppo
+## Processo di sviluppo
 
-La metodologia di sviluppo applicata su questo progetto è di tipo Agile, in particolare si è adottata la variante Scrum,
-come descritto nella sezione al seguente [link](../2-development-process/index.md).
+Come anticipato e descritto approfonditamente nella [sezione dedicata alla metodologia di sviluppo](../2-development-process/index.md), ricordiamo che per la realizzazione del presente progetto si è scelto di adottare un processo di sviluppo basato su Scrum, ma con qualche variazione.
 
-Un'importante nota da appuntare è che la metodologia di sviluppo non segue in maniera rigida i principi di _Scrum_.\
-Infatti, sono presenti diverse variazioni: prima di tutto, a differenza dei _Daily Scrum_, il Team ha deciso di 
-riunirsi "a chiamata", ossia nei casi di necessità, quando si presentano problemi di sincronizzazione o di design.\
-Inoltre il _Product Backlog_ e i vari _Sprint Backlog_ hanno piena libertà di modifica.
-Ad esempio, nel caso in cui un volontario dovesse essere sostituito non ci sarebbe stato alcun problema.\
-Anche le durate degli Sprint non sono obbligatoriamente di una settimana precisa.\
-Ovviamente tutte le scelte venivano decise insieme allo _Sprint Planning_ e perciò seguite durante tutto lo Sprint.
+Più nello specifico, data la natura didattica del progetto, il processo di sviluppo adottato dal gruppo risulta essere piuttosto diverso e meno rigido rispetto a quello classico previsto da Scrum.
+Tali differenze sono riportate nell'elenco seguente:
+- non vi è una vera e propria suddivisione dei ruoli &rarr; mentre Scrum prevede una netta separazione dei ruoli che cooperano per realizzare il progetto, il gruppo ha preferito definire ruoli solo simbolici e di mera responsabilità ma nella pratica, secondo necessità, tutti i membri del gruppo ricoprono tutti i ruoli
+- i daily scrum giornalieri non sono strettamente ed obbligatoriamente quotidiani (in base a necessità possono essere svolti anche più daily scrum in un dato giorno o magari un giorno in cui non è necessario alcun meeting si può saltare tale pratica) e non riguardano obbligatoriamente tutto il team di sviluppo (anche se ciò si è cercato di rispettarlo per chiari motivi di consapevolezza circa l'avanzamento globale del progetto da parte di ciascun membro del gruppo)
+- la durata degli sprint non è  fissa ma variabile (comunque all'incirca una settimana) &rarr; sebbene una durata fissa degli sprint sia indicativa di una scomposizione bilanciata dei task, a causa di impegni personali, concomitanza con altri progetti o imprevisti è accettata la possibilità di prolungare la durata di uno sprint (sempre secondo criterio e valutando attentamente che tale prolungamento non contrasti con le tempistiche previste per la realizzazione del progetto). 
 
-Infine, la _definition of done_ delle funzionalità in realtà non è stata definita esplicitamente, poiché raggruppando 
-per macro funzionalità gli _item_ del _Product Backlog_, non sarebbe stato possibile completare un intero gruppo di 
-funzionalità alla fine di ogni Sprint.
-Si può però confermare che alla fine di ogni Sprint, le singole funzionalità sono state valutate come completate se 
-queste soddisfacessero quanto desiderato dal _Product Owner_ e se il testing non avesse riscontrato problemi.
+L'elenco seguente riporta invece il _Product Backlog_ e tutta la documentazione (artefatti e verbali) prodotta per i vari Sprint:
 
-Di seguito vengono elencati il _Product Backlog_ e le documentazioni relative ai vari Sprint:
-
-- [Product Backlog](product-backlog.xlsx)
+- [Product Backlog](0-product-backlog.md)
 - [First Sprint](1-sprint.md)
 - [Second Sprint](2-sprint.md)
 - [Third Sprint](3-sprint.md)
