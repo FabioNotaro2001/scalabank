@@ -13,3 +13,5 @@ class AppSuite extends AnyFunSuite {
     assert(App.greeting() != null)
   }
 }
+
+
