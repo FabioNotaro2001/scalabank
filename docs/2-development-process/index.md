@@ -1,7 +1,7 @@
-# Metodologia di sviluppo
+# Processo di sviluppo adottato
 <!--Processo di sviluppo adottato (modalità di divisione in itinere dei task, meeting/interazioni pianificate, modalità di revisione in itinere dei task, scelta degli strumenti di test/build/continuous integration)-->
 Nella presente sezione è descritta l'organizzazione generale e la metodologia di sviluppo adottata dal gruppo di lavoro.
-# Processo di sviluppo adottato
+# Metodologia di sviluppo
 In generale, il processo di sviluppo adottato è di tipo agile e basato su Scrum: più dettagliatamente abbiamo cercato di rispettare la metodologia suggerita dal docente nelle regole d'esame.
 
 Ricordiamo che Scrum è un framework per lo sviluppo di software che segue un approccio agile, iterativo ed incrementale, in cui a ogni iterazione si lavora per implementare nuove funzionalità o migliorare e completare quelle già esistenti nel sistema.
