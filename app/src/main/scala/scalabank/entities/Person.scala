@@ -19,3 +19,4 @@ object Person:
 
   extension (person: Person)
     def isYoungerThan(other: Person): Boolean = person.birthYear > other.birthYear
+    def ageDifference(other: Person): Int = Math.abs(person.birthYear - other.birthYear)

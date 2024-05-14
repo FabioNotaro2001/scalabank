@@ -29,4 +29,9 @@ class PersonTest extends AnyFunSuite:
     val jane = Person("Jane", "Smith", 2000)
     john.isYoungerThan(jane) shouldBe false
 
+  test("ageDifference should return the difference in birth years if person's birth year is greater than other's"):
+    val john = Person("John", "Doe", 1990)
+    val jane = Person("Jane", "Smith", 1985)
+    john.ageDifference(jane) shouldBe 5
+
 
