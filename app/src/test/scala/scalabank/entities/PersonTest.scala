@@ -19,4 +19,14 @@ class PersonTest extends AnyFunSuite:
     val person = Person("Alice", "Smith", 2020)
     person.isAdult shouldBe false
 
+  test("isYoungerThan should return true if person is younger than the other person"):
+    val john = Person("John", "Doe", 1990)
+    val jane = Person("Jane", "Smith", 1985)
+    john.isYoungerThan(jane) shouldBe true
+
+  test("isYoungerThan should return false if person is older than the other person"):
+    val john = Person("John", "Doe", 1990)
+    val jane = Person("Jane", "Smith", 2000)
+    john.isYoungerThan(jane) shouldBe false
+
 
