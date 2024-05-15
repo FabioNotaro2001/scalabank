@@ -3,13 +3,16 @@ package scalabank.entities
 trait Employee extends Staff
 
 object Employee:
-  def apply(name: String, surname: String, birthYear: Int): Employee = EmployeeImpl(name, surname, birthYear)
+  enum Position:
+    case CustomerServiceRepresentative
+    case FinancialAnalyst
 
-  private case class EmployeeImpl(_name: String, _surname: String, _birthYear: Int) extends Employee:
-    private val person = Person(_name, _surname, _birthYear)
+  def apply(name: String, surname: String, birthYear: Int, position: Position): Employee = EmployeeImpl(name, surname, birthYear, position)
 
-    def position: String = ???
+  private case class EmployeeImpl(override val name: String, override val surname: String, override val birthYear: Int, override val position: Position) extends Employee:
+    private val person = Person(name, surname, birthYear)
+    export person.isAdult
 
     def salary: Double = ???
 
-    export person.*
+
