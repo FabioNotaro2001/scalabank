@@ -14,3 +14,7 @@ class StaffMemberTest extends AnyFunSuite:
     employee.surname shouldBe "Doe"
     employee.birthYear shouldBe 1990
     employee.isAdult shouldBe true
+
+  test("An Employee salary calculated"):
+    val employee = Employee("John", "Doe", 1990, Employee.Position.FinancialAnalyst)
+    employee.salary shouldBe 1500.0
