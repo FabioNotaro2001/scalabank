@@ -12,7 +12,14 @@ trait Person:
 object Person:
   def apply(name: String, surname: String, birthYear: Int): Person = PersonImpl(name, surname, birthYear)
 
-  private class PersonImpl(override val name: String, override val surname: String, override val birthYear: Int) extends Person:
+  private case class PersonImpl( override val name: String,
+                            override val surname: String,
+                            _birthYear: Int) extends Person:
+
+    override def birthYear: Int =
+      require(_birthYear <= Calendar.getInstance().get(Calendar.YEAR))
+      _birthYear
+
     private val age: Int = Calendar.getInstance().get(Calendar.YEAR) - birthYear
 
     override def isAdult: Boolean = age >= 18

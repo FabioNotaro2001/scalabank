@@ -3,7 +3,8 @@ package scalabank.entities
 import org.scalatest.funsuite.AnyFunSuite
 import org.junit.runner.RunWith
 import org.scalatestplus.junit.JUnitRunner
-import org.scalatest.matchers.should.Matchers.shouldBe
+import org.scalatest.matchers.should.Matchers.*
+
 
 @RunWith(classOf[JUnitRunner])
 class PersonTest extends AnyFunSuite:
@@ -33,5 +34,10 @@ class PersonTest extends AnyFunSuite:
     val john = Person("John", "Doe", 1990)
     val jane = Person("Jane", "Smith", 1985)
     john.ageDifference(jane) shouldBe 5
+
+  test("birth year should be less than the current year")
+    a [ IllegalArgumentException ] should be thrownBy Person("John", "Doe", 2025)
+
+
 
 
