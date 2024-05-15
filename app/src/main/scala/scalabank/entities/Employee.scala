@@ -1,10 +1,10 @@
 package scalabank.entities
 
-trait Employee extends Staff
+trait Employee extends StaffMember
 
 object Employee:
   enum Position:
-    case CustomerServiceRepresentative
+    case Cashier
     case FinancialAnalyst
 
   def apply(name: String, surname: String, birthYear: Int, position: Position): Employee = EmployeeImpl(name, surname, birthYear, position)

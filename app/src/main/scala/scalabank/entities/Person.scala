@@ -14,11 +14,11 @@ object Person:
 
   private case class PersonImpl( override val name: String,
                             override val surname: String,
-                            _birthYear: Int) extends Person:
+                            birthY: Int) extends Person:
 
     override def birthYear: Int =
-      require(_birthYear <= Calendar.getInstance().get(Calendar.YEAR))
-      _birthYear
+      require(birthY <= Calendar.getInstance().get(Calendar.YEAR))
+      birthY
 
     private val age: Int = Calendar.getInstance().get(Calendar.YEAR) - birthYear
 
