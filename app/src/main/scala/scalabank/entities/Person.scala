@@ -6,6 +6,7 @@ trait Person:
   def name: String
   def surname: String
   def birthYear: Int
+  def age: Int
   def isAdult: Boolean
 
 
@@ -20,7 +21,7 @@ object Person:
       require(birthY <= Calendar.getInstance().get(Calendar.YEAR))
       birthY
 
-    private val age: Int = Calendar.getInstance().get(Calendar.YEAR) - birthYear
+    override def age: Int = Calendar.getInstance().get(Calendar.YEAR) - birthYear
 
     override def isAdult: Boolean = age >= 18
 
