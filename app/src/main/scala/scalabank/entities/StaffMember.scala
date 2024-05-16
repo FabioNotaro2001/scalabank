@@ -1,10 +1,10 @@
 package scalabank.entities
 
-import scalabank.entities.Employee.Position
 
-abstract class StaffMember extends Person:
-  def position: Position
+abstract class StaffMember[T] extends Person:
+  def position: T
   def salary: Double
+  def annualSalary: Double = salary * 12
 
 
 

@@ -1,16 +1,17 @@
 package scalabank.entities
 
-trait Employee extends StaffMember:
-  def annualSalary: Double = salary * 12
+import scalabank.entities.Employee.PositionEmployee
+
+trait Employee extends StaffMember[PositionEmployee]
 
 object Employee:
-  enum Position(val salary: Double):
-    case Cashier extends Position(1000)
-    case FinancialAnalyst extends Position(1500)
+  enum PositionEmployee(val salary: Double):
+    case Cashier extends PositionEmployee(1000)
+    case FinancialAnalyst extends PositionEmployee(1500)
 
-  def apply(name: String, surname: String, birthYear: Int, position: Position): Employee = EmployeeImpl(Person(name, surname, birthYear), position)
+  def apply(name: String, surname: String, birthYear: Int, position: PositionEmployee): Employee = EmployeeImpl(Person(name, surname, birthYear), position)
 
-  private case class EmployeeImpl(person: Person, override val position: Position) extends Employee:
+  private case class EmployeeImpl(person: Person, override val position: PositionEmployee) extends Employee:
     export person.*
     def salary: Double = position.salary
 
