@@ -17,9 +17,9 @@ object Person:
                             override val surname: String,
                             birthY: Int) extends Person:
 
-    override def birthYear: Int =
-      require(birthY <= Calendar.getInstance().get(Calendar.YEAR))
-      birthY
+    require(birthY <= Calendar.getInstance().get(Calendar.YEAR))
+
+    override def birthYear: Int = birthY
 
     override def age: Int = Calendar.getInstance().get(Calendar.YEAR) - birthYear
 

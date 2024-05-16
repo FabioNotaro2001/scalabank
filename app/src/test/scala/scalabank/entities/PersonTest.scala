@@ -8,6 +8,7 @@ import org.scalatest.matchers.should.Matchers.*
 
 @RunWith(classOf[JUnitRunner])
 class PersonTest extends AnyFunSuite:
+
   test("Person should be correctly initialized and age calculated"):
     val person = Person("John", "Doe", 1990)
 
@@ -35,8 +36,12 @@ class PersonTest extends AnyFunSuite:
     val jane = Person("Jane", "Smith", 1985)
     john.ageDifference(jane) shouldBe 5
 
-  test("birth year should be less than the current year")
-    a [ IllegalArgumentException ] should be thrownBy Person("John", "Doe", 2025)
+  test("birth year should be less than the current year"):
+    a [ IllegalArgumentException ] should be thrownBy Person("John", "Doe", 2028)
+
+  test("age should be calculated correctly"):
+    val john = Person("John", "Doe", 1990)
+    john.age shouldBe 34
 
 
 
