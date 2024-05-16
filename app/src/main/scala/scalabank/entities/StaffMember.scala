@@ -1,15 +1,15 @@
 package scalabank.entities
 
-
-abstract class StaffMember[T] extends Person:
-  def position: T
+trait StaffPosition:
   def salary: Double
-  def annualSalary: Double = salary * 12
+
+abstract class StaffMember[T <: StaffPosition] extends Person:
+  def position: T
+  def salary: Double = position.salary
+  def annualSalary: Double = position.salary * 12
 
   def annualNetSalary(using taxRate: Double): Double =
     val taxes = annualSalary * taxRate
     annualSalary - taxes
-
-
 
 
