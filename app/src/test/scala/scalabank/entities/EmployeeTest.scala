@@ -4,7 +4,7 @@ import org.scalatest.funsuite.AnyFunSuite
 import org.junit.runner.RunWith
 import org.scalatestplus.junit.JUnitRunner
 import org.scalatest.matchers.should.Matchers.*
-import scalabank.entities.Employee.{EmployeePosition, taxRateDefault}
+import scalabank.entities.Employee.EmployeePosition
 
 import java.time.Year
 

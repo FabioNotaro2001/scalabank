@@ -25,7 +25,6 @@ object Employee:
 
   extension (employee: Employee)
     def fullName: String = s"${employee.name} ${employee.surname}"
-    def yearsOfService: Int = Year.now.getValue - employee.hiringYear
     def annualSalaryWithContextualBonus(using bonusRate: BonusRate): Double =
       employee.annualSalary * (1 + bonusRate.bonusRate)
 
