@@ -1,5 +1,4 @@
 package scalabank.entities
 
-trait BonusRate {
-
-}
+trait BonusRate:
+  def bonusRate: Double
