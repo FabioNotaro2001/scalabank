@@ -7,8 +7,6 @@ import scalabank.logger.Logger
 
 object App {
   def main(args: Array[String]): Unit = {
-    val l: Logger = Logger(true)
-    l.log("ciao")
     println(greeting())
   }
 
