@@ -1,7 +1,6 @@
 package scalabank.entities
 
 import scalabank.entities.Employee.EmployeePosition
-import java.time.Year
 
 trait Employee extends StaffMember[EmployeePosition] with Promotable[EmployeePosition]
 
