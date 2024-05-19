@@ -7,7 +7,6 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatestplus.junit.JUnitRunner
 
-
 @RunWith(classOf[JUnitRunner])
 class TestLogger extends AnyFlatSpec with BeforeAndAfterEach:
   override def beforeEach(): Unit = Logger.reset()
@@ -31,8 +30,3 @@ class TestLogger extends AnyFlatSpec with BeforeAndAfterEach:
     Logger.save("two")
     Logger.logAll()
     Logger.getSize() shouldBe 0
-
-
-
-
-
