@@ -35,7 +35,7 @@ class EmployeeTest extends AnyFunSuite:
     val taxRateDefault: Double = 0.2
     val employee = Employee("John", "Doe", 1990, EmployeePosition.Cashier, 2000)
     val expectedNetSalary = employee.annualSalary * (1 - taxRateDefault)
-    import Employee.given
+    import Employee.taxRateDefault
     employee.annualNetSalary shouldBe expectedNetSalary
 
   test("annualNetSalary should calculate the net annual salary using not the default tax rate"):
@@ -43,6 +43,27 @@ class EmployeeTest extends AnyFunSuite:
     val employee = Employee("John", "Doe", 1990, EmployeePosition.Cashier, 2000)
     val expectedNetSalary = employee.annualSalary * (1 - taxRate)
     employee.annualNetSalary(using taxRate) shouldBe expectedNetSalary
+
+  test("Employee should calculate annual salary with standard bonus correctly"):
+    import Employee.standardBonusRate
+    val employee = Employee("John", "Doe", 1980, EmployeePosition.Cashier, 2010)
+    employee.annualSalaryWithContextualBonus shouldBe employee.annualSalary * 1.1
+
+  test("Employee should calculate annual salary with senior bonus correctly"):
+    import Employee.seniorBonusRate
+    val employee = Employee("Jane", "Doe", 1980, EmployeePosition.FinancialAnalyst, 2010)
+    employee.annualSalaryWithContextualBonus shouldBe employee.annualSalary * 1.2
+
+  test("Employee should be promoted correctly"):
+    val employee = Employee("John", "Doe", 1980, EmployeePosition.Cashier, 2010)
+    val promotedEmployee = employee.promote(EmployeePosition.FinancialAnalyst)
+    promotedEmployee.position shouldBe EmployeePosition.FinancialAnalyst
+
+  test("List of employees should calculate total annual salary correctly"):
+    val employee1 = Employee("Alice", "Johnson", 1992, EmployeePosition.Cashier, 2000)
+    val employee2 = Employee("Bob", "Williams", 1993, EmployeePosition.FinancialAnalyst, 2000)
+    val employees = List(employee1, employee2)
+    employees.totalAnnualSalary shouldBe (employee1.annualSalary + employee2.annualSalary)
 
   test("allJobCategories should return a list of annual salaries for all employees"):
     val employee1 = Employee("John", "Doe", 1990, EmployeePosition.Cashier, 2000)
@@ -54,8 +75,6 @@ class EmployeeTest extends AnyFunSuite:
   test("yearsOfService should calculate the correct years of service"):
     val employee = Employee("John", "Doe", 1990, Employee.EmployeePosition.Cashier, 2000)
     employee.yearsOfService shouldBe (Year.now.getValue - employee.hiringYear)
-    import scalabank.entities.Employee.standardBonusRate
-    employee.annualSalaryWithContextualBonus shouldBe (employee.annualSalary * 1.1)
 
   test("promote should change the employee's position"):
     val employee = Employee("John", "Doe", 1990, Employee.EmployeePosition.Cashier, 2000)
