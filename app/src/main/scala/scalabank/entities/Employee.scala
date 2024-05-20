@@ -8,6 +8,14 @@ import scalabank.entities.Employee.EmployeePosition
 trait Employee extends AbstractStaffMember[EmployeePosition] with Promotable[EmployeePosition]
 
 /**
+ * Represents the promotion a staff member to a new position.
+ *
+ * @tparam T the type of the staff position
+ */
+trait Promotable[T <: StaffPosition]:
+  def promote(newPosition: T): Employee
+
+/**
  * Companion object for Employee.
  */
 object Employee:

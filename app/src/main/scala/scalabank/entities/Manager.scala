@@ -71,12 +71,28 @@ object Manager:
       currentProjects = currentProjects.filterNot(_ == project)
 
   extension (manager: Manager)
+    /**
+     * Retrieves the budget of a specific project managed by the manager.
+     *
+     * @param projectName The name of the project.
+     * @return The budget of the specified project, or 0.0 if the project is not found.
+     */
     def projectBudget(projectName: String): Double =
       manager.projects.find(_.name == projectName).map(_.budget).getOrElse(0.0)
 
+    /**
+     * Calculates the total budget of all projects managed by a manager.
+     *
+     * @return The total budget of all projects.
+     */
     def totalProjectBudgets: Double = manager.projects.map(_.budget).sum
 
   extension (managers: List[Manager])
+    /**
+     * Calculates the total number of projects managed by a list of managers.
+     *
+     * @return The total number of projects.
+     */
     def totalProjectsManaged: Int =
       @tailrec
       def countProjects(managers: List[Manager], acc: Int = 0): Int =

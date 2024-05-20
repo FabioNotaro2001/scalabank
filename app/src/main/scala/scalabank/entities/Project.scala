@@ -1,8 +1,7 @@
 package scalabank.entities
 
 /**
- * A trait representing a project.
- * Projects have a name, a budget, and a team of employees.
+ * A project.
  */
 trait Project:
   /**
