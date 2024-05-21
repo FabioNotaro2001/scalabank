@@ -62,7 +62,7 @@ object Manager:
                                  var currentProjects: List[Project]) extends Manager:
     export person.*
 
-    override def projects: Iterable[Project] = currentProjects.view
+    override def projects: Iterable[Project] = currentProjects
 
     override def addProject(project: Project): Unit =
       currentProjects = currentProjects :+ project

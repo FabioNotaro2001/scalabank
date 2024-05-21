@@ -9,7 +9,7 @@ import java.time.LocalDate
  *
  * @tparam T the type of the staff position
  */
-trait StaffMember[T]:
+trait StaffMember[T <: StaffPosition]:
   /** The year when member was hired. */
   def hiringYear: Int
 

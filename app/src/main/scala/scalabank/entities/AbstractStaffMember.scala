@@ -17,9 +17,9 @@ abstract class AbstractStaffMember[T <: StaffPosition] extends Person with Staff
     val taxes = annualSalary * taxRate
     annualSalary - taxes
 
-  private var appointments: Vector[Appointment] = Vector()
+  private var appointments: List[Appointment] = List()
 
-  override def getAppointments: Iterable[Appointment] = appointments.view
+  override def getAppointments: Iterable[Appointment] = appointments
 
   override def addAppointment(appointment: Appointment): Unit =
     appointments = appointments :+ appointment
