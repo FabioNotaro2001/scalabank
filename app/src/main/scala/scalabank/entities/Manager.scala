@@ -6,7 +6,7 @@ import scala.annotation.tailrec
 /**
  * Represents a manager within the organization.
  */
-trait Manager extends AbstractStaffMember[ManagerPosition]:
+trait Manager extends StaffMember[ManagerPosition]:
   /**
    * Retrieves the projects managed by the manager.
    *

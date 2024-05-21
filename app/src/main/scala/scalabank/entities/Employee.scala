@@ -5,7 +5,7 @@ import scalabank.entities.Employee.EmployeePosition
 /**
  * Trait representing the Employee, extending StaffMember with a specific EmployeePosition and Promotable behavior.
  */
-trait Employee extends AbstractStaffMember[EmployeePosition] with Promotable[EmployeePosition]
+trait Employee extends StaffMember[EmployeePosition] with Promotable[EmployeePosition]
 
 /**
  * Represents the promotion a staff member to a new position.
