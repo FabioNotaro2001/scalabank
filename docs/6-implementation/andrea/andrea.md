@@ -4,6 +4,17 @@ Nella prima parte mi sono occupato dello staff della banca in particolare, una v
 
 ## Parte 1
 
+## Struttura generale
+
+In particolare si è deciso di utilizzare il pattern factory per le se seguenti classi: `Person`, `Employee`, `Manager`, `Project`.
+Riportiamo lo schema UML per la factory della persona.
+
+![UML Persona](img/person.png)
+
+Invece è stato utilizzato un template method per quanto concerne la gestione delle diverse tipologie di dipendenti. In particolare è stata creata prima l'interfaccia `StaffPosition` la quale è un mixin ed estende Person.
+Le classi `Employee` e `Manager` la estendono.
+Riportiamo lo schema UML per il template method della gestione dei dipendenti.
+
 
 
 ### Person
@@ -19,6 +30,8 @@ Il trait `Person` rappresenta una persona con informazioni di base e relativi co
 ### StaffMember
 
 Il trait `StaffMember` rappresenta un membro dello staff con dettagli sulla posizione e metodi per calcolare i salari e gestire gli appuntamenti.
+Essendo un mixin esso fornisce funzionalità comuni a tutti i membri dello staff. È un'implementazione generica che utilizza un parametro di tipo `T` che estende `StaffPosition`. 
+Questa classe eredita da `Person`.
 
 #### Dettagli Implementativi:
 
@@ -26,14 +39,8 @@ Il trait `StaffMember` rappresenta un membro dello staff con dettagli sulla posi
 - **Bounded type parameter** Utilizzo di bounded type parameter `[T <: StaffPosition]`. Più specificamente un upper bound, in cui T è un parametro di tipo che può essere sostituito con qualsiasi tipo che sia un sottotipo di StaffPosition. In questo modo limitiamo i tipi di position.
 - **Mixin** Il trait avendo sia metodi implementati che non è un mixin.
 - **Currying** Per il passaggio di valori in `updateAppointment`.
-
-### AbstractStaffMember
-
-La classe `AbstractStaffMember` rappresenta un membro dello staff astratto e fornisce funzionalità comuni a tutti i membri dello staff. È un'implementazione generica che utilizza un parametro di tipo `T` che estende `StaffPosition`. Questa classe eredita da `Person` e implementa `StaffMember[T]`.
-
-#### Dettagli Implementativi:
-
 - **List** Per la lista è stato deciso di usare una lista immutabile, usando una var.
+
 
 ### Employee
 
