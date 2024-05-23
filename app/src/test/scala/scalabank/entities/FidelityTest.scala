@@ -19,3 +19,17 @@ class FidelityImplTest extends AnyFunSuite:
     val fidelity = Fidelity.FidelityImpl(500)
     fidelity.addPoints(100)
     fidelity.points shouldBe 600
+
+  test("redeemPoints should correctly deduct points when enough points available") :
+    val fidelity = Fidelity.FidelityImpl(500)
+    val redeemed = fidelity.redeemPoints(300)
+    redeemed shouldBe true
+    fidelity.points shouldBe 200
+    fidelity.pointsUsed shouldBe 300
+
+  test("redeemPoints should not deduct points when not enough points available") :
+    val fidelity = Fidelity.FidelityImpl(500)
+    val redeemed = fidelity.redeemPoints(700)
+    redeemed shouldBe false
+    fidelity.points shouldBe 500
+    fidelity.pointsUsed shouldBe 0

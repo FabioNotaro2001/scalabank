@@ -24,6 +24,11 @@ object Fidelity:
         override def pointsUsed: Int = _pointsUsed
 
         override def addPoints(pointsToAdd: Int): Unit = _points =  _points + pointsToAdd
-        override def redeemPoints(pointsToRedeem: Int): Boolean = ???
-        override def currentLevel: FidelityLevel = ???
+        override def redeemPoints(pointsToRedeem: Int): Boolean = pointsToRedeem match
+            case _pointsToRedeem if _points >= _pointsToRedeem => 
+                _points = _points - _pointsToRedeem
+                _pointsUsed = _pointsUsed + _pointsToRedeem 
+                true
+            case _ => false
+        override def currentLevel: FidelityLevel = ??? 
         
