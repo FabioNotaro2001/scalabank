@@ -14,3 +14,8 @@ class FidelityImplTest extends AnyFunSuite:
     val fidelity = Fidelity.FidelityImpl(500)
     fidelity.points shouldBe 500
     fidelity.pointsUsed shouldBe 0
+
+  test("addPoints should correctly increase the points") :
+    val fidelity = Fidelity.FidelityImpl(500)
+    fidelity.addPoints(100)
+    fidelity.points shouldBe 600
