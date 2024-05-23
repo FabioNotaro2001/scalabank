@@ -11,18 +11,17 @@ Riportiamo lo schema UML per la factory della persona.
 
 ![UML Persona](img/person.png)
 
-Invece è stato utilizzato un template method per quanto concerne la gestione delle diverse tipologie di dipendenti. In particolare è stata creata prima l'interfaccia `StaffPosition` la quale è un mixin, il quale contiene implementati i metodi comuni ed estende Person. A questo punto le classi `Employee` e `Manager` estendono `StaffPosition`.
-Riportiamo lo schema UML per il template method della gestione dei dipendenti. Si noti che (T) è un trait, (C) è una classe, (T, C) vuol dire che è stato creato il trait e la classe relativa utilizzando il pattern factory come descritto sopra per la classe `Persona`.
+Invece è stato utilizzato un template method per quanto concerne la gestione delle diverse tipologie di dipendenti. In particolare è stata creata prima l'interfaccia `StaffPosition` la quale è un mixin ed estende Person.
+Le classi `Employee` e `Manager` la estendono.
+Riportiamo lo schema UML per il template method della gestione dei dipendenti.
 
-![UML Persona](img/template.png)
 
-Ora riportiamo una sintetica descrizione delle classi:
 
 ### Person
 
 Il trait `Person` rappresenta una persona con informazioni di base e relativi comportamenti.
 
-#### Meccanismi utilizzati:
+#### Dettagli Implementativi:
 
 - **Validazione:** Controllo che l'anno di nascita non sia nel futuro con require.
 - **Factory Method:** Metodo `apply` per creare istanze di `Person` con la case class `PersonImpl`.
@@ -34,7 +33,7 @@ Il trait `StaffMember` rappresenta un membro dello staff con dettagli sulla posi
 Essendo un mixin esso fornisce funzionalità comuni a tutti i membri dello staff. È un'implementazione generica che utilizza un parametro di tipo `T` che estende `StaffPosition`. 
 Questa classe eredita da `Person`.
 
-#### Meccanismi utilizzati:
+#### Dettagli Implementativi:
 
 - **Generics:** Utilizzo di generics al fine di poter generalizzare la posizione lavorativa di uno `StaffMember`, la quale si differenzia a seconda della tipologia di impiegato.
 - **Bounded type parameter** Utilizzo di bounded type parameter `[T <: StaffPosition]`. Più specificamente un upper bound, in cui T è un parametro di tipo che può essere sostituito con qualsiasi tipo che sia un sottotipo di StaffPosition. In questo modo limitiamo i tipi di position.
@@ -47,7 +46,7 @@ Questa classe eredita da `Person`.
 
 Il trait `Employee` rappresenta un dipendente che estende `AbstractStaffMember` con una specifica posizione lavorativa (`EmployeePosition`) e con possibilità di promozione con (`Promotable[EmployeePosition]`).
 
-#### Meccanismi utilizzati:
+#### Dettagli Implementativi:
 
 - **Enumerazione:** `EmployeePosition` è un'enumerazione che definisce diverse posizioni e i relativi salari.
 - **Givens:** L'uso di `given` per definire i tassi di bonus standard e senior e il tasso di imposta predefinito.
@@ -64,7 +63,7 @@ Il trait `Manager` rappresenta un manager e fornisce funzionalità aggiuntive pe
 - **Gestione dei Progetti:** Metodi per ottenere (`projects`), aggiungere (`addProject`) e rimuovere (`removeProject`) progetti.
 - **Calcoli sui Progetti:** Metodi estesi per ottenere il budget di un progetto specifico (`projectBudget`) e il budget totale di tutti i progetti (`totalProjectBudgets`).
 
-#### Meccanismi utilizzati:
+#### Dettagli Implementativi:
 
 - **Enumerazione:** `ManagerPosition` è un'enumerazione che definisce diverse posizioni manageriali e i relativi salari.
 - **Factory Method:** Metodo `apply` per creare istanze di `Manager` con la case class `ManagerImpl`.
@@ -81,21 +80,3 @@ Il trait `Project` rappresenta un progetto con un nome, un budget e un team di l
 
 Il trait `StaffPosition` rappresenta una posizione occupata da un membro dello staff con il relativo salario.
 
-
-
-
-
-
-
-
-
-
-
-
-
-Per tutte le seguenti implementazioni si è deciso di utilizzare un approccio TDD.
-Il Test-Driven Development (TDD) è una metodologia di sviluppo software in cui i test automatizzati vengono scritti prima del codice funzionale. 
-In particolare si è si è adottato il Red-Green-Refactor.
-* Red: Scrivi un test che fallisce (red).
-* Green: Scrivi il codice minimo per far passare il test (green).
-* Refactor: Migliora il codice mantenendo tutti i test verdi.

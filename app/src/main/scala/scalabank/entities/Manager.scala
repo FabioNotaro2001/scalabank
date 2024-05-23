@@ -12,7 +12,7 @@ trait Manager extends StaffMember[ManagerPosition]:
    *
    * @return An iterable collection of projects managed by the manager.
    */
-  def projects: List[Project]
+  def projects: Iterable[Project]
 
   /**
    * Adds a new project to the manager.
@@ -59,10 +59,10 @@ object Manager:
   private case class ManagerImpl(person: Person,
                                  override val position: ManagerPosition,
                                  override val hiringYear: Int,
-                                 private var currentProjects: List[Project]) extends Manager:
+                                 var currentProjects: List[Project]) extends Manager:
     export person.*
 
-    override def projects: List[Project] = currentProjects
+    override def projects: Iterable[Project] = currentProjects
 
     override def addProject(project: Project): Unit =
       currentProjects = currentProjects :+ project
