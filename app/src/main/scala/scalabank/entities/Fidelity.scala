@@ -30,5 +30,9 @@ object Fidelity:
                 _pointsUsed = _pointsUsed + _pointsToRedeem 
                 true
             case _ => false
-        override def currentLevel: FidelityLevel = ??? 
+        override def currentLevel: FidelityLevel = _pointsUsed match
+            case p if p >= 1000 => FidelityLevel.Platinum
+            case p if p >= 500 => FidelityLevel.Gold
+            case p if p >= 250 => FidelityLevel.Silver
+            case _ => FidelityLevel.Bronze
         
