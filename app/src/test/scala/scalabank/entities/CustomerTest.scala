@@ -25,9 +25,3 @@ class CustomerTest extends AnyFunSuite:
     val customer = Customer("John", "Doe", 1980)
     assert(customer.isInstanceOf[BaseCustomer])
     assert(customer.isInstanceOf[Customer])
-
-    /*
-  test("Customer should be has a fidelity")
-    val customer = Customer("John", "Doe", 1980)
-    assert(customer.Fidelity.isInstanceOf[Fidelity])
-*/
