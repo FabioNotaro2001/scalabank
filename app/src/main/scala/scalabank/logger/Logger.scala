@@ -8,7 +8,7 @@ object Logger:
     private type Event = String // TODO: è giusto private qui?????
 
     private val savedEventsList = ListBuffer[Event]()
-    private val prefix: String = PrefixFormatter().getStandardPrefixFormatter
+    private val prefix = PrefixFormatter()
     private var isEnabled = true
     private val outputMedia: OutputMedia = Console()
 
@@ -22,7 +22,7 @@ object Logger:
 
     def save(event: Event): Unit =
         require(isEnabled, "The logger is not currently enabled!")
-        savedEventsList += (prefix + event)
+        savedEventsList += (prefix.getStandardPrefixWithCurrentTime + event)
 
     def logAll(): Unit =
         require(isEnabled, "The logger is not currently enabled!")
