@@ -4,6 +4,8 @@
 package scalabank
 
 import scalabank.logger.Logger
+import java.io.FileOutputStream
+import java.io.PrintStream
 
 object App {
   def main(args: Array[String]): Unit = {

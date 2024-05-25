@@ -1,16 +1,15 @@
 package scalabank.logger
 
-import scalabank.logger.Console.Console
-
+import java.io.PrintStream
 import scala.collection.mutable.ListBuffer
 
 object Logger:
-    private type Event = String // TODO: è giusto private qui?????
+    private type Event = String // TODO: se non crei istanze di tipo Event, rimetti string.
 
-    private val savedEventsList = ListBuffer[Event]()
+    private val savedEventsList = ListBuffer[Event]()   // TODO: ragione per bene se esiste questa lista o se conviene far stampare subito tutto.
     private val prefix = PrefixFormatter()
     private var isEnabled = true
-    private val outputMedia: OutputMedia = Console()
+    private val outputMedia: PrintStream = System.out   //PrintStream("debug.txt")
 
     def disable(): Unit = isEnabled = false
 
@@ -18,7 +17,7 @@ object Logger:
 
     def log(event: Event): Unit =
         require(isEnabled, "The logger is not currently enabled!")
-        outputMedia.write(event)
+        outputMedia.println(event)
 
     def save(event: Event): Unit =
         require(isEnabled, "The logger is not currently enabled!")
