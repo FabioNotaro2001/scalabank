@@ -8,6 +8,5 @@ trait PrefixFormatter:
 object PrefixFormatter:
   def apply(): PrefixFormatter = PrefixFormatterImpl()
   private class PrefixFormatterImpl extends PrefixFormatter:
-    val timeFormatter = TimeFormatter()
+    private val timeFormatter = TimeFormatter()
     override def getStandardPrefixFormatter: String = "[" + timeFormatter.getTimeFormatted() + "] "
-
