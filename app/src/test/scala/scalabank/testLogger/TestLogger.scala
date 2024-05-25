@@ -15,18 +15,23 @@ class TestLogger extends AnyFlatSpec with BeforeAndAfterEach:
     Logger.log("hello")
 
   "The logger" should "save a string" in :
-    Logger.save("ciao")
+    Logger.save("hello")
 
   "The logger" should "be empty at the beginning" in:
-    Logger.getSize() shouldBe 0
+    Logger.getSize shouldBe 0
 
   "The logger size" should "grow correctly" in:
     Logger.save("one")
     Logger.save("two")
-    Logger.getSize() shouldBe 2
+    Logger.getSize shouldBe 2
 
   "The logger" should "print all saved strings" in:
     Logger.save("one")
     Logger.save("two")
     Logger.logAll()
-    Logger.getSize() shouldBe 0
+    Logger.getSize shouldBe 0
+
+  "The logger" should "throw an exception when used while it is not enabled" in:
+    Logger.disable()
+    an [IllegalArgumentException] should be thrownBy Logger.log("hello")
+    Logger.enable()
