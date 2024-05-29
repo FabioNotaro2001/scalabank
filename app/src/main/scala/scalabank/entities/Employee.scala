@@ -1,6 +1,7 @@
 package scalabank.entities
 
 import scalabank.entities.Employee.EmployeePosition
+import scalabank.logger.{Logger, PrefixFormatter}
 
 /**
  * Trait representing the Employee, extending StaffMember with a specific EmployeePosition and Promotable behavior.
@@ -54,8 +55,10 @@ object Employee:
    * @param hiringYear the employee hiring year.
    * @return a new Employee instance.
    */
-  def apply(name: String, surname: String, birthYear: Int, position: EmployeePosition, hiringYear: Int):
-    Employee = EmployeeImpl(Person(name, surname, birthYear), position, hiringYear)
+  def apply(name: String, surname: String, birthYear: Int, position: EmployeePosition, hiringYear: Int): Employee =
+    val employee = EmployeeImpl(Person(name, surname, birthYear), position, hiringYear)
+    Logger.log(PrefixFormatter.getCreationPrefix + employee)
+    employee
 
   private case class EmployeeImpl(person: Person, override val position: EmployeePosition, override val hiringYear: Int) extends Employee:
     export person.*
