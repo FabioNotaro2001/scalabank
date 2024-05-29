@@ -1,6 +1,8 @@
 package scalabank.entities
 
 import scalabank.entities.Manager.ManagerPosition
+import scalabank.logger.{Logger, PrefixFormatter}
+
 import scala.annotation.tailrec
 
 /**
@@ -54,7 +56,9 @@ object Manager:
             position: ManagerPosition,
             hiringYear: Int,
             projects: List[Project]): Manager =
-    ManagerImpl(Person(name, surname, birthYear), position, hiringYear, projects)
+    val manager = ManagerImpl(Person(name, surname, birthYear), position, hiringYear, projects)
+    Logger.log(PrefixFormatter.getCreationPrefix + manager)
+    manager
 
   private case class ManagerImpl(person: Person,
                                  override val position: ManagerPosition,
