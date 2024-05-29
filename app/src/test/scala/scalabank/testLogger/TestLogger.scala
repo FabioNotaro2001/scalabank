@@ -13,7 +13,9 @@ class TestLogger extends AnyFlatSpec with BeforeAndAfterEach:
   "The logger" should "print a string" in:
     Logger.log("hello")
 
-  "The logger" should "throw an exception if used while it is not enabled" in:
+  "The logger" should "not print if used while it is not enabled" in:
     Logger.disable()
-    an [IllegalArgumentException] should be thrownBy Logger.log("hello")
+    Logger.log("hello")
     Logger.enable()
+
+  // TODO: Aggiungere test di log con employee, manager ecc

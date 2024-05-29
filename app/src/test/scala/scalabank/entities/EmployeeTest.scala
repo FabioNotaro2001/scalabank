@@ -2,14 +2,17 @@ package scalabank.entities
 
 import org.scalatest.funsuite.AnyFunSuite
 import org.junit.runner.RunWith
+import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.junit.JUnitRunner
 import org.scalatest.matchers.should.Matchers.*
 import scalabank.entities.Employee.EmployeePosition
+import scalabank.logger.Logger
 
 import java.time.Year
 
 @RunWith(classOf[JUnitRunner])
-class EmployeeTest extends AnyFunSuite:
+class EmployeeTest extends AnyFunSuite with BeforeAndAfterEach:
+
   test("An Employee should be correctly initialized and age calculated"):
     val employee = Employee("John", "Doe", 1990, EmployeePosition.FinancialAnalyst, 2000)
     employee.name shouldBe "John"
