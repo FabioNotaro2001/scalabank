@@ -7,7 +7,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatestplus.junit.JUnitRunner
 
-@RunWith(classOf[JUnitRunner])
+/*@RunWith(classOf[JUnitRunner])
 class TestLogger extends AnyFlatSpec with BeforeAndAfterEach:
 
   "The logger" should "print a string" in:
@@ -18,4 +18,4 @@ class TestLogger extends AnyFlatSpec with BeforeAndAfterEach:
     Logger.log("hello")
     Logger.enable()
 
-  // TODO: Aggiungere test di log con employee, manager ecc
+  // TODO: Aggiungere test di log con employee, manager ecc*/

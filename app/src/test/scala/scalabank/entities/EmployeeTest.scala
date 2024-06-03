@@ -6,7 +6,6 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.junit.JUnitRunner
 import org.scalatest.matchers.should.Matchers.*
 import scalabank.entities.Employee.EmployeePosition
-import scalabank.logger.Logger
 
 import java.time.Year
 

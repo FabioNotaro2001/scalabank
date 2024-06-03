@@ -2,16 +2,24 @@ package scalabank.logger
 
 import java.io.PrintStream
 
-object Logger:
-    private type Event = String // TODO: se non crei istanze di tipo Event, rimetti string e togli questo type.
+trait Logger:
+    def disable(): Unit
+    def enable(): Unit
+    def log(event: String): Unit
+    def setOutputMediaToFile(fileName: String): Unit
+    def setOutputMediaToConsole(): Unit
+
+trait LoggerDependency:
+    val logger: Logger
+
+class LoggerImpl extends Logger:
     private var isEnabled = true
     private var outputMedia: PrintStream = System.out
 
     def disable(): Unit = isEnabled = false
-
     def enable(): Unit = isEnabled = true
 
-    def log(event: Event): Unit =
+    def log(event: String): Unit =
         if isEnabled then outputMedia.println(PrefixFormatter.getStandardPrefixWithCurrentTime + event)
 
     def setOutputMediaToFile(fileName: String): Unit = outputMedia = PrintStream(fileName + ".txt")

@@ -57,7 +57,7 @@ object Manager:
             hiringYear: Int,
             projects: List[Project]): Manager =
     val manager = ManagerImpl(Person(name, surname, birthYear), position, hiringYear, projects)
-    Logger.log(PrefixFormatter.getCreationPrefix + manager)
+    //Logger.log(PrefixFormatter.getCreationPrefix + manager)
     manager
 
   private case class ManagerImpl(person: Person,
