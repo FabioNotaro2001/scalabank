@@ -1,6 +1,7 @@
 package scalabank.logger
 
 import java.io.PrintStream
+import scalabank.logger.PrefixFormatter
 
 trait Logger:
     def disable(): Unit
@@ -9,6 +10,7 @@ trait Logger:
     def log(string: String): Unit
     def setOutputMediaToFile(fileName: String): Unit
     def setOutputMediaToConsole(): Unit
+    def getPrefixFormatter(): PrefixFormatter
 
 trait LoggerDependency:
     val logger: Logger
@@ -16,11 +18,13 @@ trait LoggerDependency:
 class LoggerImpl extends Logger:
     private var isEnabled = true
     private var outputMedia: PrintStream = System.out
+    private val prefixFormatter: PrefixFormatter = PrefixFormatter()
 
     def disable(): Unit = isEnabled = false
     def enable(): Unit = isEnabled = true
     def isEnabledNow: Boolean = isEnabled
     def log(string: String): Unit =
-        if isEnabled then outputMedia.println(PrefixFormatter.getStandardPrefixWithCurrentTime + string)
+        if isEnabled then outputMedia.println(prefixFormatter.getPrefixWithCurrentTime + string)
     def setOutputMediaToFile(fileName: String): Unit = outputMedia = PrintStream(fileName + ".txt")
     def setOutputMediaToConsole(): Unit = outputMedia = System.out
+    def getPrefixFormatter(): PrefixFormatter = prefixFormatter

@@ -1,7 +1,7 @@
 package scalabank.entities
 
 import scalabank.entities.Employee.EmployeePosition
-import scalabank.logger.{Logger, LoggerDependency, LoggerImpl, PrefixFormatter}
+import scalabank.logger.{Logger, LoggerDependency, LoggerImpl}
 
 /**
  * Trait representing the Employee, extending StaffMember with a specific EmployeePosition and Promotable behavior.
@@ -64,7 +64,7 @@ object Employee extends LoggerDependency with EmployeeComponent:
    */
   def apply(name: String, surname: String, birthYear: Int, position: EmployeePosition, hiringYear: Int): Employee =
     val employee = EmployeeImpl(Person(name, surname, birthYear), position, hiringYear)
-    logger.log(PrefixFormatter.getCreationPrefix + employee)  // TODO: Forse PrefixFormatter va messo dentro Logger.
+    logger.log(logger.getPrefixFormatter().getCreationPrefix + employee)
     employee
 
   extension (employee: Employee)
