@@ -64,7 +64,7 @@ object Employee extends LoggerDependency with EmployeeComponent:
    */
   def apply(name: String, surname: String, birthYear: Int, position: EmployeePosition, hiringYear: Int): Employee =
     val employee = EmployeeImpl(Person(name, surname, birthYear), position, hiringYear)
-    logger.log(PrefixFormatter.getCreationPrefix + employee)
+    logger.log(PrefixFormatter.getCreationPrefix + employee)  // TODO: Forse PrefixFormatter va messo dentro Logger.
     employee
 
   extension (employee: Employee)
