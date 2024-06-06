@@ -8,14 +8,14 @@ Attenzione in particolare ai requirement non funzionali: 1) non siano troppo vag
 Si noti anche che la sezione di "Requisiti e Specifica" deve in modo completo e rigoroso descrivere il funzionamento "esterno" del sistema.-->
 Nel presente capitolo sono riportati, suddivisi ed enumerati i requisiti del sistema.
 
-Si noti che, esattamente come prevede la filosofia su cui si basa Scrum, la presente sezione è il frutto di un lavoro iterativo e continuo: l'individuazione e definizione dei requisiti è da conserarsi come un processo più che come un prodotto, in ragione del fatto che i requisiti cambiano col tempo e l'avanzamento dello sviluppo consente di identificarne sempre nuovi.
+Si noti che, esattamente come prevede la filosofia su cui si basa Scrum, la presente sezione è il frutto di un lavoro iterativo e continuo: l'individuazione e definizione dei requisiti è da considerarsi come un processo più che come un prodotto, in ragione del fatto che i requisiti cambiano col tempo e l'avanzamento dello sviluppo consente di identificarne sempre di nuovi.
 
 ## Requisiti di business
 Tentano di rispondere alla domanda riguardante il perchè il progetto ha avuto luogo: esprimono dunque come mai il software è ritenuto strategico, aiutano a definire quali sono gli obiettivi del progetto, le speranze del cliente e degli sviluppatori.
 
 Aiutano inoltre a chiarire e stabilire come giudicare la buona riuscita del progetto.
 
-Innanzitutto occorre evidenziare che il progetto è ritenuto strategico in quanto rappresenta un connubio fondamentale di diversi aspetti universitari: non solo esso è il mezzo attraverso il quale è possibile sostenere l'esame del corso di PPS, ma esso rappresenta anche una splendida occasione per mettersi alla prova e verificare ed approfondire la comprensione degli aspetti emersi durante le lezioni
+Innanzitutto occorre evidenziare che il progetto è ritenuto strategico in quanto rappresenta un connubio fondamentale di diversi aspetti universitari: non solo esso è il mezzo attraverso il quale è possibile sostenere l'esame del corso di PPS, ma esso rappresenta anche una splendida occasione per mettersi alla prova e verificare ed approfondire la comprensione degli aspetti emersi durante le lezioni.
 
 L'elenco seguente riporta i requisiti di business emersi:
 - 1.1 il progetto prevede la creazione di un framework Scala completo utilizzabile per modellare e produrre applicazioni nel contesto bancario
@@ -50,28 +50,19 @@ L'elenco seguente riporta dunque quali requisiti funzionali per l'utente sono em
 - 3.7 per quanto concerne le valute, l'utente deve poter lavorare agilmente con la valuta che preferisce e potenzialmente dovrebbe anche essere messso nelle condizioni di lavorare con multiple valute nella medesima applicazione &rarr; l'operazione di conversione è pertanto ritenuta di fondamentale interesse
 - 3.8 infine l'utente può sfruttare e consultare un logger, strumento fondamentale per la verifica di correttezza delle sue applicazioni in quanto tiene traccia e riporta in ordine esatto i principali eventi accaduti (inserimento di una persona, operazione su conto corrente, inserimento di un appuntamento...).
 
-Per meglio comprendere i requisiti funzionali e evidenziati, si faccia riferimento al/ai diagrammi dei casi d'uso sotto riportati:
+Per meglio comprendere i requisiti funzionali evidenziati, si faccia riferimento al/ai diagrammi dei casi d'uso sotto riportati:
 INSERIRE DIAGRAMMA/DIAGRAMMI DEI CASI D'USO
 
-## Requisiti funzionali di sistema
-Rispetti ai precedenti, questi requisiti sono maggiormente concentrati su come il sistema lavora internamente, ovvero sulle sue funzionalità e regole di comportamento interiori:
-- 4.1 il sistema deve gestire in autonomia l'aggiornamento dei tassi di cambio e conversione tra monete???
-- ???
-- ???
-- 
 ## Requisiti non funzionali
 I requisiti non funzionali coprono invece le qualità che è possibile attribuire al sistema. Per quanto riguarda la nostra libreria, i requisiti non funzionali individuati sono:
-- 5.1 data la natura del progetto (framework) non sono presenti requisiti non funzionali, siccome essi sono da ricercare nella specifica implementazione e nel particolare uso che si fa del framework
-- 5.2 usabilità &rarr; come emerso anche in punti precedenti, è fondamentale che l'utilizzo del framework sia chiaro, semplice e comprensibile agli utenti finali
-- 5.3 supporto multipiattaforma &rarr; il framework dev'essere diffuso nella medesima versione sui principali sistemi operativi
-- 5.4 reattività dell'interfaccia grafica
-- 5.5 estendibilità del framework (intesa come semplicità di aggiunta di concetti, entità e funzionalità a quelle offerte inizialmente)
+- 5.1 usabilità &rarr; come emerso anche in punti precedenti, è fondamentale che l'utilizzo del framework sia chiaro, semplice e comprensibile agli utenti finali
+- 5.2 estendibilità del framework (intesa come semplicità di aggiunta di concetti, entità e funzionalità a quelle offerte inizialmente).
+
 ## Requisiti di implementazione
 I principali vincoli di produzione sono:
 - 6.1 implementazione dell'interfaccia grafica con le monadi
 - 6.2 impiego di Scala come linguaggio di programmazione
-- 6.2 utilizzo di Scalatest per testing, quanto più possibile sotto forma di Domain Specific Language
-
+- 6.2 utilizzo di Scalatest per testing, quanto più possibile sotto forma di Domain Specific Language.
 
 [Back to index](../index.md) | 
 [Previous Chapter](../2-development-process/index.md) | 
