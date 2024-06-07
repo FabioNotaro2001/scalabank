@@ -2,6 +2,8 @@ package scalabank.gui;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.*;
@@ -9,10 +11,15 @@ import java.util.function.*;
 class SwingFunctionalFacade {
 
     public static interface Frame {
+        public static String CLOSED = "CLOSED";
+
         Frame setSize(int width, int height);
-        Frame addButton(String text, String name);
-        Frame addLabel(String text, String name);
-        Frame showToLabel(String text, String name);
+        Frame addView(String name, LayoutManager layout);
+        Frame showView(String name);
+        Frame addPanel(String name, LayoutManager layout, String view, Object constraints);
+        Frame addButton(String name, String text, String view, Object constraints);
+        Frame addLabel(String name, String text, String view, Object constraints);
+        Frame changeLabel(String name, String text);
         Frame show();
         Supplier<String> events();        
     }
@@ -26,7 +33,12 @@ class SwingFunctionalFacade {
         private final JFrame jframe = new JFrame();
         private final Map<String, JButton> buttons = new HashMap<>();
         private final Map<String, JLabel> labels = new HashMap<>();
+        private String currentView = "";
+        private final Map<String, JPanel> views = new HashMap<>();
+        private final Map<String, JPanel> panels = new HashMap<>();
+
         private final LinkedBlockingQueue<String> eventQueue = new LinkedBlockingQueue<>();
+
         private final Supplier<String> events = () -> {
             try{
                 return eventQueue.take();
@@ -36,6 +48,14 @@ class SwingFunctionalFacade {
         };
         public FrameImpl() {
             this.jframe.setLayout(new FlowLayout());
+
+            this.jframe.addWindowListener(new WindowAdapter(){
+                public void windowClosing(WindowEvent e){
+                    try {
+                        eventQueue.put(Frame.CLOSED);
+                    } catch (InterruptedException ex){}
+                }
+            });
         }
 
         @Override
@@ -45,7 +65,7 @@ class SwingFunctionalFacade {
         }
 
         @Override
-        public Frame addButton(String text, String name) {
+        public Frame addButton(String name, String text, String panel, Object constraints) {
             JButton jb = new JButton(text);
             jb.setActionCommand(name);
             this.buttons.put(name, jb);
@@ -54,15 +74,44 @@ class SwingFunctionalFacade {
                     eventQueue.put(name);
                 } catch (InterruptedException ex){}
             });
-            this.jframe.getContentPane().add(jb);
+            this.panels.get(panel).add(jb, constraints);
             return this;
         }
 
         @Override
-        public Frame addLabel(String text, String name) {
+        public Frame addLabel(String name, String text, String panel, Object constraints) {
             JLabel jl = new JLabel(text);
             this.labels.put(name, jl);
-            this.jframe.getContentPane().add(jl);
+            this.panels.get(panel).add(jl, constraints);
+            return this;
+        }
+
+        @Override
+        public Frame addView(String name, LayoutManager layout) {
+            JPanel jp = new JPanel(layout);
+            jp.setVisible(false);
+            this.views.put(name, jp);
+            this.panels.put(name, jp);
+            this.jframe.getContentPane().add(jp);
+            return this;
+        }
+
+        @Override
+        public Frame showView(String name) {
+            if (!this.currentView.isEmpty()) {
+                this.views.get(currentView).setVisible(false);
+            }
+            this.currentView = name;
+            this.views.get(currentView).setVisible(true);
+            return this;
+        }
+
+        @Override
+        public Frame addPanel(String name, LayoutManager layout, String panel, Object constraints) {
+            JPanel jp = new JPanel(layout);
+            this.panels.put(name, jp);
+            this.panels.get(panel).add(jp, constraints);
+            jp.setVisible(true);
             return this;
         }
 
@@ -72,7 +121,7 @@ class SwingFunctionalFacade {
         }
 
         @Override
-        public Frame showToLabel(String text, String name) {
+        public Frame changeLabel(String name, String text) {
             this.labels.get(name).setText(text);
             return this;
         }
