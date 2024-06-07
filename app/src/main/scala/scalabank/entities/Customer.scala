@@ -19,8 +19,8 @@ given defaultBaseFeeCalculator: BaseFeeCalculator with
    def calculateBaseFee(fidelity: Fidelity, isYoung: Boolean): Double = isYoung match
     case true => 0
     case false => fidelity.currentLevel match
-      case level if level == FidelityLevel.Bronze => 0.1
-      case level if level == FidelityLevel.Silver => 0.08
+      case level if level == FidelityLevel.Bronze => 1
+      case level if level == FidelityLevel.Silver => 0.8
       case level if level == FidelityLevel.Gold => 0.6
       case _ => 0.4
 
@@ -30,7 +30,7 @@ trait CustomerComponent:
                                _surname: String,
                                _birthYear: Int) extends YoungCustomer:
     override def fidelity: Fidelity = Fidelity(0)
-    override def baseFee(using calc: BaseFeeCalculator): Double = calc.calculateBaseFee(fidelity, false)
+    override def baseFee(using calc: BaseFeeCalculator): Double = calc.calculateBaseFee(fidelity, true)
 
     private val person = Person(_name, _surname, _birthYear)
     export person.*
@@ -39,7 +39,7 @@ trait CustomerComponent:
                               _surname: String,
                               _birthYear: Int) extends BaseCustomer:
     override def fidelity: Fidelity = Fidelity(0)
-    override def baseFee(using calc: BaseFeeCalculator): Double = calc.calculateBaseFee(fidelity, true)
+    override def baseFee(using calc: BaseFeeCalculator): Double = calc.calculateBaseFee(fidelity, false)
 
     private val person = Person(_name, _surname, _birthYear)
     export person.*

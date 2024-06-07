@@ -18,17 +18,17 @@ class CustomerTest extends AnyFunSuite:
 
   test("Customer should be a YoungCustomer if is less 35 years old"):
     val customer = Customer("John", "Doe", 2000)
-    assert(customer.isInstanceOf[YoungCustomer])
-    assert(customer.isInstanceOf[Customer])
+    customer shouldBe a[YoungCustomer]
+    customer shouldBe a[Customer]
 
   test("Customer should be a BaseCustomer if is oldest 35 years old"):
     val customer = Customer("John", "Doe", 1980)
-    assert(customer.isInstanceOf[BaseCustomer])
-    assert(customer.isInstanceOf[Customer])
+    customer shouldBe a[BaseCustomer]
+    customer shouldBe a[Customer]
 
   test("Customer should be has a fidelity"):
     val customer = Customer("John", "Doe", 1980)
-    assert(customer.fidelity.isInstanceOf[Fidelity])
+    customer.fidelity shouldBe a[Fidelity]
 
   test("Young Customer should be has a initial baseFee of 0"):
     val customer = Customer("John", "Doe", 2000)
