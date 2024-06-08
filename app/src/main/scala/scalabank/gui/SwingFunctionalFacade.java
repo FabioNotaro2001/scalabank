@@ -30,8 +30,10 @@ class SwingFunctionalFacade {
         String getInputText(String name);
         Frame addComboBox(String name, String[] options, String panel, Object constraints);
         String getComboBoxSelection(String name);
+        Frame addList(String name, String[] contents, String panel, Object constraints);
+
         Frame show();
-        Supplier<Tuple2<String, String>> events();
+        Supplier<String> events();
     }
 
     // TODO: change
@@ -45,17 +47,18 @@ class SwingFunctionalFacade {
         private final Map<String, JLabel> labels = new HashMap<>();
         private final Map<String, JTextField> textFields = new HashMap<>();
         private final Map<String, JComboBox<String>> comboBoxes = new HashMap<>();
+        private final Map<String, JList<String>> lists = new HashMap<>();
         private String currentView = "";
         private final Map<String, JPanel> views = new HashMap<>();
         private final Map<String, JPanel> panels = new HashMap<>();
 
-        private final LinkedBlockingQueue<Tuple2<String, String>> eventQueue = new LinkedBlockingQueue<>();
+        private final LinkedBlockingQueue<String> eventQueue = new LinkedBlockingQueue<>();
 
-        private final Supplier<Tuple2<String, String>> events = () -> {
+        private final Supplier<String> events = () -> {
             try{
                 return eventQueue.take();
             } catch (InterruptedException e){
-                return new Tuple2<>("", "");
+                return "";
             }
         };
         public FrameImpl() {
@@ -63,7 +66,7 @@ class SwingFunctionalFacade {
             this.jframe.addWindowListener(new WindowAdapter(){
                 public void windowClosing(WindowEvent e){
                     try {
-                        eventQueue.put(new Tuple2<>(Frame.CLOSED, ""));
+                        eventQueue.put(Frame.CLOSED);
                     } catch (InterruptedException ex){}
                 }
             });
@@ -88,7 +91,7 @@ class SwingFunctionalFacade {
             this.buttons.put(name, jb);
             jb.addActionListener(e -> {
                 try {
-                    eventQueue.put(new Tuple2<>(name, ""));
+                    eventQueue.put(name);
                 } catch (InterruptedException ex){}
             });
             this.panels.get(panel).add(jb, constraints);
@@ -107,28 +110,6 @@ class SwingFunctionalFacade {
         public Frame addInput(String name, int columns, String panel, Object constraints) {
             JTextField jt = new JTextField("", columns);
             this.textFields.put(name, jt);
-/*            jt.getDocument().addDocumentListener(new DocumentListener() {
-                private void createEvent() {
-                    try {
-                        eventQueue.put(new Tuple2<>(name, jt.getText()));
-                    } catch (InterruptedException ex){}
-                }
-
-                @Override
-                public void insertUpdate(DocumentEvent e) {
-                    createEvent();
-                }
-
-                @Override
-                public void removeUpdate(DocumentEvent e) {
-                    createEvent();
-                }
-
-                @Override
-                public void changedUpdate(DocumentEvent e) {
-                    createEvent();
-                }
-            });*/
             this.panels.get(panel).add(jt, constraints);
             return this;
         }
@@ -142,14 +123,6 @@ class SwingFunctionalFacade {
         public Frame addComboBox(String name, String[] options, String panel, Object constraints) {
             JComboBox<String> jc = new JComboBox<>(options);
             this.comboBoxes.put(name, jc);
-/*            jc.addActionListener(e -> {
-                try {
-                    Object selected = jc.getSelectedItem();
-                    if (selected != null) {
-                        eventQueue.put(new Tuple2<>(name, (String) selected));
-                    }
-                } catch (InterruptedException ex){}
-            });*/
             this.panels.get(panel).add(jc, constraints);
             return this;
         }
@@ -157,6 +130,14 @@ class SwingFunctionalFacade {
         @Override
         public String getComboBoxSelection(String name) {
             return (String) this.comboBoxes.get(name).getSelectedItem();
+        }
+
+        @Override
+        public Frame addList(String name, String[] contents, String panel, Object constraints) {
+            JList<String> jl = new JList<>(contents);
+            this.lists.put(name, jl);
+            this.panels.get(panel).add(jl, constraints);
+            return this;
         }
 
         @Override
@@ -176,7 +157,7 @@ class SwingFunctionalFacade {
             }
             this.currentView = name;
             this.views.get(currentView).setVisible(true);
-            this.jframe.pack();
+//            this.jframe.pack();
             return this;
         }
 
@@ -190,7 +171,7 @@ class SwingFunctionalFacade {
         }
 
         @Override
-        public Supplier<Tuple2<String, String>> events() {
+        public Supplier<String> events() {
             return events;
         }
 
