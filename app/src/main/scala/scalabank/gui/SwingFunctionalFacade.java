@@ -1,28 +1,37 @@
 package scalabank.gui;
 
+import scala.Tuple2;
+
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.*;
 import java.util.function.*;
 
 class SwingFunctionalFacade {
 
-    public static interface Frame {
-        public static String CLOSED = "CLOSED";
+    public interface Frame {
+        String CLOSED = "CLOSED";
 
         Frame setSize(int width, int height);
+        Frame setMinSize(int width, int height);
         Frame addView(String name, LayoutManager layout);
         Frame showView(String name);
         Frame addPanel(String name, LayoutManager layout, String panel, Object constraints);
         Frame addButton(String name, String text, String panel, Object constraints);
         Frame addLabel(String name, String text, String panel, Object constraints);
-        Frame addInput(String name, int columns, String panel, Object constraints);
         Frame changeLabel(String name, String text);
+        Frame addInput(String name, int columns, String panel, Object constraints);
+        String getInputText(String name);
+        Frame addComboBox(String name, String[] options, String panel, Object constraints);
+        String getComboBoxSelection(String name);
         Frame show();
-        Supplier<String> events();
+        Supplier<Tuple2<String, String>> events();
     }
 
     // TODO: change
@@ -35,26 +44,26 @@ class SwingFunctionalFacade {
         private final Map<String, JButton> buttons = new HashMap<>();
         private final Map<String, JLabel> labels = new HashMap<>();
         private final Map<String, JTextField> textFields = new HashMap<>();
+        private final Map<String, JComboBox<String>> comboBoxes = new HashMap<>();
         private String currentView = "";
         private final Map<String, JPanel> views = new HashMap<>();
         private final Map<String, JPanel> panels = new HashMap<>();
 
-        private final LinkedBlockingQueue<String> eventQueue = new LinkedBlockingQueue<>();
+        private final LinkedBlockingQueue<Tuple2<String, String>> eventQueue = new LinkedBlockingQueue<>();
 
-        private final Supplier<String> events = () -> {
+        private final Supplier<Tuple2<String, String>> events = () -> {
             try{
                 return eventQueue.take();
             } catch (InterruptedException e){
-                return "";
+                return new Tuple2<>("", "");
             }
         };
         public FrameImpl() {
             this.jframe.setLayout(new FlowLayout());
-
             this.jframe.addWindowListener(new WindowAdapter(){
                 public void windowClosing(WindowEvent e){
                     try {
-                        eventQueue.put(Frame.CLOSED);
+                        eventQueue.put(new Tuple2<>(Frame.CLOSED, ""));
                     } catch (InterruptedException ex){}
                 }
             });
@@ -67,13 +76,19 @@ class SwingFunctionalFacade {
         }
 
         @Override
+        public Frame setMinSize(int width, int height) {
+            this.jframe.setMinimumSize(new Dimension(width, height));
+            return this;
+        }
+
+        @Override
         public Frame addButton(String name, String text, String panel, Object constraints) {
             JButton jb = new JButton(text);
             jb.setActionCommand(name);
             this.buttons.put(name, jb);
             jb.addActionListener(e -> {
                 try {
-                    eventQueue.put(name);
+                    eventQueue.put(new Tuple2<>(name, ""));
                 } catch (InterruptedException ex){}
             });
             this.panels.get(panel).add(jb, constraints);
@@ -92,8 +107,56 @@ class SwingFunctionalFacade {
         public Frame addInput(String name, int columns, String panel, Object constraints) {
             JTextField jt = new JTextField("", columns);
             this.textFields.put(name, jt);
+/*            jt.getDocument().addDocumentListener(new DocumentListener() {
+                private void createEvent() {
+                    try {
+                        eventQueue.put(new Tuple2<>(name, jt.getText()));
+                    } catch (InterruptedException ex){}
+                }
+
+                @Override
+                public void insertUpdate(DocumentEvent e) {
+                    createEvent();
+                }
+
+                @Override
+                public void removeUpdate(DocumentEvent e) {
+                    createEvent();
+                }
+
+                @Override
+                public void changedUpdate(DocumentEvent e) {
+                    createEvent();
+                }
+            });*/
             this.panels.get(panel).add(jt, constraints);
             return this;
+        }
+
+        @Override
+        public String getInputText(String name) {
+            return this.textFields.get(name).getText();
+        }
+
+        @Override
+        public Frame addComboBox(String name, String[] options, String panel, Object constraints) {
+            JComboBox<String> jc = new JComboBox<>(options);
+            this.comboBoxes.put(name, jc);
+/*            jc.addActionListener(e -> {
+                try {
+                    Object selected = jc.getSelectedItem();
+                    if (selected != null) {
+                        eventQueue.put(new Tuple2<>(name, (String) selected));
+                    }
+                } catch (InterruptedException ex){}
+            });*/
+            this.panels.get(panel).add(jc, constraints);
+            return this;
+        }
+
+        @Override
+        public String getComboBoxSelection(String name) {
+            return (String) this.comboBoxes.get(name).getSelectedItem();
         }
 
         @Override
@@ -127,7 +190,7 @@ class SwingFunctionalFacade {
         }
 
         @Override
-        public Supplier<String> events() {
+        public Supplier<Tuple2<String, String>> events() {
             return events;
         }
 
