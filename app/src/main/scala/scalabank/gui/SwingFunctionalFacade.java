@@ -16,12 +16,13 @@ class SwingFunctionalFacade {
         Frame setSize(int width, int height);
         Frame addView(String name, LayoutManager layout);
         Frame showView(String name);
-        Frame addPanel(String name, LayoutManager layout, String view, Object constraints);
-        Frame addButton(String name, String text, String view, Object constraints);
-        Frame addLabel(String name, String text, String view, Object constraints);
+        Frame addPanel(String name, LayoutManager layout, String panel, Object constraints);
+        Frame addButton(String name, String text, String panel, Object constraints);
+        Frame addLabel(String name, String text, String panel, Object constraints);
+        Frame addInput(String name, int columns, String panel, Object constraints);
         Frame changeLabel(String name, String text);
         Frame show();
-        Supplier<String> events();        
+        Supplier<String> events();
     }
 
     // TODO: change
@@ -33,6 +34,7 @@ class SwingFunctionalFacade {
         private final JFrame jframe = new JFrame();
         private final Map<String, JButton> buttons = new HashMap<>();
         private final Map<String, JLabel> labels = new HashMap<>();
+        private final Map<String, JTextField> textFields = new HashMap<>();
         private String currentView = "";
         private final Map<String, JPanel> views = new HashMap<>();
         private final Map<String, JPanel> panels = new HashMap<>();
@@ -87,6 +89,14 @@ class SwingFunctionalFacade {
         }
 
         @Override
+        public Frame addInput(String name, int columns, String panel, Object constraints) {
+            JTextField jt = new JTextField("", columns);
+            this.textFields.put(name, jt);
+            this.panels.get(panel).add(jt, constraints);
+            return this;
+        }
+
+        @Override
         public Frame addView(String name, LayoutManager layout) {
             JPanel jp = new JPanel(layout);
             jp.setVisible(false);
@@ -103,6 +113,7 @@ class SwingFunctionalFacade {
             }
             this.currentView = name;
             this.views.get(currentView).setVisible(true);
+            this.jframe.pack();
             return this;
         }
 

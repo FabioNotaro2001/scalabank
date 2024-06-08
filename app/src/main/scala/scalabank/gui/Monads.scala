@@ -1,5 +1,7 @@
 package scalabank.gui
 
+import scalabank.gui.States.State
+
 object Monads:
 
   trait Monad[M[_]]:
@@ -17,7 +19,5 @@ object Monads:
 
     def seqN[M[_] : Monad, A](stream: LazyList[M[A]]): M[A] =
       stream match
-        case h #:: t =>
-          (h, t) match
-            case (m, Nil) => m
-            case (m, s) => seq(m, seqN(s))
+        case h #:: t => seq(h, seqN(t))
+
