@@ -20,8 +20,8 @@ La tabella sottostante riporta lo sprint backlog relativo al primo sprint.
       <td>creazione della classe persona</td>
       <td>Bedei, Mazzotti</td>
       <td>2</td>
-      <td>0</td>
-      <td>0</td>
+      <td>2</td>
+      <td>1</td>
       <td>0</td>
       <td>0</td>
       <td>0</td>
@@ -30,9 +30,9 @@ La tabella sottostante riporta lo sprint backlog relativo al primo sprint.
       <td>creazione delle classi che rappresentano la gerarchia del personale bancario</td>
       <td>Bedei</td>
       <td>2</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
+      <td>2</td>
+      <td>2</td>
+      <td>1</td>
       <td>0</td>
       <td>0</td>
     </tr>
@@ -40,9 +40,9 @@ La tabella sottostante riporta lo sprint backlog relativo al primo sprint.
       <td>creazione dei clienti</td>
       <td>Mazzotti</td>
       <td>3</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
+      <td>3</td>
+      <td>2</td>
+      <td>1</td>
       <td>0</td>
       <td>0</td>
     </tr>
@@ -51,8 +51,8 @@ La tabella sottostante riporta lo sprint backlog relativo al primo sprint.
       <td>realizzazione dei mockup delle schermate necessarie</td>
       <td>Bertuccioli</td>
       <td>3</td>
-      <td>0</td>
-      <td>0</td>
+      <td>3</td>
+      <td>2</td>
       <td>0</td>
       <td>0</td>
       <td>0</td>
@@ -61,17 +61,17 @@ La tabella sottostante riporta lo sprint backlog relativo al primo sprint.
       <td>realizzazione delle singole schermate</td>
       <td>Bertuccioli</td>
       <td>5</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
+      <td>5</td>
+      <td>4</td>
+      <td>2</td>
+      <td>1</td>
       <td>0</td>
     </tr>
     <tr>
       <td>collegamento delle schermate tra loro</td>
       <td>Bertuccioli</td>
       <td>2</td>
-      <td>0</td>
+      <td>2</td>
       <td>0</td>
       <td>0</td>
       <td>0</td>
@@ -81,8 +81,8 @@ La tabella sottostante riporta lo sprint backlog relativo al primo sprint.
       <td>implementazione delle funzionalità previste</td>
       <td>Bertucccioli</td>
       <td>4</td>
-      <td>0</td>
-      <td>0</td>
+      <td>4</td>
+      <td>2</td>
       <td>0</td>
       <td>0</td>
       <td>0</td>
@@ -92,7 +92,7 @@ La tabella sottostante riporta lo sprint backlog relativo al primo sprint.
       <td>individuazione degli eventi rilevanti di cui tenere traccia</td>
       <td>Notaro</td>
       <td>1</td>
-      <td>0</td>
+      <td>1</td>
       <td>0</td>
       <td>0</td>
       <td>0</td>
@@ -102,8 +102,8 @@ La tabella sottostante riporta lo sprint backlog relativo al primo sprint.
       <td>implementazione generica del logger globale</td>
       <td>Notaro</td>
       <td>2</td>
-      <td>0</td>
-      <td>0</td>
+      <td>2</td>
+      <td>1</td>
       <td>0</td>
       <td>0</td>
       <td>0</td>
@@ -112,7 +112,7 @@ La tabella sottostante riporta lo sprint backlog relativo al primo sprint.
       <td>implementazione specializzata del logger per singole entità</td>
       <td>Notaro</td>
       <td>2</td>
-      <td>0</td>
+      <td>2</td>
       <td>0</td>
       <td>0</td>
       <td>0</td>
@@ -122,8 +122,8 @@ La tabella sottostante riporta lo sprint backlog relativo al primo sprint.
       <td>collegamento con le altre entità del dominio</td>
       <td>Notaro, Bedei, Mazzotti</td>
       <td>2</td>
-      <td>0</td>
-      <td>0</td>
+      <td>2</td>
+      <td>1</td>
       <td>0</td>
       <td>0</td>
       <td>0</td>
@@ -132,8 +132,8 @@ La tabella sottostante riporta lo sprint backlog relativo al primo sprint.
       <td>raffinamento ed adozione di design pattern</td>
       <td>Notaro</td>
       <td>2</td>
-      <td>0</td>
-      <td>0</td>
+      <td>2</td>
+      <td>1</td>
       <td>0</td>
       <td>0</td>
       <td>0</td>
@@ -145,15 +145,16 @@ La tabella sottostante riporta lo sprint backlog relativo al primo sprint.
 Come si nota dallo sprint backlog, l'obiettivo principale del primo sprint è non solo predisporre le entità base che serviranno per le implementazioni delle varie funzionalità previste negli sprint successivi, ma contestualmente iniziare la realizzazione di importanti strumenti interattivi (al momento ancora piuttosto limitati) quali il logger e la GUI.
 
 # Terminazione dello sprint
-La terminazione dello sprint è avvenuta in data ???.
+La terminazione dello sprint è avvenuta in data 07/06/2024.
 
 # Sprint Review
+Il team si ritiene soddisfatto di essere riuscito a completare tutti i task previsti.
 
-Il Team è riuscito a raggiungere lo _Sprint Goal_ esattamente come il _Product Owner_ aveva desiderato.
+Sicuramente occorre lavorare e migliorare le tempistiche, siccome questo primo sprint ha richiesto più tempo del previsto (anche a causa di impegni universitari, lavorativi e personali sopraggiunti).
+
+Ad ogni modo il team si impegna ad essere più rapido nei prossimi sprint.
 
 # Sprint Retrospective
-
-Per quanto riguarda il processo di sviluppo, il Team sta scoprendo la propria velocità di realizzazione di punti Sprint.
-
-Un altro appunto da indicare è che durante lo Sprint è emerso un altro _task_ a causa di un'incomprensione sorta durante
-la stesura dello Sprint Backlog.
+La retrospettiva dello sprint ha riguardato principalmente due punti:
+- il primo è che si è discussa e valutata una funzionalità che non era stata preventivata, ossia la fidelity del Customer (che aumenta e diminuisce in base alle operazioni eseguite dal cliente)
+- inoltre si sono discusse alcune regole da seguire per modificare le classi altrui, in modo da evitare che uno sviluppatore si ritrovi una sua classe stravolta da un collega. 
