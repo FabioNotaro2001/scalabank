@@ -5,33 +5,155 @@ import States.*
 import State.*
 import scalabank.gui.SwingFunctionalFacade.Frame
 
+import java.util.Vector as JavaVector
+import java.util.List as JavaList
 import java.awt.{BorderLayout, FlowLayout, GridLayout, LayoutManager}
+import java.util
 import java.util.function.Supplier
 
 trait WindowState:
   type Window
   def initialWindow: Window
-  def setSize(width: Int, height: Int): State[Window, Unit]
-  def setMinSize(width: Int, height: Int): State[Window, Unit]
-  def addView(name: String, layout: LayoutManager): State[Window, Unit]
-  def showView(name: String): State[Window, Unit]
-  def addPanel(name: String, layout: LayoutManager, view: String, constraints: Any): State[Window, Unit]
-  def addButton(name: String, text: String, view: String, constraints: Any): State[Window, Unit]
-  def addLabel(name: String, text: String, view: String, constraints: Any): State[Window, Unit]
-  def changeLabel(name: String, text: String): State[Window, Unit]
-  def addInput(name: String, columns: Int, panel: String, constraints: Any): State[Window, Unit]
-  def getInputText(name: String): State[Window, String]
-  def addComboBox(name: String, options: Array[String], panel: String, constraints: Any): State[Window, Unit]
-  def getComboBoxSelection(name: String): State[Window, String]
-  def addList(name: String, contents: Array[String], panel: String, constraints: Any): State[Window, Unit]
 
+  /**
+   * Sets the size of the window
+   * @param width the width of the window
+   * @param height the height of the window
+   * @return the updated state
+   */
+  def setSize(width: Int, height: Int): State[Window, Unit]
+
+  /**
+   * Adds a new view (panel) to the window
+   * @param name the name of the view
+   * @param layout the layout of the view
+   * @return the updated state
+   */
+  def addView(name: String, layout: LayoutManager): State[Window, Unit]
+
+  /**
+   * Displays a view on the window
+   * @param name the selected view
+   * @return the updated state
+   */
+  def showView(name: String): State[Window, Unit]
+
+  /**
+   * Adds a panel to another panel
+   * @param name the name of the panel
+   * @param layout the layout of the panel
+   * @param panel the container in which the panel is inserted
+   * @param constraints the constraints on the new panel
+   * @return the updated state
+   */
+  def addPanel(name: String, layout: LayoutManager, panel: String, constraints: Any): State[Window, Unit]
+
+  /**
+   * Adds a button to a panel
+   * @param name the name of the button
+   * @param text the text of the button
+   * @param panel the container in which the button is inserted
+   * @param constraints the constraints on the new button
+   * @return the updated state
+   */
+  def addButton(name: String, text: String, panel: String, constraints: Any): State[Window, Unit]
+
+  /**
+   * Adds a label to a panel
+   * @param name the name of the label
+   * @param text the text of the label
+   * @param panel the container in which the label is inserted
+   * @param constraints the constraints on the new label
+   * @return the updated state
+   */
+  def addLabel(name: String, text: String, panel: String, constraints: Any): State[Window, Unit]
+
+  /**
+   * Updates the text of a label
+   * @param name the name of the label
+   * @param text the new text
+   * @return the updated state
+   */
+  def changeLabel(name: String, text: String): State[Window, Unit]
+
+  /**
+   * Adds an input element to a panel
+   * @param name the name of the input element
+   * @param columns the width of the input element in columns
+   * @param panel the container in which the input element is inserted
+   * @param constraints the constraints on the new input element
+   * @return the updated state
+   */
+  def addInput(name: String, columns: Int, panel: String, constraints: Any): State[Window, Unit]
+
+  /**
+   * Returns the text inside an input element
+   * @param name the name of the input element
+   * @return the updated state including the text of the input element
+   */
+  def getInputText(name: String): State[Window, String]
+
+  /**
+   * Adds an combobox to a panel
+   * @param name the name of the combobox
+   * @param options the list of options for the combobox
+   * @param panel the container in which the combobox is inserted
+   * @param constraints the constraints on the new combobox
+   * @return the updated state
+   */
+  def addComboBox(name: String, options: Array[String], panel: String, constraints: Any): State[Window, Unit]
+
+  /**
+   * Returns the selected element inside a combobox, which will be null in case of no selection
+   * @param name the name of the combobox
+   * @return the updated state including the returned selection
+   */
+  def getComboBoxSelection(name: String): State[Window, String]
+
+  /**
+   * Adds a list to a panel
+   * @param name the name of the list
+   * @param contents the contents of the list
+   * @param panel the container in which the list is inserted
+   * @param constraints the constraints on the new list
+   * @return the updated state
+   */
+  def addList(name: String, contents: JavaList[String], panel: String, constraints: Any): State[Window, Unit]
+
+  /**
+   * Updates the contents of a list
+   * @param name the name of the list
+   * @param contents the new contents of the list
+   * @return the updated state
+   */
+  def updateList(name: String, contents: JavaList[String]): State[Window, Unit]
+
+  /**
+   * Displays the window
+   * @return the updated state
+   */
   def show(): State[Window, Unit]
+
+  /**
+   * Executes a command
+   * @param cmd the command to be executed
+   * @return the updated state
+   */
   def exec(cmd: =>Unit): State[Window, Unit]
+
+  /**
+   * Returns the lazy list of events generated by the window
+   * @return the updated state with the lazy list of events
+   */
   def eventStream(): State[Window, LazyList[String]]
 
 extension (so: LazyList.type)
+  /**
+   * Creates a lazy list whose contents are provided by a supplier
+   * @param source the supplier for the elements
+   * @return the lazy list of elements generated by the supplier
+   */
   def generate[A](source: Supplier[A]): LazyList[A] = LazyList.iterate[A](source.get())(_ => source.get())
-
 
 object WindowStateImpl extends WindowState:
   import SwingFunctionalFacade.*
@@ -42,8 +164,6 @@ object WindowStateImpl extends WindowState:
 
   def setSize(width: Int, height: Int): State[Window, Unit] =
     State(w => (w.setSize(width, height), {}))
-  def setMinSize(width: Int, height: Int): State[Window, Unit] =
-    State(w => (w.setMinSize(width, height), {}))
   def addView(name: String, layout: LayoutManager): State[Window, Unit] =
     State(w => (w.addView(name, layout), {}))
   def showView(name: String): State[Window, Unit] =
@@ -64,8 +184,10 @@ object WindowStateImpl extends WindowState:
     State(w => (w.addComboBox(name, options, panel, constraints), {}))
   def getComboBoxSelection(name: String): State[Window, String] =
     State(w => (w, w.getComboBoxSelection(name)))
-  def addList(name: String, contents: Array[String], panel: String, constraints: Any): State[Window, Unit] =
-    State(w => (w.addList(name, contents, panel, constraints), {}))
+  def addList(name: String, contents: JavaList[String], panel: String, constraints: Any): State[Window, Unit] =
+    State(w => (w.addList(name, JavaVector(contents), panel, constraints), {}))
+  def updateList(name: String, contents: JavaList[String]): State[Window, Unit] =
+    State(w => (w.updateList(name, JavaVector(contents)), {}))
   def show(): State[Window, Unit] =
     State(w => (w.show, {}))
   def exec(cmd: =>Unit): State[Window, Unit] =
@@ -78,8 +200,6 @@ object WindowStateImpl extends WindowState:
   import Monads.*, Monad.*
   val loginView = for
     _ <- setSize(600, 300)
-    _ <- setMinSize(300, 100)
-    // ------ Login View
     _ <- addView("Login", BorderLayout(0, 40))
     _ <- addPanel("Login-Title-Panel", FlowLayout(), "Login", BorderLayout.NORTH)
     _ <- addLabel("Login-Title", "Scalabank", "Login-Title-Panel", FlowLayout.CENTER)
@@ -96,7 +216,7 @@ object WindowStateImpl extends WindowState:
     _ <- addButton("Client-Login-Button", "Login come cliente", "Login-Button-Panel", FlowLayout.LEFT)
     _ <- addButton("Empl-Login-Button", "Login come dipendente", "Login-Button-Panel", FlowLayout.TRAILING)
   yield ()
-  val userHomeView = for    // ------ User home View
+  val userHomeView = for
     _ <- addView("User-Home", BorderLayout(0, 10))
     _ <- addPanel("User-Title-Panel", FlowLayout(), "User-Home", BorderLayout.NORTH)
     _ <- addLabel("User-Title", "Benvenuto <USER>", "User-Title-Panel", FlowLayout.CENTER)
@@ -109,7 +229,7 @@ object WindowStateImpl extends WindowState:
     _ <- addButton("User-Home-Sim-Loan", "Simulatore mutuo", "User-Home-Panel", null)
     _ <- addButton("User-Home-Logout", "Esci", "User-Home-Panel", null)
   yield ()
-  val userAccountView = for     // ------ User account View
+  val userAccountView = for
     _ <- addView("User-Account", BorderLayout(0, 10))
     _ <- addPanel("User-Account-Title-Panel", FlowLayout(), "User-Account", BorderLayout.NORTH)
     _ <- addLabel("User-Account-Title", "Conto ---", "User-Account-Title-Panel", FlowLayout.CENTER)
@@ -133,9 +253,9 @@ object WindowStateImpl extends WindowState:
     _ <- addPanel("Op-List-Panel", GridLayout(2, 2), "User-Account", BorderLayout.SOUTH)
     _ <- addPanel("Op-List-Label-Panel", FlowLayout(), "Op-List-Panel", null)
     _ <- addLabel("Op-List-Label", "Lista operazioni", "Op-List-Label-Panel", FlowLayout.CENTER)
-    _ <- addList("Op-List", Array("uno", "due"), "Op-List-Panel", null)
+    _ <- addList("Op-List", JavaList.of("uno", "due"), "Op-List-Panel", null)
   yield ()
-  val userAppointmentsView = for     // ------ User appointments View
+  val userAppointmentsView = for
     _ <- addView("User-Appointments", BorderLayout(0, 10))
     _ <- addButton("User-Appts-Back", "<", "User-Appointments", BorderLayout.WEST)
 
@@ -146,16 +266,19 @@ object WindowStateImpl extends WindowState:
     _ <- addComboBox("Appt-Arguments", Array(), "Appt-Args-Panel", FlowLayout.RIGHT
     )
     _ <- addPanel("Appt-Date-Panel", FlowLayout(), "User-Appt-Panel", null)
-    _ <- addLabel("Appt-Date-Label", "Data:", "Appt-Date-Panel", FlowLayout.LEFT)
-    _ <- addInput("Appt-Date", 10, "Appt-Date-Panel", FlowLayout.RIGHT)
+    _ <- addLabel("Appt-Date-Label", "Data (gg-mm-aa):", "Appt-Date-Panel", FlowLayout.LEFT)
+    _ <- addPanel("Appt-Date-Input-Panel", FlowLayout(), "Appt-Date-Panel", FlowLayout.RIGHT)
+    _ <- addInput("Appt-Date-Day", 3, "Appt-Date-Input-Panel", FlowLayout.LEFT)
+    _ <- addInput("Appt-Date-Month", 3, "Appt-Date-Input-Panel", FlowLayout.TRAILING)
+    _ <- addInput("Appt-Date-Year", 3, "Appt-Date-Input-Panel", FlowLayout.TRAILING)
     _ <- addButton("Appt-Create", "Nuovo appuntamento", "User-Appt-Panel", null)
 
     _ <- addPanel("Appt-List-Panel", GridLayout(2, 2), "User-Appointments", BorderLayout.SOUTH)
     _ <- addPanel("Appt-List-Label-Panel", FlowLayout(), "Appt-List-Panel", null)
     _ <- addLabel("Appt-List-Label", "Lista appuntamenti", "Appt-List-Label-Panel", FlowLayout.CENTER)
-    _ <- addList("Appt-List", Array("uno", "due"), "Appt-List-Panel", null)
+    _ <- addList("Appt-List", JavaList.of("uno", "due"), "Appt-List-Panel", null)
   yield ()
-  val userLoansView = for    // ------ User loans View
+  val userLoansView = for
     _ <- addView("Loan-Simulator", BorderLayout(0, 10))
     _ <- addButton("Loan-Sim-Back", "<", "Loan-Simulator", BorderLayout.WEST)
 
@@ -171,7 +294,7 @@ object WindowStateImpl extends WindowState:
     _ <- addLabel("Loan-Calc-Rate", "Rata mensile: ---", "Loan-Results", null)
     _ <- addLabel("Loan-Calc-Interest", "Ammontare interessi totale: ---", "Loan-Results", null)
   yield ()
-  val emplHomeView = for    // ------ Employee home View
+  val emplHomeView = for
     _ <- addView("Empl-Home", BorderLayout(0, 10))
 
     _ <- addPanel("Empl-Title-Panel", FlowLayout(), "Empl-Home", BorderLayout.NORTH)
@@ -182,16 +305,14 @@ object WindowStateImpl extends WindowState:
     _ <- addButton("Empl-Home-Appointments", "Gestione appuntamenti", "Empl-Panel", null)
     _ <- addButton("Empl-Home-Logout", "Esci", "Empl-Panel", null)
   yield ()
-  val emplAppointmentsView = for    // ------ Employee appointments View
+  val emplAppointmentsView = for
     _ <- addView("Empl-Appointments", BorderLayout(0, 10))
-    _ <- addButton("Empl-Appts-Back", "<", "Empl-Appointments", BorderLayout.WEST)
-
     _ <- addButton("Empl-Appts-Back", "<", "Empl-Appointments", BorderLayout.WEST)
 
     _ <- addPanel("Empl-Appts-Panel-Outer", FlowLayout(), "Empl-Appointments", BorderLayout.CENTER)
     _ <- addPanel("Empl-Appts-Panel", GridLayout(2, 1), "Empl-Appts-Panel-Outer", FlowLayout.CENTER)
     _ <- addLabel("Empl-Appts-List-Label", "Lista appuntamenti", "Empl-Appts-Panel", FlowLayout.CENTER)
-    _ <- addList("Empl-Appts-List", Array("uno", "due"), "Empl-Appts-Panel", null)
+    _ <- addList("Empl-Appts-List", JavaList.of("uno", "due"), "Empl-Appts-Panel", null)
   yield ()
   val displayView = for
     _ <- showView("Login")
@@ -227,6 +348,7 @@ object WindowStateImpl extends WindowState:
         case "User-Appts-Back" => showView("User-Home")
         case "Loan-Sim-Back" => showView("User-Home")
         case "Empl-Appts-Back" => showView("Empl-Home")
+        case "Appt-Create" => updateList("Appt-List", JavaList.of("test1", "test2", "test3"))
         case Frame.CLOSED => exec(sys.exit())
         case v => exec(println(s"No action: ${v}"))
   yield ()
