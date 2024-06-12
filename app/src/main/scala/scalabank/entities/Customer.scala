@@ -3,17 +3,30 @@ package scalabank.entities
 import scalabank.entities.Employee.logger
 import scalabank.entities.Person
 import scalabank.logger.{Logger, LoggerDependency, LoggerImpl}
+import scalabank.appointment.Appointment
 
 trait Customer extends Person:
   def fidelity: Fidelity
   def baseFee(using BaseFeeCalculator): Double
+  def getAppointments(): Iterable[Appointment]
+  def addAppointment(appointment: Appointment): Unit
+  def removeAppointment(appointment: Appointment): Unit
+  def updateAppointment(appointment: Appointment)(newAppointment: Appointment): Unit
 
 trait YoungCustomer extends Customer
 
 trait BaseCustomer extends Customer
 
 trait CustomerBehaviour: 
+  private var appointments: List[Appointment] = List()
   def fidelity: Fidelity = Fidelity(0)
+  def getAppointments(): Iterable[Appointment] = appointments
+  def addAppointment(appointment: Appointment): Unit = appointments = appointments :+ appointment
+  def removeAppointment(appointment: Appointment): Unit = appointments = appointments.filterNot(_ == appointment)
+  def updateAppointment(appointment: Appointment)(newAppointment: Appointment): Unit =
+    appointments = appointments.map:
+      case app if app == appointment => newAppointment
+      case app => app
 
 trait BaseFeeCalculator:
   def calculateBaseFee(fidelity: Fidelity, isYoung: Boolean): Double
