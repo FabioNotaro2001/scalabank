@@ -12,6 +12,9 @@ trait YoungCustomer extends Customer
 
 trait BaseCustomer extends Customer
 
+trait CustomerBehaviour: 
+  def fidelity: Fidelity = Fidelity(0)
+
 trait BaseFeeCalculator:
   def calculateBaseFee(fidelity: Fidelity, isYoung: Boolean): Double
 
@@ -28,17 +31,15 @@ trait CustomerComponent:
   loggerDependency: LoggerDependency =>
   case class YoungCustomerImpl(_name: String,
                                _surname: String,
-                               _birthYear: Int) extends YoungCustomer:
-    override def fidelity: Fidelity = Fidelity(0)
+                               _birthYear: Int) extends YoungCustomer with CustomerBehaviour:
     override def baseFee(using calc: BaseFeeCalculator): Double = calc.calculateBaseFee(fidelity, true)
-
+    
     private val person = Person(_name, _surname, _birthYear)
     export person.*
 
   case class BaseCustomerImpl(_name: String,
                               _surname: String,
-                              _birthYear: Int) extends BaseCustomer:
-    override def fidelity: Fidelity = Fidelity(0)
+                              _birthYear: Int) extends BaseCustomer with CustomerBehaviour:
     override def baseFee(using calc: BaseFeeCalculator): Double = calc.calculateBaseFee(fidelity, false)
 
     private val person = Person(_name, _surname, _birthYear)
