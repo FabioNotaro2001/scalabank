@@ -1,9 +1,14 @@
-package scalabank.entities
+package scalabank
 
 import org.scalatest.funsuite.AnyFunSuite
 import org.junit.runner.RunWith
 import org.scalatestplus.junit.JUnitRunner
 import org.scalatest.matchers.should.Matchers.*
+import scalabank.appointment.Appointment
+import scalabank.entities.BaseFeeCalculator
+import scalabank.entities.defaultBaseFeeCalculator
+import scalabank.entities.*
+import java.time.LocalDateTime
 
 
 @RunWith(classOf[JUnitRunner])
@@ -38,4 +43,24 @@ class CustomerTest extends AnyFunSuite:
     val customer = Customer("John", "Doe", 1980)
     customer.baseFee shouldBe 1
 
-    
+  test("Customer should be able to add appointments"):
+    val customer = Customer("John", "Doe", 1980)
+    val appointment = Appointment("Meeting", LocalDateTime.now())
+    customer.addAppointment(appointment)
+    customer.getAppointments() should contain (appointment)
+
+  test("Customer should be able to remove appointments"):
+    val customer = Customer("John", "Doe", 1980)
+    val appointment = Appointment("Meeting", LocalDateTime.now())
+    customer.addAppointment(appointment)
+    customer.removeAppointment(appointment)
+    customer.getAppointments() should not contain (appointment)
+
+  test("Customer should be able to update appointments"):
+    val customer = Customer("John", "Doe", 1980)
+    val oldAppointment = Appointment("Meeting", LocalDateTime.now())
+    val newAppointment = Appointment("Lunch", LocalDateTime.now().plusHours(1))
+    customer.addAppointment(oldAppointment)
+    customer.updateAppointment(oldAppointment)(newAppointment)
+    customer.getAppointments() should contain (newAppointment)
+    customer.getAppointments() should not contain (oldAppointment)
