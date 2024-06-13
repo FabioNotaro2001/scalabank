@@ -23,11 +23,17 @@ dependencies {
 
     // This dependency is used by the application.
     implementation("com.google.guava:guava:32.1.1-jre")
+    implementation("com.softwaremill.sttp.client3:core_2.13:3.8.3")
+    implementation("com.softwaremill.sttp.client3:async-http-client-backend-future_2.13:3.8.3")
+    implementation("io.circe:circe-core_2.13:0.14.1")
+    implementation("io.circe:circe-generic_2.13:0.14.1")
+    implementation("io.circe:circe-parser_2.13:0.14.1")
 
     // Use Scalatest for testing our library
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.scalatest:scalatest_3:3.2.10")
     testImplementation("org.scalatestplus:junit-4-13_3:3.2.10.0")
+
     testRuntimeOnly("org.scala-lang.modules:scala-xml_3:2.0.1")
 }
 
