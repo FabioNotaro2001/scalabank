@@ -1,7 +1,5 @@
 package scalabank.entities
 
-package scalabank.entities
-
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers._
 import org.junit.runner.RunWith

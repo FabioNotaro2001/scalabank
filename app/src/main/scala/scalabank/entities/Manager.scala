@@ -1,6 +1,9 @@
 package scalabank.entities
 
+import scalabank.entities.Employee.logger
 import scalabank.entities.Manager.ManagerPosition
+import scalabank.logger.{Logger, LoggerDependency, LoggerImpl, PrefixFormatter}
+
 import scala.annotation.tailrec
 
 /**
@@ -28,8 +31,25 @@ trait Manager extends StaffMember[ManagerPosition]:
    */
   def removeProject(project: Project): Unit
 
+trait ManagerComponent:
+  loggerDependency: LoggerDependency =>
+  case class ManagerImpl(person: Person,
+                                 override val position: ManagerPosition,
+                                 override val hiringYear: Int,
+                                 private var currentProjects: List[Project]) extends Manager:
+    export person.*
 
-object Manager:
+    override def projects: List[Project] = currentProjects
+
+    override def addProject(project: Project): Unit =
+      currentProjects = currentProjects :+ project
+
+    override def removeProject(project: Project): Unit =
+      currentProjects = currentProjects.filterNot(_ == project)
+
+object Manager extends LoggerDependency with ManagerComponent:
+  override val logger: Logger = LoggerImpl()
+
   /**
    * Enumeration representing different types of manager positions along with their associated salaries.
    */
@@ -54,21 +74,9 @@ object Manager:
             position: ManagerPosition,
             hiringYear: Int,
             projects: List[Project]): Manager =
-    ManagerImpl(Person(name, surname, birthYear), position, hiringYear, projects)
-
-  private case class ManagerImpl(person: Person,
-                                 override val position: ManagerPosition,
-                                 override val hiringYear: Int,
-                                 private var currentProjects: List[Project]) extends Manager:
-    export person.*
-
-    override def projects: List[Project] = currentProjects
-
-    override def addProject(project: Project): Unit =
-      currentProjects = currentProjects :+ project
-
-    override def removeProject(project: Project): Unit =
-      currentProjects = currentProjects.filterNot(_ == project)
+    val manager = ManagerImpl(Person(name, surname, birthYear), position, hiringYear, projects)
+    logger.log(logger.getPrefixFormatter().getCreationPrefix + manager)
+    manager
 
   extension (manager: Manager)
     /**

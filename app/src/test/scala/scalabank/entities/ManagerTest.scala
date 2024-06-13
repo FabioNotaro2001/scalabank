@@ -4,11 +4,12 @@ import org.scalatest.funsuite.AnyFunSuite
 import org.junit.runner.RunWith
 import org.scalatestplus.junit.JUnitRunner
 import org.scalatest.matchers.should.Matchers.*
+import scalabank.logger.Logger
+
 import java.time.Year
 
 @RunWith(classOf[JUnitRunner])
 class ManagerTest extends AnyFunSuite:
-
   test("Manager should add a project correctly"):
     val project = Project("Project A", 50000.0, List())
     val manager = Manager("John", "Doe", 1980, Manager.ManagerPosition.TeamLead, 2010, List())
@@ -77,4 +78,3 @@ class ManagerTest extends AnyFunSuite:
     val manager = Manager("John", "Doe", 1980, Manager.ManagerPosition.TeamLead, 2010, List())
     val expectedNetSalary = manager.annualSalary * (1 - taxRate)
     manager.annualNetSalary shouldBe expectedNetSalary
-

@@ -5,7 +5,6 @@ enum FidelityLevel:
     
 import FidelityLevel.*
 
-
 trait Fidelity:
     def points: Int
     def addPoints(pointsToAdd: Int): Unit

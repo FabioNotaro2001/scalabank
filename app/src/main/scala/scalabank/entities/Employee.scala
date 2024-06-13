@@ -1,6 +1,7 @@
 package scalabank.entities
 
 import scalabank.entities.Employee.EmployeePosition
+import scalabank.logger.{Logger, LoggerDependency, LoggerImpl}
 
 /**
  * Trait representing the Employee, extending StaffMember with a specific EmployeePosition and Promotable behavior.
@@ -15,10 +16,17 @@ trait Employee extends StaffMember[EmployeePosition] with Promotable[EmployeePos
 trait Promotable[T <: StaffPosition]:
   def promote(newPosition: T): Employee
 
+trait EmployeeComponent:
+  loggerDependency: LoggerDependency =>
+  case class EmployeeImpl(person: Person, override val position: EmployeePosition, override val hiringYear: Int) extends Employee:
+    export person.*
+    override def promote(newPosition: EmployeePosition): Employee = copy(position = newPosition)
+
 /**
  * Companion object for Employee.
  */
-object Employee:
+object Employee extends LoggerDependency with EmployeeComponent:
+  override val logger: Logger = LoggerImpl()
 
   /**
    * Enumeration representing the different positions of employees and their salaries.
@@ -54,12 +62,10 @@ object Employee:
    * @param hiringYear the employee hiring year.
    * @return a new Employee instance.
    */
-  def apply(name: String, surname: String, birthYear: Int, position: EmployeePosition, hiringYear: Int):
-    Employee = EmployeeImpl(Person(name, surname, birthYear), position, hiringYear)
-
-  private case class EmployeeImpl(person: Person, override val position: EmployeePosition, override val hiringYear: Int) extends Employee:
-    export person.*
-    override def promote(newPosition: EmployeePosition): Employee = copy(position = newPosition)
+  def apply(name: String, surname: String, birthYear: Int, position: EmployeePosition, hiringYear: Int): Employee =
+    val employee = EmployeeImpl(Person(name, surname, birthYear), position, hiringYear)
+    logger.log(logger.getPrefixFormatter().getCreationPrefix + employee)
+    employee
 
   extension (employee: Employee)
     /**

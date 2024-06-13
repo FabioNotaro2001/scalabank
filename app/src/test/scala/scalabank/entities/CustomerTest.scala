@@ -1,9 +1,14 @@
-package scalabank.entities
+package scalabank
 
 import org.scalatest.funsuite.AnyFunSuite
 import org.junit.runner.RunWith
 import org.scalatestplus.junit.JUnitRunner
 import org.scalatest.matchers.should.Matchers.*
+import scalabank.appointment.Appointment
+import scalabank.entities.BaseFeeCalculator
+import scalabank.entities.defaultBaseFeeCalculator
+import scalabank.entities.*
+import java.time.LocalDateTime
 
 
 @RunWith(classOf[JUnitRunner])
@@ -16,18 +21,46 @@ class CustomerTest extends AnyFunSuite:
     customer.age shouldBe 34
     customer.isAdult shouldBe true
 
-  test("Customer should be a JuniorCustomer if is less 35 years old"):
+  test("Customer should be a YoungCustomer if is less 35 years old"):
     val customer = Customer("John", "Doe", 2000)
-    assert(customer.isInstanceOf[YoungCustomer])
-    assert(customer.isInstanceOf[Customer])
+    customer shouldBe a[YoungCustomer]
+    customer shouldBe a[Customer]
 
   test("Customer should be a BaseCustomer if is oldest 35 years old"):
     val customer = Customer("John", "Doe", 1980)
-    assert(customer.isInstanceOf[BaseCustomer])
-    assert(customer.isInstanceOf[Customer])
+    customer shouldBe a[BaseCustomer]
+    customer shouldBe a[Customer]
 
-    /*
-  test("Customer should be has a fidelity")
+  test("Customer should be has a fidelity"):
     val customer = Customer("John", "Doe", 1980)
-    assert(customer.Fidelity.isInstanceOf[Fidelity])
-*/
+    customer.fidelity shouldBe a[Fidelity]
+
+  test("Young Customer should be has a initial baseFee of 0"):
+    val customer = Customer("John", "Doe", 2000)
+    customer.baseFee shouldBe 0
+
+  test("Customer should be has a initial baseFee of 1"):
+    val customer = Customer("John", "Doe", 1980)
+    customer.baseFee shouldBe 1
+
+  test("Customer should be able to add appointments"):
+    val customer = Customer("John", "Doe", 1980)
+    val appointment = Appointment("Meeting", LocalDateTime.now())
+    customer.addAppointment(appointment)
+    customer.getAppointments() should contain (appointment)
+
+  test("Customer should be able to remove appointments"):
+    val customer = Customer("John", "Doe", 1980)
+    val appointment = Appointment("Meeting", LocalDateTime.now())
+    customer.addAppointment(appointment)
+    customer.removeAppointment(appointment)
+    customer.getAppointments() should not contain (appointment)
+
+  test("Customer should be able to update appointments"):
+    val customer = Customer("John", "Doe", 1980)
+    val oldAppointment = Appointment("Meeting", LocalDateTime.now())
+    val newAppointment = Appointment("Lunch", LocalDateTime.now().plusHours(1))
+    customer.addAppointment(oldAppointment)
+    customer.updateAppointment(oldAppointment)(newAppointment)
+    customer.getAppointments() should contain (newAppointment)
+    customer.getAppointments() should not contain (oldAppointment)
