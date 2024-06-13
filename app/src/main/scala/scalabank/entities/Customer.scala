@@ -13,9 +13,9 @@ trait Customer extends Person:
   def removeAppointment(appointment: Appointment): Unit
   def updateAppointment(appointment: Appointment)(newAppointment: Appointment): Unit
 
-trait YoungCustomer extends Customer
+trait YoungCustomer extends Customer with CustomerBehaviour
 
-trait BaseCustomer extends Customer
+trait BaseCustomer extends Customer with CustomerBehaviour
 
 trait CustomerBehaviour: 
   private var appointments: List[Appointment] = List()
@@ -44,7 +44,7 @@ trait CustomerComponent:
   loggerDependency: LoggerDependency =>
   case class YoungCustomerImpl(_name: String,
                                _surname: String,
-                               _birthYear: Int) extends YoungCustomer with CustomerBehaviour:
+                               _birthYear: Int) extends YoungCustomer:
     override def baseFee(using calc: BaseFeeCalculator): Double = calc.calculateBaseFee(fidelity, true)
     
     private val person = Person(_name, _surname, _birthYear)
@@ -52,7 +52,7 @@ trait CustomerComponent:
 
   case class BaseCustomerImpl(_name: String,
                               _surname: String,
-                              _birthYear: Int) extends BaseCustomer with CustomerBehaviour:
+                              _birthYear: Int) extends BaseCustomer:
     override def baseFee(using calc: BaseFeeCalculator): Double = calc.calculateBaseFee(fidelity, false)
 
     private val person = Person(_name, _surname, _birthYear)
