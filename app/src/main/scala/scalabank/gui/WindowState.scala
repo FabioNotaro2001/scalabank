@@ -118,7 +118,7 @@ trait WindowState:
    * @param constraints the constraints on the new list
    * @return the updated state
    */
-  def addList(name: String, contents: JavaList[String], panel: String, constraints: Any): State[Window, Unit]
+  def addList(name: String, contents: Array[String], panel: String, constraints: Any): State[Window, Unit]
 
   /**
    * Updates the contents of a list
@@ -126,7 +126,7 @@ trait WindowState:
    * @param contents the new contents of the list
    * @return the updated state
    */
-  def updateList(name: String, contents: JavaList[String]): State[Window, Unit]
+  def updateList(name: String, contents: Array[String]): State[Window, Unit]
 
   /**
    * Displays the window
@@ -184,10 +184,10 @@ object WindowStateImpl extends WindowState:
     State(w => (w.addComboBox(name, options, panel, constraints), {}))
   def getComboBoxSelection(name: String): State[Window, String] =
     State(w => (w, w.getComboBoxSelection(name)))
-  def addList(name: String, contents: JavaList[String], panel: String, constraints: Any): State[Window, Unit] =
-    State(w => (w.addList(name, JavaVector(contents), panel, constraints), {}))
-  def updateList(name: String, contents: JavaList[String]): State[Window, Unit] =
-    State(w => (w.updateList(name, JavaVector(contents)), {}))
+  def addList(name: String, contents: Array[String], panel: String, constraints: Any): State[Window, Unit] =
+    State(w => (w.addList(name, JavaVector(JavaList.of(contents*)), panel, constraints), {}))
+  def updateList(name: String, contents: Array[String]): State[Window, Unit] =
+    State(w => (w.updateList(name, JavaVector(JavaList.of(contents*))), {}))
   def show(): State[Window, Unit] =
     State(w => (w.show, {}))
   def exec(cmd: =>Unit): State[Window, Unit] =
@@ -253,7 +253,7 @@ object WindowStateImpl extends WindowState:
     _ <- addPanel("Op-List-Panel", GridLayout(2, 2), "User-Account", BorderLayout.SOUTH)
     _ <- addPanel("Op-List-Label-Panel", FlowLayout(), "Op-List-Panel", null)
     _ <- addLabel("Op-List-Label", "Lista operazioni", "Op-List-Label-Panel", FlowLayout.CENTER)
-    _ <- addList("Op-List", JavaList.of("uno", "due"), "Op-List-Panel", null)
+    _ <- addList("Op-List", Array("uno", "due"), "Op-List-Panel", null)
   yield ()
   val userAppointmentsView = for
     _ <- addView("User-Appointments", BorderLayout(0, 10))
@@ -276,7 +276,7 @@ object WindowStateImpl extends WindowState:
     _ <- addPanel("Appt-List-Panel", GridLayout(2, 2), "User-Appointments", BorderLayout.SOUTH)
     _ <- addPanel("Appt-List-Label-Panel", FlowLayout(), "Appt-List-Panel", null)
     _ <- addLabel("Appt-List-Label", "Lista appuntamenti", "Appt-List-Label-Panel", FlowLayout.CENTER)
-    _ <- addList("Appt-List", JavaList.of("uno", "due"), "Appt-List-Panel", null)
+    _ <- addList("Appt-List", Array("uno", "due"), "Appt-List-Panel", null)
   yield ()
   val userLoansView = for
     _ <- addView("Loan-Simulator", BorderLayout(0, 10))
@@ -312,7 +312,7 @@ object WindowStateImpl extends WindowState:
     _ <- addPanel("Empl-Appts-Panel-Outer", FlowLayout(), "Empl-Appointments", BorderLayout.CENTER)
     _ <- addPanel("Empl-Appts-Panel", GridLayout(2, 1), "Empl-Appts-Panel-Outer", FlowLayout.CENTER)
     _ <- addLabel("Empl-Appts-List-Label", "Lista appuntamenti", "Empl-Appts-Panel", FlowLayout.CENTER)
-    _ <- addList("Empl-Appts-List", JavaList.of("uno", "due"), "Empl-Appts-Panel", null)
+    _ <- addList("Empl-Appts-List", Array("uno", "due"), "Empl-Appts-Panel", null)
   yield ()
   val displayView = for
     _ <- showView("Login")
@@ -348,7 +348,7 @@ object WindowStateImpl extends WindowState:
         case "User-Appts-Back" => showView("User-Home")
         case "Loan-Sim-Back" => showView("User-Home")
         case "Empl-Appts-Back" => showView("Empl-Home")
-        case "Appt-Create" => updateList("Appt-List", JavaList.of("test1", "test2", "test3"))
+        case "Appt-Create" => updateList("Appt-List", Array("test1", "test2", "test3"))
         case Frame.CLOSED => exec(sys.exit())
         case v => exec(println(s"No action: ${v}"))
   yield ()
