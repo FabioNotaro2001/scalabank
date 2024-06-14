@@ -1,14 +1,15 @@
 package scalabank.loan
 
+import scalabank.currency.MoneyADT.Money
 import scalabank.entities.Customer
 
 trait Loan:
   def customer: Customer
-  def requiredAmount: Double
+  def requiredAmount: Money
   def numberOfMonthlyPayments: Int
-  def amountOfSinglePayment: Double
+  def amountOfSinglePayment: Money
   def interestRate: Double
-  def totalAmount: Double
+  def totalAmount: Money
 
 // TODO Come migliorare formattazione di questo file sotto?
 //TODO: Non sono troppi campi quelli dentro apply di Loan?????
@@ -17,10 +18,10 @@ trait Loan:
 // TODO: Pensa se cambiare Int in Money (magari aggiungendo a Money che non possono essere negativi).
 // TODO: L'interesse creerei una nuova classe Interest, e due sottoclassi FixedInterest (che ha un double interest=0.04) o VariableInterest (che ha una lista interest[0.04, 0.05, 0.03]).
 object Loan:
-  def apply(client: Customer, requiredAmount: Double, numberOfMonthlyPayments: Int, interestRate: Double): Loan =
+  def apply(client: Customer, requiredAmount: Money, numberOfMonthlyPayments: Int, interestRate: Double): Loan =
     LoanImpl(client, requiredAmount, numberOfMonthlyPayments, interestRate)
 
-  private case class LoanImpl(override val customer: Customer, override val requiredAmount: Double,
+  private case class LoanImpl(override val customer: Customer, override val requiredAmount: Money,
                               override val numberOfMonthlyPayments: Int, override val interestRate: Double) extends Loan:
-    override def totalAmount: Double =  requiredAmount * (1 + interestRate)
-    override def amountOfSinglePayment: Double = totalAmount / numberOfMonthlyPayments
+    override def totalAmount: Money =  requiredAmount * (1 + interestRate)
+    override def amountOfSinglePayment: Money = totalAmount / numberOfMonthlyPayments
