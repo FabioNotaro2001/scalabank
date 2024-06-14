@@ -60,15 +60,13 @@ trait EmployeeComponent:
   loggerDependency: LoggerDependency =>  // Explicit dependency between EmployeeComponent and LoggerDependency.
   case class EmployeeImpl(...) extends Employee:
     ...
+    loggerDependency.logger.log(logger.getPrefixFormatter().getCreationPrefix + this)
+    ...
 
 // The object Employee extends both LoggerDependency and EmployeeComponent, providing also an implementation of the logger.
 object Employee extends LoggerDependency with EmployeeComponent:
   override val logger: Logger = LoggerImpl()
-  def apply(...): Employee =
-    val employee = EmployeeImpl(...)
-    logger.log(logger.getPrefixFormatter().getCreationPrefix + employee)  // Here the logger is injected and used.
-    employee
-  ...
+  def apply(...): Employee = ...
 ```
 Nel codice fornito si può notare come è stato applicato il cake patter tra Logger e Employee per gestire correttamente le dipendenze.
 
