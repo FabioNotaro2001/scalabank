@@ -2,7 +2,7 @@ package scalabank.currency
 
 import scala.concurrent.{Await, Future}
 import scala.concurrent.ExecutionContext.Implicits.global
-import scalabank.currency.MoneyOperation.*
+import scalabank.currency.MoneyADT.*
 import scala.concurrent.duration._
 
 /**
@@ -53,12 +53,12 @@ object CurrencyConverter:
     private val exchangeRateProvider = ExchangeRateProvider()
 
     override def convert(amount: Money, from: Currency, to: Currency): Money =
-      Await.result(exchangeRateProvider.getExchangeRate(from.code, to.code).map(rate => amount * rate), 5.second)
+      Await.result(exchangeRateProvider.getExchangeRate(from.code, to.code).map(_ => amount), 5.second)
 
     override def convertWithFee(amount: Money, from: Currency, to: Currency)(using feePercentage: BigDecimal): Money =
-      val convertedAmount = convert(amount, from, to) 
+      val convertedAmount = convert(amount, from, to)
       applyFee(convertedAmount, feePercentage)
 
-    
-      
+
+
 

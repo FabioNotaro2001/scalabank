@@ -6,7 +6,7 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatestplus.junit.JUnitRunner
 import scala.concurrent.*
 import scala.concurrent.duration._
-import scalabank.currency.MoneyOperation.*
+import scalabank.currency.MoneyADT.*
 
 @RunWith(classOf[JUnitRunner])
 class CurrencyTest extends AnyFlatSpec:
@@ -28,7 +28,7 @@ class CurrencyTest extends AnyFlatSpec:
 
   it should "apply fees correctly" in:
     val converter = CurrencyConverter()
-    val amount = MoneyOperation(100)
+    val amount = 100.toMoney
     val feeApplied = converter.applyFee(amount, 0.5)
     feeApplied should be(BigDecimal(99.50))
 
@@ -36,90 +36,91 @@ class CurrencyTest extends AnyFlatSpec:
     val converter = CurrencyConverter()
     val fromCurrency = Currency("USD", "$")
     val toCurrency = Currency("EUR", "€")
-    val amount = MoneyOperation(100)
+    val amount = 100.toMoney
     val result: Money = converter.convert(amount, fromCurrency, toCurrency)
-    assert(result > MoneyOperation(0))
+    result should be > 0.toMoney
+
 
   "CurrencyConverterWithFee" should "convert an amount from one currency to another with default fee" in:
     val converter = CurrencyConverter()
     val fromCurrency = Currency("USD", "$")
     val toCurrency = Currency("EUR", "€")
-    val amount = MoneyOperation(100)
+    val amount = 100.toMoney
     import CurrencyConverter.feeRateDefault
     val result: Money = converter.convertWithFee(amount, fromCurrency, toCurrency)
-    assert(result > MoneyOperation(0))
+    result should be > 0.toMoney
 
   "CurrencyConverterWithFee" should "convert an amount from one currency to another with specified fee" in:
     val converter = CurrencyConverter()
     val fromCurrency = Currency("USD", "$")
     val toCurrency = Currency("EUR", "€")
-    val amount = MoneyOperation(100)
+    val amount = 100.toMoney
     val result: Money = converter.convertWithFee(amount, fromCurrency, toCurrency)(using 5)
-    assert(result > MoneyOperation(0))
+    result should be > 0.toMoney
 
   "Money" should "create an instance from BigDecimal" in :
-    val amount = MoneyOperation(BigDecimal(100))
-    amount shouldEqual BigDecimal(100)
+    val amount = 100.toMoney
+    amount shouldEqual 100.toMoney
 
   it should "not include negative numbers" in:
     intercept[IllegalArgumentException] :
-      MoneyOperation(-100)
+      -100.toMoney
 
   it should "create an instance from Int" in :
-    val amount = MoneyOperation(100)
+    val amount = 100.toMoney
     amount shouldEqual BigDecimal(100)
 
   it should "create an instance from Double" in :
-    val amount = MoneyOperation(100.5)
+    val amount = 100.5.toMoney
     amount shouldEqual BigDecimal(100.5)
 
   it should "correctly add two amounts" in :
-    val amount1 = MoneyOperation(100)
-    val amount2 = MoneyOperation(50)
+    val amount1 = 100.toMoney
+    val amount2 = 50.toMoney
     amount1 + amount2 shouldEqual BigDecimal(150)
 
   it should "correctly subtract two amounts" in :
-    val amount1 = MoneyOperation(100)
-    val amount2 = MoneyOperation(50)
+    val amount1 = 100.toMoney
+    val amount2 = 50.toMoney
     amount1 - amount2 shouldEqual BigDecimal(50)
 
   it should "correctly multiply by a factor" in :
-    val amount = MoneyOperation(100)
+    val amount = 100.toMoney
     val factor = BigDecimal(1.5)
-    amount * factor shouldEqual BigDecimal(150)
+    amount * factor shouldEqual 150.toMoney
 
   it should "correctly divide by a factor" in :
-    val amount = MoneyOperation(100)
+    val amount = 100.toMoney
     val factor = BigDecimal(2)
     amount / factor shouldEqual BigDecimal(50)
 
   it should "correctly format as a string" in :
-    val amount = MoneyOperation(100.1234)
+    val amount = 100.1234.toMoney
     amount.format shouldEqual "$100.12"
 
   it should "throw an exception when dividing by zero" in :
-    val amount = MoneyOperation(100)
+    val amount = 100.toMoney
     intercept[ArithmeticException] :
       amount / BigDecimal(0)
 
   it should "apply a fee correctly" in :
-    val amount = MoneyOperation(100)
+    val amount = 100.toMoney
     val feePercentage = BigDecimal(10)
     amount - (amount * feePercentage / 100) shouldEqual BigDecimal(90)
 
   it should "compare two Money instances correctly" in :
-    val amount1 = MoneyOperation(100)
-    val amount2 = MoneyOperation(100)
-    val amount3 = MoneyOperation(50)
-    (amount1 == amount3) shouldBe false
+    val amount1 = 100.toMoney
+    val amount2 = 100.toMoney
+    val amount3 = 50.toMoney
+    amount1 shouldNot be(amount3)
 
   it should "handle very large values correctly" in :
-    val largeAmount = MoneyOperation(BigDecimal("1000000000000000000000000000"))
-    largeAmount shouldEqual BigDecimal("1000000000000000000000000000")
+    val largeAmount = BigDecimal("1000000000000000000000000000").toMoney
+    largeAmount shouldEqual BigDecimal("1000000000000000000000000000").toMoney
 
   it should "handle very small values correctly" in :
-    val smallAmount = MoneyOperation(BigDecimal("0.0000000000000000000000001"))
-    smallAmount shouldEqual BigDecimal("0.0000000000000000000000001")
+    val smallAmount = BigDecimal("0.0000000000000000000000001").toMoney
+    smallAmount shouldEqual BigDecimal("0.0000000000000000000000001").toMoney
 
 
 

@@ -117,9 +117,9 @@ Per questo motivo è nata questa classe, in modo da rispettare i principi DRY e 
 - **Encapsulation:** Metodi privati per ottenere e parsare i tassi di cambio.
 - **For-yield:** Al fine di scomporre il JSON arrivato.
 
-### Money
+### MoneyADT
 
-L'oggetto `Money` rappresenta l'oggetto denaro.
+L'oggetto `MoneyADT` rappresenta l'oggetto con cui si può lavorare sul denaro.
 Ossia in questo modo abbiamo limitato le operazione che si possono fare con i soldi, solo quelle descritte.
 Abbiamo la possibilità di decidere noi la tipologia di dato, in questo caso abbiamo creato un tipo opaco `Money`, visto che lavoriamo con dei soldi esso è rappresentato come un `BigDecimal`.
 

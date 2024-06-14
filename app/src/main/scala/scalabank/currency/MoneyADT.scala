@@ -5,31 +5,11 @@ import scala.annotation.targetName
 /**
  * Object that provides methods for creating and manipulating Money instances.
  */
-object MoneyOperation:
+object MoneyADT:
   /**
    * Opaque type representing a monetary value.
    */
   opaque type Money = BigDecimal
-
-  /**
-   * Creates a Money instance from a BigDecimal amount.
-   *
-   * @param amount The amount to be represented as Money.
-   * @return A Money instance representing the specified amount.
-   * @throws IllegalArgumentException if the amount is negative.
-   */
-  def apply(amount: BigDecimal): Money =
-    require(amount >= 0, "Amount must be non-negative")
-    amount
-
-  /**
-   * Creates a Money instance from a Double amount.
-   *
-   * @param amount The amount to be represented as Money.
-   * @return A Money instance representing the specified amount.
-   * @throws IllegalArgumentException if the amount is negative.
-   */
-  def apply(amount: Double): Money = apply(BigDecimal(amount))
 
   /**
    * Extractor method to retrieve the BigDecimal value from a Money instance.
@@ -38,6 +18,18 @@ object MoneyOperation:
    * @return An Option containing the BigDecimal value of the Money instance.
    */
   def unapply(money: Money): Option[BigDecimal] = Some(money)
+
+  given Ordering[Money] with
+    override def compare(x: Money, y: Money): Int = x.compare(y)
+
+  extension (amount: Double | Int | Float | BigDecimal)
+    def toMoney: Money =
+      amount match
+        case amountAsBig: BigDecimal if amountAsBig >= BigDecimal(0) => amountAsBig
+        case amountAsDouble: Double if amountAsDouble >= 0 => BigDecimal(amountAsDouble)
+        case amountAsInt: Int if amountAsInt >= 0 => BigDecimal(amountAsInt)
+        case amountAsFloat: Float if amountAsFloat >= 0 => BigDecimal(amountAsFloat)
+        case _ => throw new IllegalArgumentException("Amount must be non-negative")
 
   extension (money: Money)
     /**
@@ -64,7 +56,7 @@ object MoneyOperation:
      * @param other The Money instance to compare.
      * @return true if this Money instance is greater than the other, false otherwise.
      */
-    @targetName("Grater")
+    @targetName("Greater")
     def >(other: Money): Boolean = money > other
 
     /**
@@ -82,7 +74,7 @@ object MoneyOperation:
      * @param other The Money instance to compare.
      * @return true if this Money instance is greater than or equal to the other, false otherwise.
      */
-    @targetName("GraterOrEqual")
+    @targetName("GreaterOrEqual")
     def >=(other: Money): Boolean = money >= other
 
     /**
@@ -109,7 +101,7 @@ object MoneyOperation:
      * @param factor The factor to divide by.
      * @return A new Money instance representing the quotient.
      */
-    @targetName("Division")
+    @targetName("Divide")
     def /(factor: BigDecimal): Money = money / factor
 
     /**
