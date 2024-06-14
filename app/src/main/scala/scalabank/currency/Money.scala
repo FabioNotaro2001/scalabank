@@ -41,13 +41,6 @@ object Money:
 
   extension (money: Money)
     /**
-     * Converts the Money instance to a BigDecimal.
-     *
-     * @return The BigDecimal representation of the Money instance.
-     */
-    def toBigDecimal: BigDecimal = money
-
-    /**
      * Adds two Money instances.
      *
      * @param other The Money instance to add.

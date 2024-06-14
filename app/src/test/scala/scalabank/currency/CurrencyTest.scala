@@ -43,35 +43,39 @@ class CurrencyTest extends AnyFlatSpec:
 
   "Money" should "create an instance from BigDecimal" in :
     val amount = Money(BigDecimal(100))
-    amount.toBigDecimal shouldEqual BigDecimal(100)
+    amount shouldEqual BigDecimal(100)
+
+  it should "not include negative numbers" in:
+    intercept[IllegalArgumentException] :
+      Money(-100)
 
   it should "create an instance from Int" in :
     val amount = Money(100)
-    amount.toBigDecimal shouldEqual BigDecimal(100)
+    amount shouldEqual BigDecimal(100)
 
   it should "create an instance from Double" in :
     val amount = Money(100.5)
-    amount.toBigDecimal shouldEqual BigDecimal(100.5)
+    amount shouldEqual BigDecimal(100.5)
 
   it should "correctly add two amounts" in :
     val amount1 = Money(100)
     val amount2 = Money(50)
-    (amount1 + amount2).toBigDecimal shouldEqual BigDecimal(150)
+    amount1 + amount2 shouldEqual BigDecimal(150)
 
   it should "correctly subtract two amounts" in :
     val amount1 = Money(100)
     val amount2 = Money(50)
-    (amount1 - amount2).toBigDecimal shouldEqual BigDecimal(50)
+    amount1 - amount2 shouldEqual BigDecimal(50)
 
   it should "correctly multiply by a factor" in :
     val amount = Money(100)
     val factor = BigDecimal(1.5)
-    (amount * factor).toBigDecimal shouldEqual BigDecimal(150)
+    amount * factor shouldEqual BigDecimal(150)
 
   it should "correctly divide by a factor" in :
     val amount = Money(100)
     val factor = BigDecimal(2)
-    (amount / factor).toBigDecimal shouldEqual BigDecimal(50)
+    amount / factor shouldEqual BigDecimal(50)
 
   it should "correctly format as a string" in :
     val amount = Money(100.1234)
@@ -82,15 +86,10 @@ class CurrencyTest extends AnyFlatSpec:
     intercept[ArithmeticException] :
       amount / BigDecimal(0)
 
-  it should "handle negative values" in :
-    val amount1 = Money(-100)
-    val amount2 = Money(50)
-    (amount1 + amount2).toBigDecimal shouldEqual BigDecimal(-50)
-
   it should "apply a fee correctly" in :
     val amount = Money(100)
     val feePercentage = BigDecimal(10)
-    (amount - (amount * feePercentage / 100)).toBigDecimal shouldEqual BigDecimal(90)
+    amount - (amount * feePercentage / 100) shouldEqual BigDecimal(90)
 
   it should "compare two Money instances correctly" in :
     val amount1 = Money(100)
@@ -100,11 +99,11 @@ class CurrencyTest extends AnyFlatSpec:
 
   it should "handle very large values correctly" in :
     val largeAmount = Money(BigDecimal("1000000000000000000000000000"))
-    largeAmount.toBigDecimal shouldEqual BigDecimal("1000000000000000000000000000")
+    largeAmount shouldEqual BigDecimal("1000000000000000000000000000")
 
   it should "handle very small values correctly" in :
     val smallAmount = Money(BigDecimal("0.0000000000000000000000001"))
-    smallAmount.toBigDecimal shouldEqual BigDecimal("0.0000000000000000000000001")
+    smallAmount shouldEqual BigDecimal("0.0000000000000000000000001")
 
 
 
