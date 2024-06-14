@@ -26,13 +26,13 @@ class CurrencyTest extends AnyFlatSpec:
     rate should be > BigDecimal(0)
 
   it should "apply fees correctly" in:
-    val converter = CurrencyConverter("dummyApiKey")
+    val converter = CurrencyConverter()
     val amount = Money(100)
     val feeApplied = converter.applyFee(amount, 0.5)
     feeApplied should be(BigDecimal(99.50))
 
   "CurrencyConverter" should "convert an amount from one currency to another" in:
-    val converter = CurrencyConverter("dummyApiKey")
+    val converter = CurrencyConverter()
     val fromCurrency = Currency("USD", "$")
     val toCurrency = Currency("EUR", "€")
     val amount = Money(100)

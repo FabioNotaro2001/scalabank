@@ -29,11 +29,12 @@ trait CurrencyConverter:
 
 
 object CurrencyConverter:
-  def apply(apiKey: String): CurrencyConverter = OnlineCurrencyConverter()
+  def apply(): CurrencyConverter = OnlineCurrencyConverter()
 
   private case class OnlineCurrencyConverter() extends CurrencyConverter:
     private val exchangeRateProvider = ExchangeRateProvider()
 
     override def convert(amount: Money, from: Currency, to: Currency): Future[Money] =
       exchangeRateProvider.getExchangeRate(from.code, to.code).map(rate => amount * rate)
+
 
