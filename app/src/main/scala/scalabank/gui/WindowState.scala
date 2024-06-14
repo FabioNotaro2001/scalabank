@@ -199,6 +199,8 @@ object WindowStateImpl extends WindowState:
   import WindowStateImpl.*
   import Monads.*, Monad.*
   val loginView = for
+    // TODO: input anno di nascita per cliente
+    // TODO: anno di nascita, posizione (si assume anno corrente di assunzione)
     _ <- setSize(600, 300)
     _ <- addView("Login", BorderLayout(0, 40))
     _ <- addPanel("Login-Title-Panel", FlowLayout(), "Login", BorderLayout.NORTH)
@@ -255,7 +257,7 @@ object WindowStateImpl extends WindowState:
     _ <- addLabel("Op-List-Label", "Lista operazioni", "Op-List-Label-Panel", FlowLayout.CENTER)
     _ <- addList("Op-List", Array("uno", "due"), "Op-List-Panel", null)
   yield ()
-  val userAppointmentsView = for
+  val userAppointmentsView = for // TODO: input per descrizione appuntamento
     _ <- addView("User-Appointments", BorderLayout(0, 10))
     _ <- addButton("User-Appts-Back", "<", "User-Appointments", BorderLayout.WEST)
 

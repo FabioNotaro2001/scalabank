@@ -13,6 +13,8 @@ import java.time.LocalDateTime
 
 @RunWith(classOf[JUnitRunner])
 class CustomerTest extends AnyFunSuite:
+  private val employee = Employee("Alice", "Johnson", 1992, Employee.EmployeePosition.Cashier, 2015)
+
   test("Customer should be correctly initialized and age calculated"):
     val customer = Customer("John", "Doe", 1990)
     customer.name shouldBe "John"
@@ -45,21 +47,21 @@ class CustomerTest extends AnyFunSuite:
 
   test("Customer should be able to add appointments"):
     val customer = Customer("John", "Doe", 1980)
-    val appointment = Appointment("Meeting", LocalDateTime.now())
+    val appointment = Appointment(customer, employee, "Meeting", LocalDateTime.now())
     customer.addAppointment(appointment)
     customer.getAppointments() should contain (appointment)
 
   test("Customer should be able to remove appointments"):
     val customer = Customer("John", "Doe", 1980)
-    val appointment = Appointment("Meeting", LocalDateTime.now())
+    val appointment = Appointment(customer, employee, "Meeting", LocalDateTime.now())
     customer.addAppointment(appointment)
     customer.removeAppointment(appointment)
     customer.getAppointments() should not contain (appointment)
 
   test("Customer should be able to update appointments"):
     val customer = Customer("John", "Doe", 1980)
-    val oldAppointment = Appointment("Meeting", LocalDateTime.now())
-    val newAppointment = Appointment("Lunch", LocalDateTime.now().plusHours(1))
+    val oldAppointment = Appointment(customer, employee, "Meeting", LocalDateTime.now())
+    val newAppointment = Appointment(customer, employee, "Lunch", LocalDateTime.now().plusHours(1))
     customer.addAppointment(oldAppointment)
     customer.updateAppointment(oldAppointment)(newAppointment)
     customer.getAppointments() should contain (newAppointment)
