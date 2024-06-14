@@ -2,6 +2,8 @@ package scalabank.logger
 
 import java.io.PrintStream
 
+//TODO: qui, in tutte le classi e in tutta la relazione, cambiare tutti i metodi getValore() con valore().
+
 /**
  * Trait defining the Logger functionality.
  */
