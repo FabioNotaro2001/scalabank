@@ -10,7 +10,7 @@ import org.scalatestplus.junit.JUnitRunner
 class TestInterestRate extends AnyFlatSpec:
   val rate = InterestRate(0.05)
   val base: Double = 100.0
-  
+
   "An InterestRate" should "be positive" in:
     assertThrows[AssertionError] {
       InterestRate(-0.05)
