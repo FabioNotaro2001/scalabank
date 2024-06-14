@@ -1,18 +1,14 @@
 package scalabank.testLoan
 
 import org.scalatest.matchers.should.Matchers.*
-import scalabank.logger.*
 import org.junit.runner.RunWith
-import org.scalatest.BeforeAndAfterEach
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatestplus.junit.JUnitRunner
-import scalabank.entities.Employee
-import scalabank.entities.Employee.EmployeePosition
 import scalabank.entities.Customer
 import scalabank.loan.Loan
 
 @RunWith(classOf[JUnitRunner])
-class TestLoan extends AnyFlatSpec with BeforeAndAfterEach:
+class TestLoan extends AnyFlatSpec:
   val customer: Customer = Customer("Mirko", "Viroli", 1980)
   val loan = Loan(customer, 12000, 12, 5.5)
 
