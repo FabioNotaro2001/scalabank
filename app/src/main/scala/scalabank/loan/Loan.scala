@@ -13,7 +13,7 @@ trait Loan:
 // TODO Come migliorare formattazione di questo file sotto?
 //TODO: Non sono troppi campi quelli dentro apply di Loan?????
 // TODO: sono giusti i campi che sono soldi rappresentati come int e interestRate rappresentato come BigDecimal? Forse ci andrebbero nostre classi apposite?????
-//TODO: InterestManager potrebbe anche gestire tassi variabili con una lista dei tassi.
+// TODO: InterestManager potrebbe anche gestire tassi variabili con una lista dei tassi.
 // TODO: Pensa se cambiare Int in Money (magari aggiungendo a Money che non possono essere negativi).
 // TODO: L'interesse creerei una nuova classe Interest, e due sottoclassi FixedInterest (che ha un double interest=0.04) o VariableInterest (che ha una lista interest[0.04, 0.05, 0.03]).
 object Loan:
