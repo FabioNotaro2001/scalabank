@@ -43,20 +43,20 @@ object Money:
     /**
      * Adds two Money instances.
      *
-     * @param other The Money instance to add.
+     * @param moneyToAdd The Money instance to add.
      * @return A new Money instance representing the sum.
      */
     @targetName("Add")
-    def +(other: Money): Money = money + other
+    def +(moneyToAdd: Money): Money = money + moneyToAdd
 
     /**
      * Subtracts one Money instance from another.
      *
-     * @param other The Money instance to subtract.
+     * @param moneyToGet The Money instance to subtract.
      * @return A new Money instance representing the difference.
      */
     @targetName("Subtraction")
-    def -(other: Money): Money = money - other
+    def -(moneyToGet: Money): Money = money - moneyToGet
 
     /**
      * Compares if one Money instance is greater than another.
