@@ -5,7 +5,7 @@ import scala.annotation.targetName
 /**
  * Object that provides methods for creating and manipulating Money instances.
  */
-object Money:
+object MoneyOperation:
   /**
    * Opaque type representing a monetary value.
    */
@@ -118,3 +118,10 @@ object Money:
      * @return The formatted string representation of the Money instance.
      */
     def format: String = f"$$${money}%.2f"
+
+    /**
+     * Converts the Money instance to a BigDecimal.
+     *
+     * @return The BigDecimal representation of the Money instance.
+     */
+    def toBigDecimal: BigDecimal = money
