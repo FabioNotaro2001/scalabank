@@ -5,13 +5,13 @@ import org.junit.runner.RunWith
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatestplus.junit.JUnitRunner
 import scalabank.entities.Customer
-import scalabank.loan.Loan
+import scalabank.loan.*
 import scalabank.currency.MoneyADT.*
 
 @RunWith(classOf[JUnitRunner])
 class TestLoan extends AnyFlatSpec:
   val customer: Customer = Customer("Mirko", "Viroli", 1980)
-  val loan = Loan(customer, 12000.toMoney, 12, 5.5)
+  val loan = Loan(customer, 12000.toMoney, 12, InterestRate(0.05))
 
   "The loan" should "have the correct client" in:
     assert(loan.customer == customer)
@@ -27,8 +27,8 @@ class TestLoan extends AnyFlatSpec:
     assert(loan.amountOfSinglePayment == expectedSinglePayment)
 
   "The loan" should "have the correct interest rate" in:
-    assert(loan.interestRate == 5.5)
+    assert(loan.interestRate == InterestRate(0.05))
 
   "The loan" should "have the correct total amount" in:
-    val expectedTotalAmount = loan.requiredAmount * (1 + loan.interestRate)
+    val expectedTotalAmount = loan.requiredAmount * (1.0 + loan.interestRate)
     assert(loan.totalAmount == expectedTotalAmount)
