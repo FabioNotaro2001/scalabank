@@ -81,13 +81,64 @@ Il trait `Project` rappresenta un progetto con un nome, un budget e un team di l
 
 Il trait `StaffPosition` rappresenta una posizione occupata da un membro dello staff con il relativo salario.
 
+## Parte 2
+
+In questa parte, descriveremo l'implementazione dei file all'interno del package `scalabank.currency`. Abbiamo utilizzato i principi KISS (Keep It Simple, Stupid) e DRY (Don't Repeat Yourself) per mantenere il codice semplice, leggibile e riutilizzabile. Inoltre, sono stati applicati vari pattern di progettazione per migliorare la struttura e la manutenibilità del codice.
+
+![UML Persona](img/money.png)
+
+### Currency
+
+Il trait `Currency` rappresenta una valuta con un codice e un simbolo.
+
+#### Meccanismi utilizzati:
+
+- **Encapsulation:** Uso di metodi per accedere agli attributi `code` e `symbol`.
+- **Factory Method:** Metodo `apply` per creare istanze di `Currency` con la case class privata `CurrencyImpl`.
+
+### CurrencyConverter
+
+Il trait `CurrencyConverter` rappresenta un convertitore di valute con metodi per la conversione e l'applicazione di commissioni. 
+Per la realizzazione abbiamo utilizzato un API esterna interrogando il server di YAHOO, al fine di avere ogni volta i dati aggiornati delle valute. 
+
+#### Meccanismi utilizzati:
+
+- **Asynchronous Programming:** Uso di `Future` per operazioni asincrone.
+- **Factory Method:** Metodo `apply` per creare istanze di `CurrencyConverter` con la case class `OnlineCurrencyConverter`.
+
+### ExchangeRateProvider
+
+Il trait `ExchangeRateProvider` rappresenta un provider di tassi di cambio. Ho dovuto appoggiarmi a una classe diversa perché la risposta del server di YAHOO richiede la scomposizione della risposta attraverso una libreria apposita per formati JSON. 
+Per questo motivo è nata questa classe, in modo da rispettare i principi DRY e SRP. Essa scompone la richiesta e restituisce il valore richiesto.
 
 
+#### Meccanismi utilizzati:
+- **Asynchronous Programming:** Uso di `Future` per operazioni asincrone.
+- **Encapsulation:** Metodi privati per ottenere e parsare i tassi di cambio.
+- **For-yield:** Al fine di scomporre il JSON arrivato.
 
+### Money
 
+L'oggetto `Money` rappresenta l'oggetto denaro.
+Ossia in questo modo abbiamo limitato le operazione che si possono fare con i soldi, solo quelle descritte.
+Abbiamo la possibilità di decidere noi la tipologia di dato, in questo caso abbiamo creato un tipo opaco `Money`, visto che lavoriamo con dei soldi esso è rappresentato come un `BigDecimal`.
 
+#### Meccanismi utilizzati:
 
+- **Type Safety:** Uso di un tipo opaco per rappresentare in modo sicuro una quantità di denaro.
+- **Extension Methods:** Metodi di estensione per operazioni aritmetiche e formattazione, al fine di limitare le operazioni possibili.
 
+### Principi KISS e DRY
+
+- **KISS (Keep It Simple, Stupid):** Ho mantenuto il codice semplice e leggibile, evitando complessità inutili. Ad esempio, l'uso di `Future` per operazioni asincrone semplifica la gestione delle chiamate di rete.
+- **DRY (Don't Repeat Yourself):** Ho evitato la duplicazione del codice utilizzando metodi di estensione e case class private per implementazioni specifiche. Ad esempio, i metodi di estensione per `Money` prevengono la duplicazione di logica comune.
+
+### Pattern di Progettazione
+
+- **Factory Method:** Usato per creare istanze di `Currency`, `CurrencyConverter` e `ExchangeRateProvider`.
+- **Type Opacity:** Usato per il tipo `Money` per garantire la sicurezza dei tipi.
+- **Asynchronous Programming:** Uso di `Future` per operazioni di rete non bloccanti.
+- **Encapsulation:** Uso di metodi privati e case class per nascondere i dettagli di implementazione e fornire un'interfaccia pulita.
 
 
 
