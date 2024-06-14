@@ -15,7 +15,7 @@ trait Loan:
 // TODO: sono giusti i campi che sono soldi rappresentati come int e interestRate rappresentato come BigDecimal? Forse ci andrebbero nostre classi apposite?????
 //TODO: InterestManager potrebbe anche gestire tassi variabili con una lista dei tassi.
 // TODO: Pensa se cambiare Int in Money (magari aggiungendo a Money che non possono essere negativi).
-// TODO: L'interesse va bene double o è meglio in un qualche tipo percentuale da me creato?
+// TODO: L'interesse creerei una nuova classe Interest, e due sottoclassi FixedInterest (che ha un double interest=0.04) o VariableInterest (che ha una lista interest[0.04, 0.05, 0.03]).
 object Loan:
   def apply(client: Customer, requiredAmount: Double, numberOfMonthlyPayments: Int, interestRate: Double): Loan =
     LoanImpl(client, requiredAmount, numberOfMonthlyPayments, interestRate)
