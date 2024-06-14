@@ -6,6 +6,7 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatestplus.junit.JUnitRunner
 import scala.concurrent.*
 import scala.concurrent.duration._
+import scalabank.currency.Money.*
 
 @RunWith(classOf[JUnitRunner])
 class CurrencyTest extends AnyFlatSpec:

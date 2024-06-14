@@ -2,6 +2,7 @@ package scalabank.currency
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scalabank.currency.Money.*
 
 /**
  * Trait representing a currency converter with conversion and fee application methods.
