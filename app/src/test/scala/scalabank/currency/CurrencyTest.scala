@@ -27,7 +27,7 @@ class CurrencyTest extends AnyFlatSpec:
 
   it should "apply fees correctly" in:
     val converter = CurrencyConverter("dummyApiKey")
-    val amount = BigDecimal(100)
+    val amount = Money(100)
     val feeApplied = converter.applyFee(amount, 0.5)
     feeApplied should be(BigDecimal(99.50))
 
@@ -35,10 +35,75 @@ class CurrencyTest extends AnyFlatSpec:
     val converter = CurrencyConverter("dummyApiKey")
     val fromCurrency = Currency("USD", "$")
     val toCurrency = Currency("EUR", "€")
-    val amount = BigDecimal(100)
-    val futureResult: Future[BigDecimal] = converter.convert(amount, fromCurrency, toCurrency)
-    val newAmount: BigDecimal = Await.result(futureResult, 5.seconds)
-    assert(newAmount > BigDecimal(0))
+    val amount = Money(100)
+    val futureResult: Future[Money] = converter.convert(amount, fromCurrency, toCurrency)
+    val newAmount: Money = Await.result(futureResult, 5.seconds)
+    assert(newAmount > Money(0))
+
+  "Money" should "create an instance from BigDecimal" in :
+    val amount = Money(BigDecimal(100))
+    amount.toBigDecimal shouldEqual BigDecimal(100)
+
+  it should "create an instance from Int" in :
+    val amount = Money(100)
+    amount.toBigDecimal shouldEqual BigDecimal(100)
+
+  it should "create an instance from Double" in :
+    val amount = Money(100.5)
+    amount.toBigDecimal shouldEqual BigDecimal(100.5)
+
+  it should "correctly add two amounts" in :
+    val amount1 = Money(100)
+    val amount2 = Money(50)
+    (amount1 + amount2).toBigDecimal shouldEqual BigDecimal(150)
+
+  it should "correctly subtract two amounts" in :
+    val amount1 = Money(100)
+    val amount2 = Money(50)
+    (amount1 - amount2).toBigDecimal shouldEqual BigDecimal(50)
+
+  it should "correctly multiply by a factor" in :
+    val amount = Money(100)
+    val factor = BigDecimal(1.5)
+    (amount * factor).toBigDecimal shouldEqual BigDecimal(150)
+
+  it should "correctly divide by a factor" in :
+    val amount = Money(100)
+    val factor = BigDecimal(2)
+    (amount / factor).toBigDecimal shouldEqual BigDecimal(50)
+
+  it should "correctly format as a string" in :
+    val amount = Money(100.1234)
+    amount.format shouldEqual "$100.12"
+
+  it should "throw an exception when dividing by zero" in :
+    val amount = Money(100)
+    intercept[ArithmeticException] :
+      amount / BigDecimal(0)
+
+  it should "handle negative values" in :
+    val amount1 = Money(-100)
+    val amount2 = Money(50)
+    (amount1 + amount2).toBigDecimal shouldEqual BigDecimal(-50)
+
+  it should "apply a fee correctly" in :
+    val amount = Money(100)
+    val feePercentage = BigDecimal(10)
+    (amount - (amount * feePercentage / 100)).toBigDecimal shouldEqual BigDecimal(90)
+
+  it should "compare two Money instances correctly" in :
+    val amount1 = Money(100)
+    val amount2 = Money(100)
+    val amount3 = Money(50)
+    (amount1 == amount3) shouldBe false
+
+  it should "handle very large values correctly" in :
+    val largeAmount = Money(BigDecimal("1000000000000000000000000000"))
+    largeAmount.toBigDecimal shouldEqual BigDecimal("1000000000000000000000000000")
+
+  it should "handle very small values correctly" in :
+    val smallAmount = Money(BigDecimal("0.0000000000000000000000001"))
+    smallAmount.toBigDecimal shouldEqual BigDecimal("0.0000000000000000000000001")
 
 
 

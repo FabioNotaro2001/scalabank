@@ -15,7 +15,7 @@ trait CurrencyConverter:
    * @param to     The target currency.
    * @return The converted amount.
    */
-  def convert(amount: BigDecimal, from: Currency, to: Currency): Future[BigDecimal]
+  def convert(amount: Money, from: Currency, to: Currency): Future[Money]
 
   /**
    * Applies a fee to the amount.
@@ -24,7 +24,7 @@ trait CurrencyConverter:
    * @param feePercentage The fee percentage.
    * @return The amount after the fee is applied.
    */
-  def applyFee(amount: BigDecimal, feePercentage: BigDecimal): BigDecimal =
+  def applyFee(amount: Money, feePercentage: BigDecimal): Money =
     amount - (amount * feePercentage / 100)
 
 
@@ -34,6 +34,6 @@ object CurrencyConverter:
   private case class OnlineCurrencyConverter() extends CurrencyConverter:
     private val exchangeRateProvider = ExchangeRateProvider()
 
-    override def convert(amount: BigDecimal, from: Currency, to: Currency): Future[BigDecimal] =
+    override def convert(amount: Money, from: Currency, to: Currency): Future[Money] =
       exchangeRateProvider.getExchangeRate(from.code, to.code).map(rate => amount * rate)
 
