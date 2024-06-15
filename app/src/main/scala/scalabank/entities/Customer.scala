@@ -1,10 +1,8 @@
 package scalabank.entities
 
-import scalabank.entities.Employee.logger
 import scalabank.entities.Person
 import scalabank.logger.{Logger, LoggerDependency, LoggerImpl}
 import scalabank.appointment.Appointment
-import scalabank.entities.Customer.logger
 
 trait Customer extends Person:
   def fidelity: Fidelity
