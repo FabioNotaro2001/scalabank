@@ -26,6 +26,11 @@ class CustomerTest extends AnyFunSuite:
     customer shouldBe a[YoungCustomer]
     customer shouldBe a[Customer]
 
+  test("Customer should be a OldCustomer if is more 65 years old"):
+    val customer = Customer("John", "Doe", 1950)
+    customer shouldBe a[OldCustomer]
+    customer shouldBe a[Customer]
+
   test("Customer should be a BaseCustomer if is oldest 35 years old"):
     val customer = Customer("John", "Doe", 1980)
     customer shouldBe a[BaseCustomer]
