@@ -10,25 +10,25 @@ import scalabank.currency.MoneyADT.*
 
 @RunWith(classOf[JUnitRunner])
 class TestLoan extends AnyFlatSpec:
-  val customer: Customer = Customer("Mirko", "Viroli", 1980)
+  val customer = Customer("Mirko", "Viroli", 1980)
   val loan = Loan(customer, 12000.toMoney, 12, InterestRate(0.05))
 
   "The loan" should "have the correct client" in:
-    assert(loan.customer == customer)
+    loan.customer shouldEqual customer
 
   "The loan" should "have the correct required amount" in:
-    assert(loan.requiredAmount == 12000.toMoney)
+    loan.requiredAmount shouldEqual 12000.toMoney
 
   "The loan" should "have the correct number of monthly payments" in:
-    assert(loan.numberOfMonthlyPayments == 12)
+    loan.numberOfMonthlyPayments shouldBe 12
 
   "The loan" should "have the correct amount of single payment" in:
     val expectedSinglePayment = loan.totalAmount / loan.numberOfMonthlyPayments
-    assert(loan.amountOfSinglePayment == expectedSinglePayment)
+    loan.amountOfSinglePayment shouldEqual expectedSinglePayment
 
   "The loan" should "have the correct interest rate" in:
-    assert(loan.interestRate == InterestRate(0.05))
+    loan.interestRate shouldBe InterestRate(0.05)
 
   "The loan" should "have the correct total amount" in:
     val expectedTotalAmount = loan.requiredAmount * (1.0 + loan.interestRate)
-    assert(loan.totalAmount == expectedTotalAmount)
+    loan.totalAmount shouldEqual expectedTotalAmount

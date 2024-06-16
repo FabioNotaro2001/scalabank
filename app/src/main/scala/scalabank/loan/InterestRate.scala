@@ -5,16 +5,28 @@ import scala.annotation.targetName
 case class InterestRate(val interestValue: Double):
   assert(interestValue > 0)
 
-extension(base: Double)
+extension (base: Double)
   @targetName("Add")
-  def +(interestToAdd: InterestRate): Double = base + interestToAdd.interestValue
+  def +(other: InterestRate): Double = base + other.interestValue
 
   @targetName("Subtraction")
-  def -(interestToRemove: InterestRate): Double = base - interestToRemove.interestValue
+  def -(other: InterestRate): Double = base - other.interestValue
 
   @targetName("Multiply")
-  def *(interestToMultiply: InterestRate): Double = base * interestToMultiply.interestValue
+  def *(other: InterestRate): Double = base * other.interestValue
 
   @targetName("Divide")
-  def /(interestToDivide: InterestRate): Double = base / interestToDivide.interestValue
+  def /(other: InterestRate): Double = base / other.interestValue
 
+extension (base: InterestRate)
+  @targetName("AddInterestRate")
+  def +(other: InterestRate): InterestRate = InterestRate(base.interestValue + other.interestValue)
+
+  @targetName("SubtractionInterestRate")
+  def -(other: InterestRate): InterestRate = InterestRate(base.interestValue - other.interestValue)
+
+  @targetName("MultiplyInterestRate")
+  def *(other: InterestRate): InterestRate = InterestRate(base.interestValue * other.interestValue)
+
+  @targetName("DivideInterestRate")
+  def /(other: InterestRate): InterestRate = InterestRate(base.interestValue / other.interestValue)

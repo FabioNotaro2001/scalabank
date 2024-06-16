@@ -1,40 +1,52 @@
 package scalabank.testLoan
 
 import org.scalatest.matchers.should.Matchers.*
-import scalabank.loan.*
+import scalabank.loan.{InterestRate, *}
 import org.junit.runner.RunWith
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatestplus.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
 class TestInterestRate extends AnyFlatSpec:
-  val rate = InterestRate(0.05)
-  val base: Double = 100.0
+  val rateOfTenPercent = InterestRate(0.10)
+  val rateOfFivePercent = InterestRate(0.05)
+  val doubleValOfHundred: Double = 100.0
+  val tolerance = 0.01
 
   "An InterestRate" should "be positive" in:
-    assertThrows[AssertionError] {
-      InterestRate(-0.05)
-    }
+    a [AssertionError] should be thrownBy InterestRate(-0.05)
 
   "An InterestRate" should "initialize correctly with positive value" in:
-    assert(rate.interestValue == 0.05)
+    rateOfTenPercent.interestValue shouldEqual 0.10
 
-  "Double + InterestRate" should "add interest correctly" in:
-    val interestRateToAdd = InterestRate(0.05)
-    val result = base + interestRateToAdd
-    assert(result == 100.05)
+  "A Double" should "be added correctly to an InterestRate" in:
+    val result = doubleValOfHundred + rateOfTenPercent
+    result shouldBe 100.10
 
-  "Double - InterestRate" should "subtract interest correctly" in:
-    val interestRateToRemove = InterestRate(0.05)
-    val result = base - interestRateToRemove
-    assert(result == 99.95)
+  "A Double" should "be subtracted correctly to an InterestRate" in:
+    val result = doubleValOfHundred - rateOfTenPercent
+    result shouldBe 99.90
 
-  "Double * InterestRate" should "multiply interest correctly" in:
-    val interestRateToMultiply = InterestRate(0.05)
-    val result = base * interestRateToMultiply
-    assert(result == 5.0)
+  "A Double" should "be multiplied correctly to an InterestRate" in:
+    val result = doubleValOfHundred * rateOfTenPercent
+    result shouldBe 10.0
 
-  "Double / InterestRate" should "divide interest correctly" in:
-    val interestRateToDivide = InterestRate(0.05)
-    val result = base / interestRateToDivide
-    assert(result == 2000.0)
+  "A Double" should "be divided correctly to an InterestRate" in:
+    val result = doubleValOfHundred / rateOfTenPercent
+    result shouldBe 1000.0
+
+  "The sum between two InterestRates" should "be computed correctly" in:
+    val result = rateOfTenPercent + rateOfFivePercent
+    result.interestValue shouldBe 0.15 +- tolerance
+
+  "The subtraction between two InterestRates" should "be computed correctly" in:
+    val result = rateOfTenPercent - rateOfFivePercent
+    result.interestValue shouldBe 0.05 +- tolerance
+
+  "The multiplication between two InterestRates" should "be computed correctly" in:
+    val result = rateOfTenPercent * rateOfFivePercent
+    result.interestValue shouldBe 0.005 +- tolerance
+
+  "The division between two InterestRates" should "be computed correctly" in:
+    val result = rateOfTenPercent / rateOfFivePercent
+    result.interestValue shouldBe 2.0 +- tolerance
