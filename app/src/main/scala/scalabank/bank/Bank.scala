@@ -6,10 +6,15 @@ import scalabank.entities.{Customer, Employee}
 import scalabank.logger.{Logger, LoggerDependency, LoggerImpl}
 
 import java.time.LocalDateTime
+import scala.annotation.targetName
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 import scala.collection.mutable.{HashMap as MutableHashMap, Map as MutableMap}
 import scala.util.Random
+
+extension [A](opt: Option[A])
+  @targetName("getOrElse")
+  def ??(value: A): A = opt.getOrElse(value)
 
 trait BankInformation
 
@@ -32,7 +37,9 @@ trait Bank:
    * @param customer the customer requesting the appointment
    * @return a new appointment for the customer
    */
-  def createAppointment(customer: Customer, description: String, date: LocalDateTime): Appointment
+  def createAppointment(customer: Customer, description: String, date: LocalDateTime, duration: Int): Appointment
+  def updateAppointment(appointment: Appointment, description: Option[String], date: Option[LocalDateTime], duration: Option[Int]): Appointment
+  def cancelAppointment(appointment: Appointment): Unit
 
 abstract class AbstractBankImpl[T <: BankInformation](override val bankInformation: T) extends Bank:
   protected val employees: ListBuffer[Employee] = ListBuffer()
@@ -53,10 +60,11 @@ trait BankComponent:
   case class PhysicalBank(override val bankInformation: PhysicalBankInformation) extends AbstractBankImpl[PhysicalBankInformation](bankInformation):
     private val appointments: MutableMap[Customer, ListBuffer[Appointment]] = MutableHashMap()
 
-    override def createAppointment(customer: Customer, description: String, date: LocalDateTime): Appointment =
-      require(date.isAfter(LocalDateTime.now), "Date of appointment has to be in the future")
+    override def createAppointment(customer: Customer, description: String, date: LocalDateTime, duration: Int): Appointment =
+      require(customers.contains(customer), "Customer not registered with the bank")
+      assume(employees.nonEmpty)
       val employee = employees(Random().nextInt(employees.length))
-      val appointment = Appointment(customer, employee, description, date)
+      val appointment = Appointment(customer, employee, description, date, duration)
       if appointments.contains(customer)
       then
         appointments(customer).addOne(appointment)
@@ -66,9 +74,51 @@ trait BankComponent:
       employee.addAppointment(appointment)
       appointment
 
+    private def verifyAppointmentRequirements(appointment: Appointment): Unit =
+      require(appointment != null, "The appointment must be defined")
+      require(appointment.date.isAfter(LocalDateTime.now), "Cannot cancel an appointment that has already passed")
+      require(customers.contains(appointment.customer), "Customer not registered with the bank")
+      require(employees.contains(appointment.employee), "Employee not affiliated with the bank")
+
+    override def updateAppointment(appointment: Appointment, description: Option[String], date: Option[LocalDateTime], duration: Option[Int]): Appointment =
+      verifyAppointmentRequirements(appointment)
+      require(description.nonEmpty || date.nonEmpty || duration.nonEmpty, "At least one of the fields of the appointment must be updated")
+      val newAppointment = Appointment(appointment.customer, appointment.employee,
+                                        description ?? appointment.description, date ?? appointment.date, duration ?? appointment.duration)
+      appointments.get(appointment.customer) match
+        case Some(customerAppointments) =>
+          val index = customerAppointments.indexOf(appointment)
+          require(index != -1, "Customer has no such appointment registered")
+          customerAppointments.remove(index)
+          customerAppointments.insert(index, newAppointment)
+          appointment.customer.updateAppointment(appointment)(newAppointment)
+          appointment.employee.updateAppointment(appointment)(newAppointment)
+          newAppointment
+        case None =>
+          throw IllegalArgumentException("Customer has no appointments registered")
+
+
+    override def cancelAppointment(appointment: Appointment): Unit =
+      verifyAppointmentRequirements(appointment)
+      appointments.get(appointment.customer) match
+        case Some(customerAppointments) =>
+          val index = customerAppointments.indexOf(appointment)
+          assert(index != -1, "Customer has no such appointment registered")
+          customerAppointments.remove(index)
+          appointment.customer.removeAppointment(appointment)
+          appointment.employee.removeAppointment(appointment)
+        case None =>
+          throw AssertionError("Customer has no appointments registered")
+
   case class VirtualBankInformation(name: String, phoneNumber: String) extends BankInformation
   case class VirtualBank(override val bankInformation: VirtualBankInformation) extends AbstractBankImpl[VirtualBankInformation](bankInformation):
-    override def createAppointment(customer: Customer, description: String, date: LocalDateTime): Appointment =
+    override def createAppointment(customer: Customer, description: String, date: LocalDateTime, duration: Int): Appointment =
+      throw UnsupportedOperationException("Virtual banks don't support appointments")
+
+    override def updateAppointment(appointment: Appointment, description: Option[String], date: Option[LocalDateTime], duration: Option[Int]): Appointment =
+      throw UnsupportedOperationException("Virtual banks don't support appointments")
+
+    override def cancelAppointment(appointment: Appointment): Unit =
       throw UnsupportedOperationException("Virtual banks don't support appointments")
 
 object Bank extends LoggerDependency with BankComponent:
