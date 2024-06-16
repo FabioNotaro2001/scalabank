@@ -13,5 +13,5 @@ object LoanCalculator:
   private class LoanCalculatorImpl() extends LoanCalculator:
     private val interestManager = InterestManager()
     override def calculateLoan(customer: Customer, requiredAmount: Money, numberOfPayments: Int) =
-      assert(numberOfPayments > 0)  // TODO: dire a Bedo di aggiungere conversione opposta, cio+ da Money ad Int e qui aggiungere condizione che anche required amount dev'essere > 0. Nel caso aggiungere test corrispondente.
+      assert(numberOfPayments > 0) 
       Loan(customer, requiredAmount, numberOfPayments, interestManager.findAppropriateInterestForCustomer(customer))
