@@ -50,5 +50,5 @@ object ExchangeRateProvider:
         resultArray <- chart.hcursor.downField("result").as[List[Json]]
         firstResult <- resultArray.headOption.toRight(DecodingFailure("Result array is empty", Nil))
         meta <- firstResult.hcursor.downField("meta").as[Json]
-        regularMarketPrice <- meta.hcursor.downField("regularMarketPrice").as[Double]
+        regularMarketPrice <- meta.hcursor.downField("regularMarketPrice").as[BigDecimal]
       yield regularMarketPrice
