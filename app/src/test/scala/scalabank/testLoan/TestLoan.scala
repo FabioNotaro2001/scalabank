@@ -20,10 +20,10 @@ class TestLoan extends AnyFlatSpec:
     loan.requiredAmount shouldEqual 12000.toMoney
 
   "The loan" should "have the correct number of monthly payments" in:
-    loan.numberOfMonthlyPayments shouldBe 12
+    loan.numberOfPayments shouldBe 12
 
   "The loan" should "have the correct amount of single payment" in:
-    val expectedSinglePayment = loan.totalAmount / loan.numberOfMonthlyPayments
+    val expectedSinglePayment = loan.totalAmount / loan.numberOfPayments
     loan.amountOfSinglePayment shouldEqual expectedSinglePayment
 
   "The loan" should "have the correct interest rate" in:

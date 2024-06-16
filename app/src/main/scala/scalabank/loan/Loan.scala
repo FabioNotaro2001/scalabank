@@ -7,7 +7,7 @@ import scalabank.loan.*
 trait Loan:
   def customer: Customer
   def requiredAmount: Money
-  def numberOfMonthlyPayments: Int
+  def numberOfPayments: Int
   def amountOfSinglePayment: Money
   def interestRate: InterestRate
   def totalAmount: Money
@@ -17,6 +17,6 @@ object Loan:
     LoanImpl(client, requiredAmount, numberOfMonthlyPayments, interestRate)
 
   private case class LoanImpl(override val customer: Customer, override val requiredAmount: Money,
-                              override val numberOfMonthlyPayments: Int, override val interestRate: InterestRate) extends Loan:
+                              override val numberOfPayments: Int, override val interestRate: InterestRate) extends Loan:
     override def totalAmount: Money =  requiredAmount * (1.0 + interestRate)
-    override def amountOfSinglePayment: Money = totalAmount / numberOfMonthlyPayments
+    override def amountOfSinglePayment: Money = totalAmount / numberOfPayments
