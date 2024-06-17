@@ -68,19 +68,19 @@ object Employee extends LoggerDependency with EmployeeComponent:
   override val logger: Logger = LoggerImpl()
   def apply(...): Employee = ...
 ```
-Nel codice fornito si può notare come è stato applicato il cake patter tra Logger e Employee per gestire correttamente le dipendenze.
+Nel codice fornito si può notare come è stato applicato il cake patter tra `Logger` e `Employee` per gestire correttamente le dipendenze.
 
 I componenti interessati dal pattern sono dunque:
-- LoggerDependency &rarr; è il trait che rappresenta la dipendenze esposta, offerta dal logger
-- EmployeeComponent &rarr; è il trait che definisce la struttura di Employee e contestualmente specifica che esso dipende da LoggerDependency
-- ObjectEmployee combina dunque LoggerDependency ed EmployeeComponent, fornendo anche un'implementazione concreta del logger.
+- `LoggerDependency` &rarr; è il trait che rappresenta la dipendenze esposta, offerta dal logger
+- `EmployeeComponent` &rarr; è il trait che definisce la struttura di `Employee` e contestualmente specifica che esso dipende da `LoggerDependency`
+- `ObjectEmployee` combina dunque `LoggerDependency` ed `EmployeeComponent`, fornendo anche un'implementazione concreta del logger.
 
 Come anticipato questa strategia, sebbene risulti più complessa da implementare e comprendere, offre notevoli vantaggi in termini di gestione delle dipendenze (esse sono chiaramente definite, migliorando di fatto anche la modularità) e separazione dei ruoli (la logica dell'impiegato risulta separata dalla logica del logger, pur dipendendone).
 
 ### Applicazione principio SRP per gestione prefissi
 Il principio SRP suggerisce che un componente dovrebbe avere un unico motivo per cambiare.
 
-Come conseguenza di ciò, occorre incapsulare via, all'esterno, ciò che ricade fuori dalla responsabilità principale del logger, ossia il PrefixFormatter, responsabile della gestione dei prefissi delle stampe.
+Come conseguenza di ciò, occorre incapsulare via, all'esterno, ciò che ricade fuori dalla responsabilità principale del logger, ossia il `PrefixFormatter`, responsabile della gestione dei prefissi delle stampe.
 
 Come conseguenza dell'applicazione di tale principio, è stato necessario separare le due classi, come di seguito riportato:
 ```
@@ -120,9 +120,9 @@ L'ultimo aspetto rilevante di implementazione del logger che è bene sottolinear
 
 Infatti, nella sua accezione più semplificata, il logger stampa su console, tuttavia anche in ottica di sviluppi futuri (Anticipation Of Change) mi è sembrato ragionevole pensare che il logger potesse stampare anche su file ad esempio.
 
-Introducendo tale vincolo di estendibilità, occorre cambiare la classe logger, in modo che segua il principio DIP, ovvero occorre imporre che la classe Logger non può dipendere da un'altra classe concreta (come System.out), ma bisogna sforzarsi di farlo dipendere da una sua astrazione.
+Introducendo tale vincolo di estendibilità, occorre cambiare la classe logger, in modo che segua il principio DIP, ovvero occorre imporre che la classe `Logger` non può dipendere da un'altra classe concreta (come `System.out`), ma bisogna sforzarsi di farlo dipendere da una sua astrazione.
 
-Per rispettare tale principio, è stato necessario rimuovere la stampa diretta su console delle stringhe nel metodo log, ed estrarre ed aggiungere la dipendenza alla classe più generale PrintStream:
+Per rispettare tale principio, è stato necessario rimuovere la stampa diretta su console delle stringhe nel metodo `log`, ed estrarre ed aggiungere la dipendenza alla classe più generale `PrintStream`:
 ```
 trait Logger:
     def log(string: String): Unit
@@ -144,3 +144,54 @@ class LoggerImpl extends Logger:
 Come conseguenza del rispetto di tale principio, si migliora la modularità e flessibilità del codice, riducendo inoltre le dipendenze rigide tra oggetti concreti.
 
 ## Modellazione dei mutui
+Lo sprint relativo all'implementazione e modellazione dei mutui non ha richiesto l'impiego di particolari costrutti avanzati del linguaggio Scala.
+
+Anche per questo motivo, come anticipato nella sezione di design, ho cercato di organizzare il codice in modo pulito, ben separato e ben strutturato, cercando di favorire quanto più possibile la semplicità di utilizzo e modifica.
+
+Nelle sezioni che seguono sono comunque riportati alcuni meccanismi avanzati o comunque degni di nota che hanno contraddistinto questa fase di implementazione.
+
+### Utilizzo di meccanismi di pattern matching avanzato
+Nell'implementazione del trait `InterestManager` il pattern matching si è dimostratomolto utile e comodo per determinare il tasso d'interesse appropriato in base alla categoria del cliente che ha richiesto la simulazione del prestito:
+```
+trait InterestManager:
+  def findAppropriateInterestForCustomer(customer: Customer): InterestRate
+
+object InterestManager:
+  ...  
+  private class InterestManagerImpl() extends InterestManager:
+    ...
+    override def findAppropriateInterestForCustomer(customer: Customer): InterestRate = customer match
+      case customer: YoungCustomer => interestProvider.getInterestForYoungCustomer
+      case customer: OldCustomer => interestProvider.getInterestForOldCustomer
+      case _ => interestProvider.getDefaultInterest
+
+```
+Come si nota dal codice sopra riportato, il pattern matching basato sui confronti di tipo ha consentito con semplicità e leggibilità di richiedere al `InterestProvider` il corretto `InterestRate` secondo il tipo del `Customer`.
+
+Viene infatti fatto un matching per il parametro customer cercando di individuare tutti i casi possibili (si noti infatti che il matching è esaustivo grazie al caso default).
+
+### Adozione del cake pattern per LoanCalculator
+Come riportato nel capitolo precedente, il `Logger` possiede varie classi clienti, tra cui LoanCalculator, che è stata progettata e implementata da me durante lo sprint in cui mi sono conentrato sui mutui.
+
+Pertanto anche la classe LoanCalculator è stata organizzata in modo da aderire al cake pattern, seguendo tutte le indicazioni riportate in precedenza.
+
+L'unica particolarità risiede nel fatto che il `Logger` in questo caso non stampa l'evento alla creazione ma alla richiesta di calcolo di un `Loan` (ovvero alla chiamata del metodo `calculateLoan`), infatti è stato anche necessario utilizzare un differente prefisso rispetto ai soliti e precedenti casi:
+```
+trait LoanCalculator:
+  def calculateLoan(customer: Customer, requiredAmount: Money, numberOfPayments: Int): Loan
+
+trait LoanCalculatorComponent:
+  loggerDependency: LoggerDependency =>
+  case class LoanCalculatorImpl() extends LoanCalculator:
+    ...
+    override def calculateLoan(customer: Customer, requiredAmount: Money, numberOfPayments: Int) =
+      ...
+      val loanComputed = Loan(customer, requiredAmount, numberOfPayments, interestManager.findAppropriateInterestForCustomer(customer))
+      loggerDependency.logger.log(logger.getPrefixFormatter().getLoanSimulationPrefix + loanComputed)
+      loanComputed
+
+object LoanCalculator extends LoggerDependency with LoanCalculatorComponent:
+  override val logger: Logger = LoggerImpl()
+
+  def apply(): LoanCalculator = LoanCalculatorImpl()
+```
