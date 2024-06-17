@@ -142,3 +142,5 @@ class LoggerImpl extends Logger:
     def setOutputMediaToConsole(): Unit = outputMedia = System.out
 ```
 Come conseguenza del rispetto di tale principio, si migliora la modularità e flessibilità del codice, riducendo inoltre le dipendenze rigide tra oggetti concreti.
+
+## Modellazione dei mutui

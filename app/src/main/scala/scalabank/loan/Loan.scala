@@ -9,21 +9,21 @@ import scalabank.loan.*
  */
 trait Loan:
   /**
-   * The customer who has taken out the loan.
+   * The customer who has requested the loan.
    *
-   * @return the customer associated with this loan.
+   * @return the customer associated with this loan simulation.
    */
   def customer: Customer
 
   /**
-   * The amount of money borrowed.
+   * The amount of money desired by the customer.
    *
-   * @return the principal amount of the loan.
+   * @return the principal amount of the loan simulation.
    */
   def requiredAmount: Money
 
   /**
-   * The number of payments to be made to repay the loan.
+   * The number of payments to be made to repay the loan wished by the customer.
    *
    * @return the total number of payments.
    */
@@ -51,25 +51,25 @@ trait Loan:
   def totalAmount: Money
 
 /**
- * Companion object for the `Loan` trait.
+ * Companion object for the Loan trait.
  */
 object Loan:
   /**
    * Factory method to create a new `Loan` instance.
    *
-   * @param client the customer taking out the loan.
-   * @param requiredAmount the principal amount to be borrowed.
+   * @param client the customer that requested the loan simulation.
+   * @param requiredAmount the principal amount of money requeste dy the customer.
    * @param numberOfMonthlyPayments the number of monthly payments to be made.
    * @param interestRate the interest rate for the loan.
-   * @return a new `Loan` instance.
+   * @return a new Loan instance.
    */
   def apply(client: Customer, requiredAmount: Money, numberOfMonthlyPayments: Int, interestRate: InterestRate): Loan =
     new LoanImpl(client, requiredAmount, numberOfMonthlyPayments, interestRate)
 
   /**
-   * Private implementation of the `Loan` trait.
+   * Private implementation of the Loan trait.
    *
-   * @param customer the customer associated with the loan.
+   * @param customer the customer associated with the loan simulation.
    * @param requiredAmount the principal amount of the loan.
    * @param numberOfPayments the total number of payments.
    * @param interestRate the interest rate of the loan.

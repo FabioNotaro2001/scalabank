@@ -3,7 +3,7 @@ package scalabank.loan
 import scala.annotation.targetName
 
 /**
- * Represents an interest rate for a loan.
+ * Represents an interest rate.
  *
  * @param interestValue the value of the interest rate, must be positive.
  * @throws AssertionError if `interestValue` is not greater than 0.
@@ -12,81 +12,81 @@ case class InterestRate(interestValue: Double):
   assert(interestValue > 0)
 
 /**
- * Provides extension methods for `Double` to perform arithmetic operations with `InterestRate`.
+ * Provides extension methods for Double to perform arithmetic operations with InterestRate.
  */
 extension (base: Double)
   /**
-   * Adds a `Double` and an `InterestRate`.
+   * Adds a Double and an InterestRate.
    *
-   * @param other the `InterestRate` to add.
-   * @return the sum as a `Double`.
+   * @param other the InterestRate to add.
+   * @return the sum as a Double.
    */
   @targetName("Add")
   def +(other: InterestRate): Double = base + other.interestValue
 
   /**
-   * Subtracts an `InterestRate` from a `Double`.
+   * Subtracts an InterestRate from a Double.
    *
-   * @param other the `InterestRate` to subtract.
-   * @return the difference as a `Double`.
+   * @param other the InterestRate to subtract.
+   * @return the difference as a Double.
    */
   @targetName("Subtraction")
   def -(other: InterestRate): Double = base - other.interestValue
 
   /**
-   * Multiplies a `Double` by an `InterestRate`.
+   * Multiplies a Double by an InterestRate.
    *
-   * @param other the `InterestRate` to multiply by.
-   * @return the product as a `Double`.
+   * @param other the InterestRate to multiply by.
+   * @return the product as a Double.
    */
   @targetName("Multiply")
   def *(other: InterestRate): Double = base * other.interestValue
 
   /**
-   * Divides a `Double` by an `InterestRate`.
+   * Divides a Double by an InterestRate.
    *
-   * @param other the `InterestRate` to divide by.
-   * @return the quotient as a `Double`.
+   * @param other the InterestRate to divide by.
+   * @return the quotient as a Double.
    */
   @targetName("Divide")
   def /(other: InterestRate): Double = base / other.interestValue
 
 /**
- * Provides extension methods for `InterestRate` to perform arithmetic operations with another `InterestRate`.
+ * Provides extension methods for InterestRate to perform arithmetic operations with another InterestRate.
  */
 extension (base: InterestRate)
   /**
-   * Adds two `InterestRate` instances.
+   * Adds two InterestRate instances.
    *
-   * @param other the `InterestRate` to add.
-   * @return the sum as an `InterestRate`.
+   * @param other the InterestRate to add.
+   * @return the sum as an InterestRate.
    */
   @targetName("AddInterestRate")
   def +(other: InterestRate): InterestRate = InterestRate(base.interestValue + other.interestValue)
 
   /**
-   * Subtracts one `InterestRate` from another.
+   * Subtracts one InterestRate from another.
    *
-   * @param other the `InterestRate` to subtract.
-   * @return the difference as an `InterestRate`.
+   * @param other the InterestRate to subtract.
+   * @return the difference as an InterestRate.
    */
   @targetName("SubtractionInterestRate")
   def -(other: InterestRate): InterestRate = InterestRate(base.interestValue - other.interestValue)
 
   /**
-   * Multiplies two `InterestRate` instances.
+   * Multiplies two InterestRate instances.
    *
-   * @param other the `InterestRate` to multiply by.
-   * @return the product as an `InterestRate`.
+   * @param other the InterestRate to multiply by.
+   * @return the product as an InterestRate.
    */
   @targetName("MultiplyInterestRate")
   def *(other: InterestRate): InterestRate = InterestRate(base.interestValue * other.interestValue)
 
   /**
-   * Divides one `InterestRate` by another.
+   * Divides one InterestRate by another.
    *
-   * @param other the `InterestRate` to divide by.
-   * @return the quotient as an `InterestRate`.
+   * @param other the InterestRate to divide by.
+   * @return the quotient as an InterestRate.
    */
   @targetName("DivideInterestRate")
   def /(other: InterestRate): InterestRate = InterestRate(base.interestValue / other.interestValue)
