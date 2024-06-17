@@ -2,14 +2,66 @@ package scalabank.loan
 
 import scalabank.loan.*
 
+/**
+ * Provides default interest rates and rates based on customer age categories.
+ */
 trait InterestProvider:
+  /**
+   * Retrieves the default interest rate.
+   *
+   * @return the default `InterestRate`.
+   */
   def getDefaultInterest: InterestRate
+
+  /**
+   * Retrieves the interest rate for young customers.
+   *
+   * @return the `InterestRate` for young customers.
+   */
   def getInterestForYoungCustomer: InterestRate
+
+  /**
+   * Retrieves the interest rate for old customers.
+   *
+   * @return the `InterestRate` for old customers.
+   */
   def getInterestForOldCustomer: InterestRate
 
+/**
+ * Companion object for the `InterestProvider` trait.
+ */
 object InterestProvider:
-  def apply(): InterestProvider = InterestProviderImpl()
+  /**
+   * Factory method to create a new `InterestProvider` instance.
+   *
+   * @return a new instance of `InterestProvider`.
+   */
+  def apply(): InterestProvider = new InterestProviderImpl()
+
+  /**
+   * Private implementation of the `InterestProvider` trait.
+   *
+   * Note: Consider whether the default interest value can be retrieved via an API.
+   * Alternatively, it could be fetched from a Prolog database.
+   */
   private class InterestProviderImpl() extends InterestProvider:
-    override def getDefaultInterest: InterestRate = InterestRate(0.04)  // TODO: Pensare se questo valore può essere preso tramite API. In alternativa si potrebbe pensare di prenderlo da database prolog.
+    /**
+     * Retrieves the default interest rate.
+     *
+     * @return the default `InterestRate`.
+     */
+    override def getDefaultInterest: InterestRate = InterestRate(0.04)
+
+    /**
+     * Retrieves the interest rate for young customers.
+     *
+     * @return the `InterestRate` for young customers.
+     */
     override def getInterestForYoungCustomer: InterestRate = InterestRate(0.03)
+
+    /**
+     * Retrieves the interest rate for old customers.
+     *
+     * @return the `InterestRate` for old customers.
+     */
     override def getInterestForOldCustomer: InterestRate = InterestRate(0.05)
