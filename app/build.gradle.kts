@@ -20,11 +20,7 @@ repositories {
 
 dependencies {
     implementation("org.scala-lang:scala3-compiler_3:3.4.0")
-    implementation("it.unibo.alice.tuprolog:2p-core:4.0.0")
-    implementation("it.unibo.alice.tuprolog:2p-parser:4.0.0")
-    implementation("org.antlr:antlr4-runtime:4.9.2")
-    implementation("org.apache.commons:commons-lang3:3.12.0")
-    implementation("com.codepoetics:protonpack:1.15")
+    implementation("com.h2database:h2:2.1.214")
     // This dependency is used by the application.
     implementation("com.google.guava:guava:32.1.1-jre")
     implementation("com.softwaremill.sttp.client3:core_2.13:3.8.3")
