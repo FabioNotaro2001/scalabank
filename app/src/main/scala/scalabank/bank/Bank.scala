@@ -2,6 +2,7 @@ package scalabank.bank
 
 import scalabank.appointment.Appointment
 import scalabank.bank
+import scalabank.entities.Customer.logger
 import scalabank.entities.{Customer, Employee}
 import scalabank.logger.{Logger, LoggerDependency, LoggerImpl}
 
@@ -20,6 +21,7 @@ trait BankInformation
 
 trait Bank:
   def bankInformation: BankInformation
+
   /**
    * Adds an employee to the bank
    * @param employee the employee to be added
@@ -38,7 +40,21 @@ trait Bank:
    * @return a new appointment for the customer
    */
   def createAppointment(customer: Customer, description: String, date: LocalDateTime, duration: Int): Appointment
+
+  /**
+   * Updates an appointment
+   * @param appointment the appointment to be modified
+   * @param description the new description, if changed
+   * @param date the new date, if changed
+   * @param duration the new duration, if changed
+   * @return the updated appointment
+   */
   def updateAppointment(appointment: Appointment, description: Option[String], date: Option[LocalDateTime], duration: Option[Int]): Appointment
+
+  /**
+   * Deletes an appointment
+   * @param appointment the appointment to be deleted
+   */
   def cancelAppointment(appointment: Appointment): Unit
 
 abstract class AbstractBankImpl[T <: BankInformation](override val bankInformation: T) extends Bank:
@@ -56,9 +72,9 @@ abstract class AbstractBankImpl[T <: BankInformation](override val bankInformati
 trait BankComponent:
   loggerDependency: LoggerDependency =>
   case class PhysicalBankInformation(name: String, address: String, phoneNumber: String) extends BankInformation
-
-  case class PhysicalBank(override val bankInformation: PhysicalBankInformation) extends AbstractBankImpl[PhysicalBankInformation](bankInformation):
+  case class PhysicalBank(bankInfo: PhysicalBankInformation) extends AbstractBankImpl[PhysicalBankInformation](bankInfo):
     private val appointments: MutableMap[Customer, ListBuffer[Appointment]] = MutableHashMap()
+    loggerDependency.logger.log(logger.getPrefixFormatter().getCreationPrefix + this)
 
     override def createAppointment(customer: Customer, description: String, date: LocalDateTime, duration: Int): Appointment =
       require(customers.contains(customer), "Customer not registered with the bank")
@@ -97,7 +113,6 @@ trait BankComponent:
         case None =>
           throw IllegalArgumentException("Customer has no appointments registered")
 
-
     override def cancelAppointment(appointment: Appointment): Unit =
       verifyAppointmentRequirements(appointment)
       appointments.get(appointment.customer) match
@@ -111,7 +126,9 @@ trait BankComponent:
           throw AssertionError("Customer has no appointments registered")
 
   case class VirtualBankInformation(name: String, phoneNumber: String) extends BankInformation
-  case class VirtualBank(override val bankInformation: VirtualBankInformation) extends AbstractBankImpl[VirtualBankInformation](bankInformation):
+  case class VirtualBank(bankInfo: VirtualBankInformation) extends AbstractBankImpl[VirtualBankInformation](bankInfo):
+    loggerDependency.logger.log(logger.getPrefixFormatter().getCreationPrefix + this)
+
     override def createAppointment(customer: Customer, description: String, date: LocalDateTime, duration: Int): Appointment =
       throw UnsupportedOperationException("Virtual banks don't support appointments")
 
@@ -123,5 +140,7 @@ trait BankComponent:
 
 object Bank extends LoggerDependency with BankComponent:
   override val logger: Logger = LoggerImpl()
+
   def physicalBank(name: String, address: String, phoneNumber: String): Bank = PhysicalBank(PhysicalBankInformation(name, address, phoneNumber))
+
   def virtualBank(name: String, phoneNumber: String): Bank = VirtualBank(VirtualBankInformation(name, phoneNumber))
