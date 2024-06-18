@@ -20,6 +20,7 @@ trait EmployeeComponent:
   loggerDependency: LoggerDependency =>
   case class EmployeeImpl(person: Person, override val position: EmployeePosition, override val hiringYear: Int) extends Employee:
     export person.*
+    loggerDependency.logger.log(logger.getPrefixFormatter().getCreationPrefix + this)
     override def promote(newPosition: EmployeePosition): Employee = copy(position = newPosition)
 
 /**
@@ -64,7 +65,6 @@ object Employee extends LoggerDependency with EmployeeComponent:
    */
   def apply(name: String, surname: String, birthYear: Int, position: EmployeePosition, hiringYear: Int): Employee =
     val employee = EmployeeImpl(Person(name, surname, birthYear), position, hiringYear)
-    logger.log(logger.getPrefixFormatter().getCreationPrefix + employee)
     employee
 
   extension (employee: Employee)

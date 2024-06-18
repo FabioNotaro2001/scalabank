@@ -60,7 +60,7 @@ trait CustomerComponent:
                                _surname: String,
                                _birthYear: Int) extends YoungCustomer:
     override def baseFee(using calc: BaseFeeCalculator): Double = calc.calculateBaseFee(fidelity, true)
-    
+    loggerDependency.logger.log(logger.getPrefixFormatter().getCreationPrefix + this)
     private val person = Person(_name, _surname, _birthYear)
     export person.*
 
@@ -68,7 +68,7 @@ trait CustomerComponent:
                                _surname: String,
                                _birthYear: Int) extends OldCustomer:
     override def baseFee(using calc: BaseFeeCalculator): Double = calc.calculateBaseFee(fidelity, true)
-    
+    loggerDependency.logger.log(logger.getPrefixFormatter().getCreationPrefix + this)
     private val person = Person(_name, _surname, _birthYear)
     export person.*
 
@@ -76,7 +76,7 @@ trait CustomerComponent:
                               _surname: String,
                               _birthYear: Int) extends BaseCustomer:
     override def baseFee(using calc: BaseFeeCalculator): Double = calc.calculateBaseFee(fidelity, false)
-
+    loggerDependency.logger.log(logger.getPrefixFormatter().getCreationPrefix + this)
     private val person = Person(_name, _surname, _birthYear)
     export person.*
 
@@ -85,13 +85,10 @@ object Customer extends LoggerDependency with CustomerComponent:
   def apply(name: String, surname: String, birthYear: Int): Customer = Person(name, surname, birthYear) match
       case person if person.age < 35 =>
         val customer = YoungCustomerImpl(name, surname, birthYear)
-        logger.log(logger.getPrefixFormatter().getCreationPrefix + customer)
         customer
       case person if person.age > 65 =>
         val customer = OldCustomerImpl(name, surname, birthYear)
-        logger.log(logger.getPrefixFormatter().getCreationPrefix + customer)
         customer
       case _ =>
         val customer = BaseCustomerImpl(name, surname, birthYear)
-        logger.log(logger.getPrefixFormatter().getCreationPrefix + customer)
         customer
