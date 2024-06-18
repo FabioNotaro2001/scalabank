@@ -32,7 +32,7 @@ trait BankAccountComponent:
                                    val _currency: Currency,
                                    val _state: StateBankAccount) extends BankAccount:
 
-        loggerDependency.logger.log(logger.getPrefixFormatter().getCreationPrefix + this)
+        loggerDependency.logger.log(logger.getPrefixFormatter().getPrefixForBankAccountOpening + this)
 
         override def id: Int = _id
 
@@ -51,7 +51,7 @@ trait BankAccountComponent:
                                    val _currency: Currency,
                                    val _state: StateBankAccount) extends BankAccount:
 
-        loggerDependency.logger.log(logger.getPrefixFormatter().getCreationPrefix + this)
+        loggerDependency.logger.log(logger.getPrefixFormatter().getPrefixForBankAccountOpening + this)
 
         override def id: Int = _id
 

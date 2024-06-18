@@ -27,6 +27,14 @@ trait PrefixFormatter:
    */
   def getLoanSimulationPrefix: String
 
+
+  /**
+   * Retrieves the bankAccount opening prefix.
+   *
+   * @return a string representing the bankAccount opening prefix.
+   */
+  def getPrefixForBankAccountOpening: String
+
 /**
  * Companion object for the `PrefixFormatter` trait.
  */
@@ -64,3 +72,10 @@ object PrefixFormatter:
      * @return a string representing the loan simulation prefix.
      */
     override def getLoanSimulationPrefix: String = "[LOAN SIMULATION] "
+
+    /**
+     * Retrieves the bankAccount opening prefix.
+     *
+     * @return a string representing the bankAccount opening prefix.
+     */
+    override def getPrefixForBankAccountOpening: String = "[BANK ACCOUNT OPENING] "
