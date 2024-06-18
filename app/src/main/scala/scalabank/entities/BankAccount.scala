@@ -34,7 +34,7 @@ case class BaseBankAccountImpl(val _id: Int,
     override def computeInterest: Money = ???
 
 object BaseBankAccount:
-    def apply(id: Int, balance: Money, currency: Currency, state: StateBankAccount) = BaseBankAccountImpl(id, balance, currency, state)
+    def apply(id: Int, balance: Money, currency: Currency, state: StateBankAccount): BaseBankAccountImpl = BaseBankAccountImpl(id, balance, currency, state)
 
 case class SuperBankAccountImpl(val _id: Int,
                                val _balance: Money,
@@ -54,4 +54,4 @@ case class SuperBankAccountImpl(val _id: Int,
     override def computeInterest: Money = ???
 
 object SuperBankAccount:
-    def apply(id: Int, balance: Money, currency: Currency, state: StateBankAccount) = SuperBankAccountImpl(id, balance, currency, state)
+    def apply(id: Int, balance: Money, currency: Currency, state: StateBankAccount): SuperBankAccountImpl = SuperBankAccountImpl(id, balance, currency, state)
