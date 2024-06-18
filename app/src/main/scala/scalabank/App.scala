@@ -7,8 +7,6 @@ import scalabank.entities.Person
 
 object App {
   def main(args: Array[String]): Unit = {
-    val p = Person("andrea", "bedei", 2001)
-    p.isAdult
   }
 
   def greeting(): String = "Hello, world!"

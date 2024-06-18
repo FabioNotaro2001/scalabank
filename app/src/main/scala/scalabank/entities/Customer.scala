@@ -19,7 +19,7 @@ trait OldCustomer extends Customer with CustomerBehaviour
 
 trait BaseCustomer extends Customer with CustomerBehaviour
 
-trait CustomerBehaviour: 
+trait CustomerBehaviour:
   private var appointments: List[Appointment] = List()
   def fidelity: Fidelity = Fidelity(0)
   def getAppointments(): Iterable[Appointment] = appointments
@@ -34,7 +34,7 @@ trait BaseFeeCalculator:
   def calculateBaseFee(fidelity: Fidelity, isYoung: Boolean): Double
 
 given defaultBaseFeeCalculator: BaseFeeCalculator with
-   def calculateBaseFee(fidelity: Fidelity, isYoung: Boolean): Double = isYoung match
+  def calculateBaseFee(fidelity: Fidelity, isYoung: Boolean): Double = isYoung match
     case true => 0
     case false => fidelity.currentLevel match
       case level if level == FidelityLevel.Bronze => 1
@@ -44,42 +44,45 @@ given defaultBaseFeeCalculator: BaseFeeCalculator with
 
 trait CustomerComponent:
   loggerDependency: LoggerDependency =>
-  case class YoungCustomerImpl(_name: String,
+  case class YoungCustomerImpl(_cf: String,
+                               _name: String,
                                _surname: String,
                                _birthYear: Int) extends YoungCustomer:
     override def baseFee(using calc: BaseFeeCalculator): Double = calc.calculateBaseFee(fidelity, true)
-    
-    private val person = Person(_name, _surname, _birthYear)
+
+    private val person = Person(_cf, _name, _surname, _birthYear)
     export person.*
 
-  case class OldCustomerImpl(_name: String,
-                               _surname: String,
-                               _birthYear: Int) extends OldCustomer:
+  case class OldCustomerImpl( _cf: String,
+                              _name: String,
+                              _surname: String,
+                              _birthYear: Int) extends OldCustomer:
     override def baseFee(using calc: BaseFeeCalculator): Double = calc.calculateBaseFee(fidelity, true)
-    
-    private val person = Person(_name, _surname, _birthYear)
+
+    private val person = Person(_cf, _name, _surname, _birthYear)
     export person.*
 
-  case class BaseCustomerImpl(_name: String,
+  case class BaseCustomerImpl(_cf: String,
+                              _name: String,
                               _surname: String,
                               _birthYear: Int) extends BaseCustomer:
     override def baseFee(using calc: BaseFeeCalculator): Double = calc.calculateBaseFee(fidelity, false)
 
-    private val person = Person(_name, _surname, _birthYear)
+    private val person = Person(_cf, _name, _surname, _birthYear)
     export person.*
 
 object Customer extends LoggerDependency with CustomerComponent:
   override val logger: Logger = LoggerImpl()
-  def apply(name: String, surname: String, birthYear: Int): Customer = Person(name, surname, birthYear) match
-      case person if person.age < 35 =>
-        val customer = YoungCustomerImpl(name, surname, birthYear)
-        logger.log(logger.getPrefixFormatter().getCreationPrefix + customer)
-        customer
-      case person if person.age > 65 =>
-        val customer = OldCustomerImpl(name, surname, birthYear)
-        logger.log(logger.getPrefixFormatter().getCreationPrefix + customer)
-        customer
-      case _ =>
-        val customer = BaseCustomerImpl(name, surname, birthYear)
-        logger.log(logger.getPrefixFormatter().getCreationPrefix + customer)
-        customer
+  def apply(cf: String, name: String, surname: String, birthYear: Int): Customer = Person(cf, name, surname, birthYear) match
+    case person if person.age < 35 =>
+      val customer = YoungCustomerImpl(cf, name, surname, birthYear)
+      logger.log(logger.getPrefixFormatter().getCreationPrefix + customer)
+      customer
+    case person if person.age > 65 =>
+      val customer = OldCustomerImpl(cf, name, surname, birthYear)
+      logger.log(logger.getPrefixFormatter().getCreationPrefix + customer)
+      customer
+    case _ =>
+      val customer = BaseCustomerImpl(cf, name, surname, birthYear)
+      logger.log(logger.getPrefixFormatter().getCreationPrefix + customer)
+      customer

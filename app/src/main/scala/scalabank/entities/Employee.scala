@@ -62,8 +62,8 @@ object Employee extends LoggerDependency with EmployeeComponent:
    * @param hiringYear the employee hiring year.
    * @return a new Employee instance.
    */
-  def apply(name: String, surname: String, birthYear: Int, position: EmployeePosition, hiringYear: Int): Employee =
-    val employee = EmployeeImpl(Person(name, surname, birthYear), position, hiringYear)
+  def apply(cf: String, name: String, surname: String, birthYear: Int, position: EmployeePosition, hiringYear: Int): Employee =
+    val employee = EmployeeImpl(Person(cf, name, surname, birthYear), position, hiringYear)
     logger.log(logger.getPrefixFormatter().getCreationPrefix + employee)
     employee
 
