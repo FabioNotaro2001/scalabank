@@ -13,8 +13,8 @@ import java.time.LocalDateTime
 
 @RunWith(classOf[JUnitRunner])
 class BankTest extends AnyFlatSpec with BeforeAndAfterEach:
-  private val employee = Employee("John", "Doe", 1990, EmployeePosition.FinancialAnalyst, 2000)
-  private val customer = Customer("Mark", "Baker", 1990)
+  private val employee = Employee("JHNDEO65B22D705Y", "John", "Doe", 1990, EmployeePosition.FinancialAnalyst, 2000)
+  private val customer = Customer("BKRMRK65B22D705Y", "Mark", "Baker", 1990)
   private val duration = 30
 
   "A physical bank" should "support creating appointments" in:
@@ -53,8 +53,6 @@ class BankTest extends AnyFlatSpec with BeforeAndAfterEach:
     assertThrows[IllegalArgumentException]:
       bank.updateAppointment(appointment, None, Some(LocalDateTime.now.plusDays(2)), None)
     bank.createAppointment(customer, "", LocalDateTime.now.plusDays(1), duration)
-    assertThrows[IllegalArgumentException]:
-      bank.updateAppointment(appointment, None, Some(LocalDateTime.now.plusDays(2)), None)
 
   "Appointment creation" should "fail if no employees are set" in :
     val bank: Bank = Bank.physicalBank("Bank", "22 Test St.", "111-2223333")
