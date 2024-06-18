@@ -17,9 +17,18 @@ extension [A](opt: Option[A])
   @targetName("getOrElse")
   def ??(value: A): A = opt.getOrElse(value)
 
+/**
+ * Empty trait for representing information regarding a bank
+ */
 trait BankInformation
 
+/**
+ * Trait for representing a bank, which can have customers, employees and appointments
+ */
 trait Bank:
+  /**
+   * @return the information associayed to the bank
+   */
   def bankInformation: BankInformation
 
   /**

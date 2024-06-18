@@ -5,13 +5,31 @@ import scalabank.logger.{Logger, LoggerDependency, LoggerImpl}
 
 import java.time.LocalDateTime
 
+/**
+ * Represents an appointment a customer can schedule
+ */
 trait Appointment:
-  def customer: Customer
-  def employee: Employee
-  def description: String
-  def date: LocalDateTime
   /**
-   * Returns the duration of the appointment
+   * @return the customer who scheduled the appointment
+   */
+  def customer: Customer
+
+  /**
+   * @return the employee involved in the appointment
+   */
+  def employee: Employee
+
+  /**
+   * @return the description associated to the appointment
+   */
+  def description: String
+
+  /**
+   * @return the date of the appointment
+   */
+  def date: LocalDateTime
+  
+  /**
    * @return the duration of the appointment expressed in minutes
    */
   def duration: Int
