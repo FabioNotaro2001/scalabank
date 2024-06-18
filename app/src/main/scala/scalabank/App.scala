@@ -7,6 +7,7 @@ import scalabank.entities.Person
 
 object App {
   def main(args: Array[String]): Unit = {
+
   }
 
   def greeting(): String = "Hello, world!"
