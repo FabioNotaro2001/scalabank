@@ -4,8 +4,7 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import org.junit.runner.RunWith
 import org.scalatestplus.junit.JUnitRunner
-import scalabank.database.Database
-import scalabank.entities.{Employee, Person}
+import scalabank.entities.Employee
 import scalabank.entities.Employee.EmployeePosition
 
 @RunWith(classOf[JUnitRunner])
