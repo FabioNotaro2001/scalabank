@@ -76,23 +76,23 @@ class CustomerTest extends AnyFunSuite:
 
 
   test("Customer should be able to create a base bank account"):
-    val customer = Customer("John", "Doe", 1980)
+    val customer = Customer("JHNDOE22B705Y", "John", "Doe", 1980)
     customer.createBaseBankAccount(1)
     customer.bankAccount shouldBe defined
     customer.bankAccount.get shouldBe a[BankAccount]
 
   test("Customer should be able to create a super bank account"):
-    val customer = Customer("John", "Doe", 1980)
+    val customer = Customer("JHNDOE22B705Y", "John", "Doe", 1980)
     customer.createSuperBankAccount(2)
     customer.bankAccount shouldBe defined
     customer.bankAccount.get shouldBe a[BankAccount]
 
   test("Customer should initially have no bank account"):
-    val customer = Customer("John", "Doe", 1980)
+    val customer = Customer("JHNDOE22B705Y", "John", "Doe", 1980)
     customer.bankAccount shouldBe empty
 
   test("Customer should be able to access bank account details if exists"):
-    val customer = Customer("John", "Doe", 1980)
+    val customer = Customer("JHNDOE22B705Y", "John", "Doe", 1980)
     customer.createBaseBankAccount(1)
     customer.bankAccount shouldBe defined
     val account = customer.bankAccount.get

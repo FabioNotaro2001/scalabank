@@ -8,8 +8,8 @@ import org.scalatestplus.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
 class TestInterestRate extends AnyFlatSpec:
-  val rateOfTenPercent = InterestRate(0.10)
-  val rateOfFivePercent = InterestRate(0.05)
+  val rateOfTenPercent: InterestRate = InterestRate(0.10)
+  val rateOfFivePercent: InterestRate = InterestRate(0.05)
   val doubleValOfHundred: Double = 100.0
   val tolerance = 0.01
 

@@ -22,7 +22,7 @@ class BankTest extends AnyFlatSpec with BeforeAndAfterEach:
     bank.addCustomer(customer)
     bank.addEmployee(employee)
     val appointment = bank.createAppointment(customer, "", LocalDateTime.now.plusDays(1), duration)
-    customer.getAppointments() should contain (appointment)
+    customer.getAppointments should contain (appointment)
     employee.getAppointments should contain (appointment)
 
   "An appointment" should "be cancellable within due time" in:
@@ -31,7 +31,7 @@ class BankTest extends AnyFlatSpec with BeforeAndAfterEach:
     bank.addEmployee(employee)
     val appointment = bank.createAppointment(customer, "", LocalDateTime.now.plusDays(1), duration)
     bank.cancelAppointment(appointment)
-    customer.getAppointments() shouldNot contain (appointment)
+    customer.getAppointments shouldNot contain (appointment)
     employee.getAppointments shouldNot contain (appointment)
 
   "An appointment" should "be modifiable within due time" in :
@@ -40,9 +40,9 @@ class BankTest extends AnyFlatSpec with BeforeAndAfterEach:
     bank.addEmployee(employee)
     val appointment = bank.createAppointment(customer, "", LocalDateTime.now.plusDays(1), duration)
     val newAppointment = bank.updateAppointment(appointment, None, Some(LocalDateTime.now.plusDays(2)), None)
-    customer.getAppointments() should contain(newAppointment)
+    customer.getAppointments should contain(newAppointment)
     employee.getAppointments should contain(newAppointment)
-    customer.getAppointments() shouldNot contain(appointment)
+    customer.getAppointments shouldNot contain(appointment)
     employee.getAppointments shouldNot contain(appointment)
 
   "Unregistered appointments cannot be updated" should "not be modifiable" in:
