@@ -17,7 +17,7 @@ class PersonTable(val connection: Connection) extends DatabaseOperations[Person,
     stmt.setString(2, entity.name)
     stmt.setString(3, entity.surname)
     stmt.setInt(4, entity.birthYear)
-    stmt.executeUpdate()
+    stmt.executeUpdate
 
   private def createPerson(resultSet: ResultSet) =
     Person(resultSet.getString("cf"), resultSet.getString("name"), resultSet.getString("surname"), resultSet.getInt("birthYear"))
@@ -25,16 +25,16 @@ class PersonTable(val connection: Connection) extends DatabaseOperations[Person,
   def findById(cf: String): Option[Person] =
     val stmt = connection.prepareStatement("SELECT * FROM person WHERE cf = ?")
     stmt.setString(1, cf)
-    val result = stmt.executeQuery()
+    val result = stmt.executeQuery
     for
-      _ <- Option(result) if result.next()
+      _ <- Option(result) if result.next
     yield createPerson(result)
 
   def findAll(): Seq[Person] =
-    val stmt = connection.createStatement()
+    val stmt = connection.createStatement
     val resultSet = stmt.executeQuery("SELECT * FROM person")
     new Iterator[Person]:
-      def hasNext: Boolean = resultSet.next()
+      def hasNext: Boolean = resultSet.next
       def next(): Person = createPerson(resultSet)
     .toSeq
 
@@ -44,15 +44,15 @@ class PersonTable(val connection: Connection) extends DatabaseOperations[Person,
     stmt.setString(2, entity.surname)
     stmt.setInt(3, entity.birthYear)
     stmt.setString(4, entity.cf)
-    stmt.executeUpdate()
+    stmt.executeUpdate
 
   def delete(cf: String): Unit =
     val stmt = connection.prepareStatement("DELETE FROM person WHERE cf = ?")
     stmt.setString(1, cf)
-    stmt.executeUpdate()
+    stmt.executeUpdate
 
   private def populateDB(numberOfEntries: Int): Unit =
-      PopulatePersonTable.createInstancesDB(numberOfEntries).foreach(_ => insert(_))
+      PopulateEntityTable.createInstancesDB(numberOfEntries, (cf, name, surname, birthYear) => Person(cf, name, surname, birthYear)).foreach(_ => insert(_))
 
 
 
