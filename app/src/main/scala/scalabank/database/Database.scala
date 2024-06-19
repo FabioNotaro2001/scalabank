@@ -1,19 +1,26 @@
 package scalabank.database
 
+import scalabank.database.employee.EmployeeTable
 import scalabank.database.person.PersonTable
+
 import java.sql.{Connection, DriverManager}
 
 trait Database:
   def personTable: PersonTable
 
+  def employeeTable: EmployeeTable
+
 object Database:
-  def apply(url : String): Database = TablesImpl(url)
+  def apply(url: String): Database = TablesImpl(url)
 
   private case class TablesImpl(url: String) extends Database:
-    val connection: Connection = DriverManager.getConnection(url)
+    private val connection: Connection = DriverManager.getConnection(url)
     private val personTab: PersonTable = PersonTable(connection)
+    private val employeeTab: EmployeeTable = EmployeeTable(connection)
 
     override def personTable: PersonTable = personTab
+
+    override def employeeTable: EmployeeTable = employeeTab
 
 
 
