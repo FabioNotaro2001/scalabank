@@ -10,7 +10,7 @@ import scalabank.entities.Person
 
 
 @RunWith(classOf[JUnitRunner])
-class DataBaseTest extends AnyFlatSpec:
+class PersonTest extends AnyFlatSpec:
   //val db = Database("jdbc:h2:./database/test")
   val db: Database = Database("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1")
   val person: Person = Person("ABCDEF12G34H567I", "Mario", "Rossi", 1990)
