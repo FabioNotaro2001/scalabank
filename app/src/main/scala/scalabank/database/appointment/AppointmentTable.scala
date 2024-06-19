@@ -4,7 +4,6 @@ import scalabank.database.DatabaseOperations
 import scalabank.appointment.Appointment
 import scalabank.database.customer.CustomerTable
 import scalabank.database.employee.EmployeeTable
-import scalabank.entities.{Customer, Employee}
 
 import java.sql.{Connection, PreparedStatement, ResultSet, Statement}
 import java.time.LocalDateTime
@@ -31,7 +30,7 @@ class AppointmentTable(val connection: Connection, customerTable: CustomerTable,
   private def createAppointment(resultSet: ResultSet): Appointment =
     val customer = customerTable.findById(resultSet.getString("customerCf")).get
     val employee = employeeTable.findById(resultSet.getString("employeeCf")).get
-    null
+    Appointment(customer, employee, resultSet.getString("description"), LocalDateTime.parse(resultSet.getString("date"), dateFormat), resultSet.getInt("duration"))
 
   def findById(id: Int): Option[Appointment] =
     val query = "SELECT * FROM appointment WHERE id = ?"
@@ -52,14 +51,7 @@ class AppointmentTable(val connection: Connection, customerTable: CustomerTable,
     .toSeq
 
   def update(appointment: Appointment): Unit =
-    val query = "UPDATE appointment SET customerCf = ?, employeeCf = ?, description = ?, date = ?, duration = ?"
-    val stmt = connection.prepareStatement(query)
-    stmt.setString(1, appointment.customer.cf)
-    stmt.setString(2, appointment.employee.cf)
-    stmt.setString(3, appointment.description)
-    stmt.setString(4, appointment.date.format(dateFormat))
-    stmt.setInt(5, appointment.duration)
-    stmt.executeUpdate
+    throw NotImplementedError()
 
   def delete(id: Int): Unit =
     val query = "DELETE FROM appointment WHERE id = ?"
