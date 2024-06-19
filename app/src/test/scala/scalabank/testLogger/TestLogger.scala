@@ -3,27 +3,26 @@ package scalabank.testLogger
 import org.scalatest.matchers.should.Matchers.*
 import scalabank.logger.*
 import org.junit.runner.RunWith
-import org.scalatest.BeforeAndAfterEach
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatestplus.junit.JUnitRunner
 import scalabank.entities.Employee
 import scalabank.entities.Employee.EmployeePosition
 
 @RunWith(classOf[JUnitRunner])
-class TestLogger extends AnyFlatSpec with BeforeAndAfterEach:
+class TestLogger extends AnyFlatSpec:
   val logger: Logger = LoggerImpl()
 
   "The logger" should "be enabled by default" in:
-    assert(logger.isEnabledNow)
+    logger.isEnabledNow shouldBe true
 
   "The method disable" should "disable logger" in:
     logger.disable()
-    assert(!logger.isEnabledNow)
+    logger.isEnabledNow shouldBe false
 
   "The method enable" should "enable the logger" in:
     logger.disable()
     logger.enable()
-    assert(logger.isEnabledNow)
+    logger.isEnabledNow shouldBe true
 
   "The logger" should "print correctly to console" in:
     logger.log("This string should be printed")

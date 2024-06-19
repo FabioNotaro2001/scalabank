@@ -5,11 +5,12 @@ import org.junit.runner.RunWith
 import org.scalatestplus.junit.JUnitRunner
 import org.scalatest.matchers.should.Matchers.*
 import scalabank.appointment.Appointment
-import scalabank.entities.BaseFeeCalculator
+import scalabank.currency.Currency
 import scalabank.entities.defaultBaseFeeCalculator
 import scalabank.entities.*
-import java.time.LocalDateTime
 
+import java.time.LocalDateTime
+import scalabank.currency.MoneyADT.toMoney
 
 @RunWith(classOf[JUnitRunner])
 class CustomerTest extends AnyFunSuite:
@@ -55,14 +56,14 @@ class CustomerTest extends AnyFunSuite:
     val customer = Customer("JHNDOE22B705Y", "John", "Doe", 1980)
     val appointment = Appointment(customer, employee, "Meeting", LocalDateTime.now().plusDays(1), duration)
     customer.addAppointment(appointment)
-    customer.getAppointments() should contain (appointment)
+    customer.getAppointments should contain (appointment)
 
   test("Customer should be able to remove appointments"):
     val customer = Customer("JHNDOE22B705Y", "John", "Doe", 1980)
     val appointment = Appointment(customer, employee, "Meeting", LocalDateTime.now().plusDays(1), duration)
     customer.addAppointment(appointment)
     customer.removeAppointment(appointment)
-    customer.getAppointments() should not contain (appointment)
+    customer.getAppointments should not contain (appointment)
 
   test("Customer should be able to update appointments"):
     val customer = Customer("JHNDOE22B705Y", "John", "Doe", 1980)
@@ -70,5 +71,32 @@ class CustomerTest extends AnyFunSuite:
     val newAppointment = Appointment(customer, employee, "Lunch", LocalDateTime.now().plusDays(2), duration)
     customer.addAppointment(oldAppointment)
     customer.updateAppointment(oldAppointment)(newAppointment)
-    customer.getAppointments() should contain (newAppointment)
-    customer.getAppointments() should not contain (oldAppointment)
+    customer.getAppointments should contain (newAppointment)
+    customer.getAppointments should not contain (oldAppointment)
+
+
+  test("Customer should be able to create a base bank account"):
+    val customer = Customer("John", "Doe", 1980)
+    customer.createBaseBankAccount(1)
+    customer.bankAccount shouldBe defined
+    customer.bankAccount.get shouldBe a[BankAccount]
+
+  test("Customer should be able to create a super bank account"):
+    val customer = Customer("John", "Doe", 1980)
+    customer.createSuperBankAccount(2)
+    customer.bankAccount shouldBe defined
+    customer.bankAccount.get shouldBe a[BankAccount]
+
+  test("Customer should initially have no bank account"):
+    val customer = Customer("John", "Doe", 1980)
+    customer.bankAccount shouldBe empty
+
+  test("Customer should be able to access bank account details if exists"):
+    val customer = Customer("John", "Doe", 1980)
+    customer.createBaseBankAccount(1)
+    customer.bankAccount shouldBe defined
+    val account = customer.bankAccount.get
+    account.id shouldBe 1
+    account.balance shouldBe 100.toMoney
+    account.currency shouldBe Currency("EUR", "€")
+    account.state shouldBe StateBankAccount.Active
