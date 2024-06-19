@@ -1,17 +1,24 @@
 package scalabank.entities
 
-import scalabank.entities.Employee.logger
 import scalabank.entities.Person
 import scalabank.logger.{Logger, LoggerDependency, LoggerImpl}
 import scalabank.appointment.Appointment
+import scalabank.currency.MoneyADT
+import scalabank.currency.MoneyADT.toMoney
+import scalabank.currency.Currency
+import scalabank.entities.StateBankAccount.Active
 
 trait Customer extends Person:
   def fidelity: Fidelity
   def baseFee(using BaseFeeCalculator): Double
-  def getAppointments(): Iterable[Appointment]
+  def getAppointments: Iterable[Appointment]
   def addAppointment(appointment: Appointment): Unit
   def removeAppointment(appointment: Appointment): Unit
   def updateAppointment(appointment: Appointment)(newAppointment: Appointment): Unit
+  def createBaseBankAccount(_id : Int): Unit
+  def createSuperBankAccount(_id : Int): Unit
+  def bankAccount: Option[BankAccount]
+
 
 trait YoungCustomer extends Customer with CustomerBehaviour
 
@@ -21,14 +28,19 @@ trait BaseCustomer extends Customer with CustomerBehaviour
 
 trait CustomerBehaviour: 
   private var appointments: List[Appointment] = List()
+  private var _bankAccount: Option[BankAccount] = None
   def fidelity: Fidelity = Fidelity(0)
-  def getAppointments(): Iterable[Appointment] = appointments
+  def getAppointments: Iterable[Appointment] = appointments
   def addAppointment(appointment: Appointment): Unit = appointments = appointments :+ appointment
   def removeAppointment(appointment: Appointment): Unit = appointments = appointments.filterNot(_ == appointment)
   def updateAppointment(appointment: Appointment)(newAppointment: Appointment): Unit =
     appointments = appointments.map:
       case app if app == appointment => newAppointment
       case app => app
+  def createBaseBankAccount(_id : Int): Unit = _bankAccount = Some(BaseBankAccount(id = _id, balance = 100.toMoney, currency = Currency("EUR", "€"), state = Active));
+  def createSuperBankAccount(_id : Int): Unit = _bankAccount = Some(SuperBankAccount(id = _id, balance = 100.toMoney, currency = Currency("EUR", "€"), state = Active));
+  def bankAccount: Option[BankAccount] = _bankAccount
+
 
 trait BaseFeeCalculator:
   def calculateBaseFee(fidelity: Fidelity, isYoung: Boolean): Double
@@ -48,7 +60,7 @@ trait CustomerComponent:
                                _surname: String,
                                _birthYear: Int) extends YoungCustomer:
     override def baseFee(using calc: BaseFeeCalculator): Double = calc.calculateBaseFee(fidelity, true)
-    
+    loggerDependency.logger.log(logger.getPrefixFormatter().getCreationPrefix + this)
     private val person = Person(_name, _surname, _birthYear)
     export person.*
 
@@ -56,7 +68,7 @@ trait CustomerComponent:
                                _surname: String,
                                _birthYear: Int) extends OldCustomer:
     override def baseFee(using calc: BaseFeeCalculator): Double = calc.calculateBaseFee(fidelity, true)
-    
+    loggerDependency.logger.log(logger.getPrefixFormatter().getCreationPrefix + this)
     private val person = Person(_name, _surname, _birthYear)
     export person.*
 
@@ -64,7 +76,7 @@ trait CustomerComponent:
                               _surname: String,
                               _birthYear: Int) extends BaseCustomer:
     override def baseFee(using calc: BaseFeeCalculator): Double = calc.calculateBaseFee(fidelity, false)
-
+    loggerDependency.logger.log(logger.getPrefixFormatter().getCreationPrefix + this)
     private val person = Person(_name, _surname, _birthYear)
     export person.*
 
@@ -73,13 +85,10 @@ object Customer extends LoggerDependency with CustomerComponent:
   def apply(name: String, surname: String, birthYear: Int): Customer = Person(name, surname, birthYear) match
       case person if person.age < 35 =>
         val customer = YoungCustomerImpl(name, surname, birthYear)
-        logger.log(logger.getPrefixFormatter().getCreationPrefix + customer)
         customer
       case person if person.age > 65 =>
         val customer = OldCustomerImpl(name, surname, birthYear)
-        logger.log(logger.getPrefixFormatter().getCreationPrefix + customer)
         customer
       case _ =>
         val customer = BaseCustomerImpl(name, surname, birthYear)
-        logger.log(logger.getPrefixFormatter().getCreationPrefix + customer)
         customer
