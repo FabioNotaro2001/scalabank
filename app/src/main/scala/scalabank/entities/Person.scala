@@ -5,6 +5,12 @@ package scalabank.entities
  */
 trait Person:
   /**
+   * The person fiscal code.
+   *
+   * @return The person fiscal code.
+   */
+  def cf: String
+  /**
    * The person name.
    *
    * @return The name of the person.
@@ -52,11 +58,12 @@ object Person:
    * @param birthYear The person birth year.
    * @return A new Person instance.
    */
-  def apply(name: String, surname: String, birthYear: Int): Person = PersonImpl(name, surname, birthYear)
+  def apply(cf: String, name: String, surname: String, birthYear: Int): Person = PersonImpl(cf, name, surname, birthYear)
 
-  private case class PersonImpl( override val name: String,
-                            override val surname: String,
-                            override val birthYear: Int) extends Person:
+  private case class PersonImpl(override val cf: String,
+                                override val name: String,
+                                override val surname: String,
+                                override val birthYear: Int) extends Person:
 
     import java.time.LocalDate
     private val currentYear: Int = LocalDate.now.getYear

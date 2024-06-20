@@ -33,4 +33,4 @@ class TestLogger extends AnyFlatSpec:
     logger.enable()
 
   "A client entity" should "be logged with its creation" in:
-    val employee = Employee("Mario", "Rossi", 1960, EmployeePosition.FinancialAnalyst, 1500)
+    val employee = Employee("RSSMRA26D705Y", "Mario", "Rossi", 1960, EmployeePosition.FinancialAnalyst, 1500)

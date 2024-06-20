@@ -6,7 +6,7 @@ import org.junit.runner.RunWith
 import org.scalatestplus.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
-class FidelityImplTest extends AnyFunSuite:
+class FidelityTest extends AnyFunSuite:
 
   test("FidelityImpl should be correctly initialized with points and pointsUsed") :
     val fidelity = Fidelity.FidelityImpl(500)

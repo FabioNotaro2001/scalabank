@@ -20,7 +20,7 @@ repositories {
 
 dependencies {
     implementation("org.scala-lang:scala3-compiler_3:3.4.0")
-
+    implementation("com.h2database:h2:2.1.214")
     // This dependency is used by the application.
     implementation("com.google.guava:guava:32.1.1-jre")
     implementation("com.softwaremill.sttp.client3:core_2.13:3.8.3")

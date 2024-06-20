@@ -10,8 +10,8 @@ import java.time.LocalDateTime
 
 @RunWith(classOf[JUnitRunner])
 class AppointmentTest extends AnyFunSuite:
-  private val customer = Customer("John", "Doe", 1990)
-  val employee = Employee("Alice", "Johnson", 1992, Employee.EmployeePosition.Cashier, 2015)
+  private val customer = Customer("JHNDOE22B705Y", "John", "Doe", 1990)
+  val employee: Employee = Employee("JHNDOE22B705Y", "Alice", "Johnson", 1992, Employee.EmployeePosition.Cashier, 2015)
   private val duration = 30
 
   test("Appointments should have valid parameters"):

@@ -6,16 +6,16 @@ import scalabank.entities.*
 import org.junit.runner.RunWith
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatestplus.junit.JUnitRunner
-import scalabank.currency.MoneyADT.toMoney
+import scalabank.currency.MoneyADT.{Money, toMoney}
 
 @RunWith(classOf[JUnitRunner])
 class TestLoanCalculator extends AnyFlatSpec:
-  val loanCalculator = LoanCalculator()
-  val customer = Customer("Gianluca", "Aguzzi", 1980)
-  val requiredAmount = 100000.toMoney
+  val loanCalculator: LoanCalculator = LoanCalculator()
+  val customer: Customer = Customer("GZZGLC65B22D705Y", "Gianluca", "Aguzzi", 1980)
+  val requiredAmount: Money = 100000.toMoney
   val numberOfPayments = 120
-  val loanCalculated = loanCalculator.calculateLoan(customer, requiredAmount, numberOfPayments)
-  val interestManager = InterestManager()
+  val loanCalculated: Loan = loanCalculator.calculateLoan(customer, requiredAmount, numberOfPayments)
+  val interestManager: InterestManager = InterestManager()
 
   "The LoanCalculator" should "check if numberOfPayments is greater than 0" in:
     a [AssertionError] should be thrownBy loanCalculator.calculateLoan(customer, requiredAmount, 0)

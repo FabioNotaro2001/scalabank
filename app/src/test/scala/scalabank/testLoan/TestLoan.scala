@@ -10,8 +10,8 @@ import scalabank.currency.MoneyADT.*
 
 @RunWith(classOf[JUnitRunner])
 class TestLoan extends AnyFlatSpec:
-  val customer = Customer("Mirko", "Viroli", 1980)
-  val loan = Loan(customer, 12000.toMoney, 12, InterestRate(0.05))
+  val customer: Customer = Customer("VRLMRK65B22D705W", "Mirko", "Viroli", 1980)
+  val loan: Loan = Loan(customer, 12000.toMoney, 12, InterestRate(0.05))
 
   "The loan" should "have the correct client" in:
     loan.customer shouldEqual customer
