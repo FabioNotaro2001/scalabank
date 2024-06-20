@@ -57,7 +57,7 @@ class CustomerTable(val connection: Connection) extends DatabaseOperations[Custo
     stmt.setString(1, cf)
     stmt.executeUpdate
 
-  private def populateDB(numberOfEntries: Int): Unit =
+  def populateDB(numberOfEntries: Int): Unit =
     PopulateEntityTable.createInstancesDB[Customer](numberOfEntries, 
       (cf, name, surname, birthYear) => Customer(cf, name, surname, birthYear)
     ).foreach(insert)

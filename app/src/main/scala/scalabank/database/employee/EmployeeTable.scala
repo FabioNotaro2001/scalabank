@@ -67,7 +67,7 @@ class EmployeeTable(val connection: Connection) extends DatabaseOperations[Emplo
     stmt.setString(1, cf)
     stmt.executeUpdate
 
-  private def populateDB(numberOfEntries: Int): Unit =
+  def populateDB(numberOfEntries: Int): Unit =
     PopulateEntityTable.createInstancesDB[Employee](numberOfEntries,
       (cf, name, surname, birthYear) => Employee(cf, name, surname, birthYear, EmployeePosition.Cashier, 2020)
     ).foreach(insert)
