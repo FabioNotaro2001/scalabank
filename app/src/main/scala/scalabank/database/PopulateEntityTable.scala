@@ -1,4 +1,4 @@
-package scalabank.database.person
+package scalabank.database
 
 import scalabank.database.FiscalCode
 import scalabank.entities.Person
