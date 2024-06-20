@@ -3,61 +3,92 @@ package scalabank.database
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import org.junit.runner.RunWith
-import org.scalatest.matchers.should.Matchers.a
+import org.scalatest.BeforeAndAfterAll
 import org.scalatestplus.junit.JUnitRunner
-import scalabank.entities.{Customer, Employee}
 import scalabank.appointment.Appointment
-import scalabank.entities.Employee.EmployeePosition
+import scalabank.database.appointment.AppointmentTable
+import scalabank.database.customer.CustomerTable
+import scalabank.database.employee.EmployeeTable
 
+import java.sql.{Connection, DriverManager, ResultSet}
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 @RunWith(classOf[JUnitRunner])
-class AppointmentTest extends AnyFlatSpec with Matchers:
-  val db: Database = Database("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1")
-  val customer: Customer = Customer("RSSMRA40L67T890M", "Mario", "Rossi", 1990)
-  db.customerTable.insert(customer)
-  val employee: Employee = Employee("VRDLGU5L67T830MY", "Luigi", "Verdi", 1985, EmployeePosition.Cashier, 2010)
-  db.employeeTable.insert(employee)
+class AppointmentTest extends AnyFlatSpec with Matchers with BeforeAndAfterAll:
+  private val connection: Connection = DriverManager.getConnection("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1")
+  private val customerTable = new CustomerTable(connection)
+  private val employeeTable = new EmployeeTable(connection)
+  private val appointmentTable = new AppointmentTable(connection, customerTable, employeeTable)
+  private val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
 
-  val dateFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-  val appointmentDate: LocalDateTime = LocalDateTime.parse(LocalDateTime.now.plusDays(1).format(dateFormat), dateFormat)
-  val appointment: Appointment = Appointment(customer, employee, "Consultation", appointmentDate, 60)
+  override def beforeAll(): Unit =
+    customerTable.populateDB(1)
+    employeeTable.populateDB(1)
 
-  "AppointmentTable" should "insert and find an appointment" in:
-    db.appointmentTable.insert(appointment)
-    val retrievedAppointment = db.appointmentTable.findById(1)
-    retrievedAppointment.get.date shouldEqual appointmentDate
+  private def convertDateInFuture(days: Int): LocalDateTime =
+    val date = LocalDateTime.now.plusDays(days)
+    LocalDateTime.parse(date.format(dateFormat), dateFormat)
 
-  it should "update an appointment" in:
-    val updatedAppointment = Appointment(customer, employee, "Updated Consultation", appointmentDate, 120)
-    a [ NotImplementedError ] should be thrownBy db.appointmentTable.update(updatedAppointment)
+  "AppointmentTable" should "insert and retrieve an appointment correctly" in:
+    val customers = customerTable.findAll()
+    val employees = employeeTable.findAll()
+    val customer = customers.head
+    val employee = employees.head
+    val appointment = Appointment(customer, employee, "Test Appointment", convertDateInFuture(1), 30)
+    appointmentTable.insert(appointment)
+    val id = (customer.cf, employee.cf, appointment.date)
+    val retrievedAppointment = appointmentTable.findById(id)
+    retrievedAppointment shouldBe Some(appointment)
 
-  it should "delete an appointment" in:
-    db.appointmentTable.delete(1)
-    val retrievedAppointment = db.appointmentTable.findById(1)
-    retrievedAppointment should be(empty)
+  it should "update an appointment correctly" in:
+    val customers = customerTable.findAll()
+    val employees = employeeTable.findAll()
+    val customer = customers.head
+    val employee = employees.head
+    val appointment = Appointment(customer, employee, "Initial Description", convertDateInFuture(2), 30)
+    appointmentTable.insert(appointment)
+    val id = (customer.cf, employee.cf, appointment.date)
+    val updatedAppointment = Appointment(appointment.customer, appointment.employee, "Update Description", appointment.date, 45)
+    appointmentTable.update(updatedAppointment)
+    val retrievedAppointment = appointmentTable.findById(id)
+    retrievedAppointment shouldBe Some(updatedAppointment)
 
-  it should "find all appointments" in:
-    val appointment1 = Appointment(customer, employee, "Consultation 1", appointmentDate, 30)
-    val appointment2 = Appointment(customer, employee, "Consultation 2", appointmentDate, 45)
-    db.appointmentTable.insert(appointment1)
-    db.appointmentTable.insert(appointment2)
-    val allAppointments = db.appointmentTable.findAll()
-    allAppointments should contain allOf (appointment1, appointment2)
+  it should "delete an appointment correctly" in:
+    val customers = customerTable.findAll()
+    val employees = employeeTable.findAll()
+    val customer = customers.head
+    val employee = employees.head
+    val appointment = Appointment(customer, employee, "To be deleted", convertDateInFuture(3), 30)
+    appointmentTable.insert(appointment)
+    val id = (customer.cf, employee.cf, appointment.date)
+    appointmentTable.delete(id)
+    val retrievedAppointment = appointmentTable.findById(id)
+    retrievedAppointment shouldBe None
 
-  it should "find appointments by employee CF" in:
-    val employee2 = Employee("EMP65420A12B345C", "Anna", "Neri", 1987, EmployeePosition.Cashier, 2012)
-    db.employeeTable.insert(employee2)
-    val appointment3 = Appointment(customer, employee2, "Consultation 3", appointmentDate, 30)
-    db.appointmentTable.insert(appointment3)
-    val appointmentsByEmployee = db.appointmentTable.findByEmployeeCf("EMP65420A12B345C")
-    appointmentsByEmployee should contain(appointment3)
+  it should "find appointments by employeeCf" in:
+    val customers = customerTable.findAll()
+    val employees = employeeTable.findAll()
+    val customer = customers.head
+    val employee = employees.head
+    val appointment1 = Appointment(customer, employee, "Appointment 1", convertDateInFuture(4), 30)
+    val appointment2 = Appointment(customer, employee, "Appointment 2", convertDateInFuture(5), 30)
+    appointmentTable.insert(appointment1)
+    appointmentTable.insert(appointment2)
+    val retrievedAppointments = appointmentTable.findByEmployeeCf(employee.cf)
+    retrievedAppointments should contain allOf (appointment1, appointment2)
 
-  it should "find appointments by customer CF" in:
-    val customer2 = Customer("CST67824A12B345C", "Laura", "Bianchi", 1992)
-    db.customerTable.insert(customer2)
-    val appointment4 = Appointment(customer2, employee, "Consultation 4", appointmentDate, 45)
-    db.appointmentTable.insert(appointment4)
-    val appointmentsByCustomer = db.appointmentTable.findByCustomerCf("CST67824A12B345C")
-    appointmentsByCustomer should contain(appointment4)
+  it should "find appointments by customerCf" in:
+    val customers = customerTable.findAll()
+    val employees = employeeTable.findAll()
+    val customer = customers.head
+    val employee = employees.head
+    val appointment1 = Appointment(customer, employee, "Appointment 1", convertDateInFuture(6), 30)
+    val appointment2 = Appointment(customer, employee, "Appointment 2", convertDateInFuture(7), 30)
+    appointmentTable.insert(appointment1)
+    appointmentTable.insert(appointment2)
+    val retrievedAppointments = appointmentTable.findByCustomerCf(customer.cf)
+    retrievedAppointments should contain allOf (appointment1, appointment2)
+
+
+

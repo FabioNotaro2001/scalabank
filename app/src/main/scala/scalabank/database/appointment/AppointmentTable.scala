@@ -5,21 +5,22 @@ import scalabank.appointment.Appointment
 import scalabank.database.customer.CustomerTable
 import scalabank.database.employee.EmployeeTable
 
-import java.sql.{Connection, PreparedStatement, ResultSet, Statement}
+import java.sql.{Connection, PreparedStatement, ResultSet}
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-class AppointmentTable(val connection: Connection, customerTable: CustomerTable, employeeTable: EmployeeTable) extends DatabaseOperations[Appointment, Int]:
+class AppointmentTable(val connection: Connection, customerTable: CustomerTable, employeeTable: EmployeeTable) extends DatabaseOperations[Appointment, (String, String, LocalDateTime)]:
   private val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 
-  if !tableExists("appointment", connection) then
-    val query = "CREATE TABLE IF NOT EXISTS appointment (id INT AUTO_INCREMENT PRIMARY KEY, customerCf VARCHAR(16), employeeCf VARCHAR(16), description TEXT, date DATETIME, duration INT)"
+  if (!tableExists("appointment", connection))
+    val query = "CREATE TABLE IF NOT EXISTS appointment ( customerCf VARCHAR(16), employeeCf VARCHAR(16)," +
+      " description TEXT, date DATETIME, duration INT, PRIMARY KEY (customerCf, employeeCf, date))"
     connection.createStatement.execute(query)
-  // populateDB(1) // Uncomment if you want to populate initial data
+    populateDB()
 
   def insert(entity: Appointment): Unit =
     val query = "INSERT INTO appointment (customerCf, employeeCf, description, date, duration) VALUES (?, ?, ?, ?, ?)"
-    val stmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+    val stmt = connection.prepareStatement(query)
     stmt.setString(1, entity.customer.cf)
     stmt.setString(2, entity.employee.cf)
     stmt.setString(3, entity.description)
@@ -30,16 +31,22 @@ class AppointmentTable(val connection: Connection, customerTable: CustomerTable,
   private def createAppointment(resultSet: ResultSet): Appointment =
     val customer = customerTable.findById(resultSet.getString("customerCf")).get
     val employee = employeeTable.findById(resultSet.getString("employeeCf")).get
-    Appointment(customer, employee, resultSet.getString("description"), LocalDateTime.parse(resultSet.getString("date"), dateFormat), resultSet.getInt("duration"))
+    Appointment(customer,
+                employee,
+                resultSet.getString("description"),
+                LocalDateTime.parse(resultSet.getString("date"), dateFormat),
+                resultSet.getInt("duration")
+    )
 
-  def findById(id: Int): Option[Appointment] =
-    val query = "SELECT * FROM appointment WHERE id = ?"
+  def findById(id: (String, String, LocalDateTime)): Option[Appointment] =
+    val (customerCf, employeeCf, date) = id
+    val query = "SELECT * FROM appointment WHERE customerCf = ? AND employeeCf = ? AND date = ?"
     val stmt = connection.prepareStatement(query)
-    stmt.setInt(1, id)
-    val result = stmt.executeQuery()
-    for
-      _ <- Option(result) if result.next
-    yield createAppointment(result)
+    stmt.setString(1, customerCf)
+    stmt.setString(2, employeeCf)
+    stmt.setString(3, date.format(dateFormat))
+    val result = stmt.executeQuery
+    if result.next then Some(createAppointment(result)) else None
 
   def findAll(): Seq[Appointment] =
     val stmt = connection.createStatement
@@ -51,12 +58,22 @@ class AppointmentTable(val connection: Connection, customerTable: CustomerTable,
     .toSeq
 
   def update(appointment: Appointment): Unit =
-    throw NotImplementedError()
-
-  def delete(id: Int): Unit =
-    val query = "DELETE FROM appointment WHERE id = ?"
+    val query = "UPDATE appointment SET description = ?, duration = ? WHERE customerCf = ? AND employeeCf = ? AND date = ?"
     val stmt = connection.prepareStatement(query)
-    stmt.setInt(1, id)
+    stmt.setString(1, appointment.description)
+    stmt.setInt(2, appointment.duration)
+    stmt.setString(3, appointment.customer.cf)
+    stmt.setString(4, appointment.employee.cf)
+    stmt.setString(5, appointment.date.format(dateFormat))
+    stmt.executeUpdate
+
+  def delete(id: (String, String, LocalDateTime)): Unit =
+    val (customerCf, employeeCf, date) = id
+    val query = "DELETE FROM appointment WHERE customerCf = ? AND employeeCf = ? AND date = ?"
+    val stmt = connection.prepareStatement(query)
+    stmt.setString(1, customerCf)
+    stmt.setString(2, employeeCf)
+    stmt.setString(3, date.format(dateFormat))
     stmt.executeUpdate
 
   def findByEmployeeCf(employeeCf: String): Seq[Appointment] =
@@ -74,3 +91,17 @@ class AppointmentTable(val connection: Connection, customerTable: CustomerTable,
       def hasNext: Boolean = resultSet.next
       def next(): Appointment = createAppointment(resultSet)
     .toSeq
+
+  private def populateDB(): Unit =
+    val customers = customerTable.findAll()
+    val employees = employeeTable.findAll()
+    val appointments = for
+      customer <- customers
+      employee <- employees
+      i <- 1 to 5
+    yield
+      val description = s"Appointment ${i} between ${customer.cf} and ${employee.cf}"
+      val date = LocalDateTime.now.plusDays(i)
+      val duration = 30
+      Appointment(customer, employee, description, date, duration)
+    appointments.foreach(insert)
