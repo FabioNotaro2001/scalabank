@@ -7,16 +7,16 @@ Nella prima parte mi sono occupato dello staff della banca in particolare, una v
 ## Struttura generale
 
 In particolare si è deciso di utilizzare il pattern factory per le se seguenti classi: `Person`, `Employee`, `Manager`, `Project`.
-Riportiamo lo schema UML per la factory della persona.
+Riporto lo schema UML per la factory della persona.
 
 ![UML Persona](img/person.png)
 
 Invece è stato utilizzato un template method per quanto concerne la gestione delle diverse tipologie di dipendenti. In particolare è stata creata prima l'interfaccia `StaffPosition` la quale è un mixin, il quale contiene implementati i metodi comuni ed estende Person. A questo punto le classi `Employee` e `Manager` estendono `StaffPosition`.
-Riportiamo lo schema UML per il template method della gestione dei dipendenti. Si noti che (T) è un trait, (C) è una classe, (T, C) vuol dire che è stato creato il trait e la classe relativa utilizzando il pattern factory come descritto sopra per la classe `Persona`.
+Riporto lo schema UML per il template method della gestione dei dipendenti. Si noti che (T) è un trait, (C) è una classe, (T, C) vuol dire che è stato creato il trait e la classe relativa utilizzando il pattern factory come descritto sopra per la classe `Persona`.
 
 ![UML Persona](img/template.png)
 
-Ora riportiamo una sintetica descrizione delle classi:
+Ora riporto una sintetica descrizione delle classi:
 
 ### Person
 
@@ -37,7 +37,7 @@ Questa classe eredita da `Person`.
 #### Meccanismi utilizzati:
 
 - **Generics:** Utilizzo di generics al fine di poter generalizzare la posizione lavorativa di uno `StaffMember`, la quale si differenzia a seconda della tipologia di impiegato.
-- **Bounded type parameter** Utilizzo di bounded type parameter `[T <: StaffPosition]`. Più specificamente un upper bound, in cui T è un parametro di tipo che può essere sostituito con qualsiasi tipo che sia un sottotipo di StaffPosition. In questo modo limitiamo i tipi di position.
+- **Bounded type parameter** Utilizzo di bounded type parameter `[T <: StaffPosition]`. Più specificamente un upper bound, in cui T è un parametro di tipo che può essere sostituito con qualsiasi tipo che sia un sottotipo di StaffPosition. In questo modo limito i tipi di position.
 - **Mixin** Il trait avendo sia metodi implementati che non è un mixin.
 - **Currying** Per il passaggio di valori in `updateAppointment`.
 - **List** Per la lista è stato deciso di usare una lista immutabile, usando una var.
@@ -83,7 +83,7 @@ Il trait `StaffPosition` rappresenta una posizione occupata da un membro dello s
 
 ## Parte 2
 
-In questa parte, descriveremo l'implementazione dei file all'interno del package `scalabank.currency`. Abbiamo utilizzato i principi KISS (Keep It Simple, Stupid) e DRY (Don't Repeat Yourself) per mantenere il codice semplice, leggibile e riutilizzabile. Inoltre, sono stati applicati vari pattern di progettazione per migliorare la struttura e la manutenibilità del codice.
+In questa parte, descriveremo l'implementazione dei file all'interno del package `scalabank.currency`. Ho utilizzato i principi KISS (Keep It Simple, Stupid) e DRY (Don't Repeat Yourself) per mantenere il codice semplice, leggibile e riutilizzabile. Inoltre, sono stati applicati vari pattern di progettazione per migliorare la struttura e la manutenibilità del codice.
 
 ![UML Persona](img/money.png)
 
@@ -98,8 +98,7 @@ Il trait `Currency` rappresenta una valuta con un codice e un simbolo.
 
 ### CurrencyConverter
 
-Il trait `CurrencyConverter` rappresenta un convertitore di valute con metodi per la conversione e l'applicazione di commissioni. 
-Per la realizzazione abbiamo utilizzato un API esterna interrogando il server di YAHOO, al fine di avere ogni volta i dati aggiornati delle valute. 
+Il trait `CurrencyConverter` rappresenta un convertitore di valute con metodi per la conversione e l'applicazione di commissioni. Per la realizzazione, ho utilizzato un'API esterna interrogando il server di YAHOO, al fine di avere ogni volta i dati aggiornati delle valute.
 
 #### Meccanismi utilizzati:
 
@@ -108,20 +107,17 @@ Per la realizzazione abbiamo utilizzato un API esterna interrogando il server di
 
 ### ExchangeRateProvider
 
-Il trait `ExchangeRateProvider` rappresenta un provider di tassi di cambio. Ho dovuto appoggiarmi a una classe diversa perché la risposta del server di YAHOO richiede la scomposizione della risposta attraverso una libreria apposita per formati JSON. 
-Per questo motivo è nata questa classe, in modo da rispettare i principi DRY e SRP. Essa scompone la richiesta e restituisce il valore richiesto.
-
+Il trait `ExchangeRateProvider` rappresenta un provider di tassi di cambio. Ho dovuto appoggiarmi a una classe diversa perché la risposta del server di YAHOO richiede la scomposizione della risposta attraverso una libreria apposita per formati JSON. Per questo motivo è nata questa classe, in modo da rispettare i principi DRY e SRP. Essa scompone la richiesta e restituisce il valore richiesto.
 
 #### Meccanismi utilizzati:
+
 - **Asynchronous Programming:** Uso di `Future` per operazioni asincrone.
 - **Encapsulation:** Metodi privati per ottenere e parsare i tassi di cambio.
 - **For-yield:** Al fine di scomporre il JSON arrivato.
 
 ### MoneyADT
 
-L'oggetto `MoneyADT` rappresenta l'oggetto con cui si può lavorare sul denaro.
-Ossia in questo modo abbiamo limitato le operazione che si possono fare con i soldi, solo quelle descritte.
-Abbiamo la possibilità di decidere noi la tipologia di dato, in questo caso abbiamo creato un tipo opaco `Money`, visto che lavoriamo con dei soldi esso è rappresentato come un `BigDecimal`.
+L'oggetto `MoneyADT` rappresenta l'oggetto con cui si può lavorare sul denaro. In questo modo ho limitato le operazioni che si possono fare con i soldi, solo a quelle descritte. Si ha la possibilità di decidere noi la tipologia di dato. In questo caso, ho creato un tipo opaco `Money`, visto che lavoriamo con dei soldi esso è rappresentato come un `BigDecimal`.
 
 #### Meccanismi utilizzati:
 

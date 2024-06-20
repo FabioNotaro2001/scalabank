@@ -22,13 +22,14 @@ object MoneyADT:
   given Ordering[Money] with
     override def compare(x: Money, y: Money): Int = x.compare(y)
 
-  extension (amount: Double | Int | Float | BigDecimal)
+  extension (amount: Double | Int | Float | String | BigDecimal)
     def toMoney: Money =
       amount match
         case amountAsBig: BigDecimal if amountAsBig >= BigDecimal(0) => amountAsBig
         case amountAsDouble: Double if amountAsDouble >= 0 => BigDecimal(amountAsDouble)
         case amountAsInt: Int if amountAsInt >= 0 => BigDecimal(amountAsInt)
         case amountAsFloat: Float if amountAsFloat >= 0 => BigDecimal(amountAsFloat)
+        case amountAsString: String if BigDecimal(amountAsString) >= 0 => BigDecimal(amountAsString)
         case _ => throw new IllegalArgumentException("Amount must be non-negative")
 
   extension (money: Money)

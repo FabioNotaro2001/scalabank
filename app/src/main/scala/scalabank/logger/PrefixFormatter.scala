@@ -7,46 +7,75 @@ import scalabank.utils.TimeFormatter
  */
 trait PrefixFormatter:
   /**
-   * Gets the prefix with the current time.
+   * Retrieves the prefix with the current time.
    *
-   * @return a string representing the prefix with the current time.
+   * @return a string representing the prefix, including the current time.
    */
   def getPrefixWithCurrentTime: String
 
   /**
-   * Gets the creation prefix.
+   * Retrieves the creation prefix.
    *
    * @return a string representing the creation prefix.
    */
   def getCreationPrefix: String
 
+  /**
+   * Retrieves the loan simulation prefix.
+   *
+   * @return a string representing the loan simulation prefix.
+   */
+  def getLoanSimulationPrefix: String
+
+
+  /**
+   * Retrieves the bankAccount opening prefix.
+   *
+   * @return a string representing the bankAccount opening prefix.
+   */
+  def getPrefixForBankAccountOpening: String
+
 /**
- * Companion object for the PrefixFormatter trait.
+ * Companion object for the `PrefixFormatter` trait.
  */
 object PrefixFormatter:
   /**
-   * Creates a new instance of PrefixFormatter.
+   * Instantiates a new `PrefixFormatter`.
    *
-   * @return a new PrefixFormatter instance.
+   * @return a new instance of `PrefixFormatter`.
    */
-  def apply(): PrefixFormatter = PrefixFormatterImpl()
+  def apply(): PrefixFormatter = new PrefixFormatterImpl()
 
   /**
-   * Private class implementing the PrefixFormatter trait.
+   * Private class implementing the `PrefixFormatter` trait.
    */
   private class PrefixFormatterImpl extends PrefixFormatter:
     private val timeFormatter = TimeFormatter()
 
     /**
-     * Gets the prefix with the current time.
+     * Retrieves the prefix with the current time.
      *
-     * @return a string representing the prefix with the current time.
+     * @return a string representing the prefix, including the current time.
      */
-    override def getPrefixWithCurrentTime: String = "[" + timeFormatter.getTimeFormatted() + "] "
+    override def getPrefixWithCurrentTime: String = s"[${timeFormatter.getTimeFormatted()}] "
 
     /**
-     * Gets the creation prefix.
+     * Retrieves the creation prefix.
      *
      * @return a string representing the creation prefix.
      */
     override def getCreationPrefix: String = "[CREATION] "
+
+    /**
+     * Retrieves the loan simulation prefix.
+     *
+     * @return a string representing the loan simulation prefix.
+     */
+    override def getLoanSimulationPrefix: String = "[LOAN SIMULATION] "
+
+    /**
+     * Retrieves the bankAccount opening prefix.
+     *
+     * @return a string representing the bankAccount opening prefix.
+     */
+    override def getPrefixForBankAccountOpening: String = "[BANK ACCOUNT OPENING] "

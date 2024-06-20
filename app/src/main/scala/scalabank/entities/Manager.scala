@@ -34,9 +34,9 @@ trait Manager extends StaffMember[ManagerPosition]:
 trait ManagerComponent:
   loggerDependency: LoggerDependency =>
   case class ManagerImpl(person: Person,
-                                 override val position: ManagerPosition,
-                                 override val hiringYear: Int,
-                                 private var currentProjects: List[Project]) extends Manager:
+                         override val position: ManagerPosition,
+                         override val hiringYear: Int,
+                         private var currentProjects: List[Project]) extends Manager:
     export person.*
 
     override def projects: List[Project] = currentProjects
@@ -68,13 +68,14 @@ object Manager extends LoggerDependency with ManagerComponent:
    * @param projects   The initial projects managed by the manager.
    * @return A new manager instance.
    */
-  def apply(name: String,
+  def apply(cf: String,
+            name: String,
             surname: String,
             birthYear: Int,
             position: ManagerPosition,
             hiringYear: Int,
             projects: List[Project]): Manager =
-    val manager = ManagerImpl(Person(name, surname, birthYear), position, hiringYear, projects)
+    val manager = ManagerImpl(Person(cf, name, surname, birthYear), position, hiringYear, projects)
     logger.log(logger.getPrefixFormatter().getCreationPrefix + manager)
     manager
 
