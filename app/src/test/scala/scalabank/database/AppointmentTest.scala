@@ -3,28 +3,23 @@ package scalabank.database
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import org.junit.runner.RunWith
-import org.scalatest.BeforeAndAfterAll
 import org.scalatestplus.junit.JUnitRunner
 import scalabank.appointment.Appointment
 import scalabank.database.appointment.AppointmentTable
 import scalabank.database.customer.CustomerTable
 import scalabank.database.employee.EmployeeTable
 
-import java.sql.{Connection, DriverManager, ResultSet}
+import java.sql.{Connection, DriverManager}
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 @RunWith(classOf[JUnitRunner])
-class AppointmentTest extends AnyFlatSpec with Matchers with BeforeAndAfterAll:
-  private val connection: Connection = DriverManager.getConnection("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1")
+class AppointmentTest extends AnyFlatSpec with Matchers:
+  private val connection: Connection = DriverManager.getConnection("jdbc:h2:mem:test2;DB_CLOSE_DELAY=-1")
   private val customerTable = new CustomerTable(connection)
   private val employeeTable = new EmployeeTable(connection)
   private val appointmentTable = new AppointmentTable(connection, customerTable, employeeTable)
   private val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
-
-  override def beforeAll(): Unit =
-    customerTable.populateDB(1)
-    employeeTable.populateDB(1)
 
   private def convertDateInFuture(days: Int): LocalDateTime =
     val date = LocalDateTime.now.plusDays(days)

@@ -100,7 +100,7 @@ class AppointmentTable(val connection: Connection, customerTable: CustomerTable,
       employee <- employees
       i <- 1 to 5
     yield
-      val description = s"Appointment ${i} between ${customer.cf} and ${employee.cf}"
+      val description = s"Appointment $i between ${customer.cf} and ${employee.cf}"
       val date = LocalDateTime.now.plusDays(i)
       val duration = 30
       Appointment(customer, employee, description, date, duration)

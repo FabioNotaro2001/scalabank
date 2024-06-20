@@ -1,8 +1,7 @@
 package scalabank.database.employee
 
-import scalabank.database.DatabaseOperations
-import scalabank.database.person.PopulateEntityTable
-import scalabank.entities.{Employee, Person}
+import scalabank.database.{DatabaseOperations, PopulateEntityTable}
+import scalabank.entities.Employee
 import scalabank.entities.Employee.EmployeePosition
 
 import java.sql.{Connection, ResultSet}
@@ -11,7 +10,7 @@ class EmployeeTable(val connection: Connection) extends DatabaseOperations[Emplo
   if !tableExists("employee", connection) then
     val query = "CREATE TABLE IF NOT EXISTS employee (cf VARCHAR(16) PRIMARY KEY, name VARCHAR(255), surname VARCHAR(255), birthYear INT, position VARCHAR(50), hiringYear INT)"
     connection.createStatement.execute(query)
-    populateDB(1)
+    populateDB(2)
 
   def insert(entity: Employee): Unit =
     val query = "INSERT INTO employee (cf, name, surname, birthYear, position, hiringYear) VALUES (?, ?, ?, ?, ?, ?)"
@@ -67,7 +66,7 @@ class EmployeeTable(val connection: Connection) extends DatabaseOperations[Emplo
     stmt.setString(1, cf)
     stmt.executeUpdate
 
-  def populateDB(numberOfEntries: Int): Unit =
+  private def populateDB(numberOfEntries: Int): Unit =
     PopulateEntityTable.createInstancesDB[Employee](numberOfEntries,
       (cf, name, surname, birthYear) => Employee(cf, name, surname, birthYear, EmployeePosition.Cashier, 2020)
     ).foreach(insert)

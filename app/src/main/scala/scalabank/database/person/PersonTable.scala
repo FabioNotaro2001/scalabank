@@ -2,6 +2,7 @@ package scalabank.database.person
 
 import scalabank.database.DatabaseOperations
 import scalabank.entities.Person
+import scalabank.database.PopulateEntityTable
 
 import java.sql.{Connection, ResultSet}
 
@@ -12,7 +13,8 @@ class PersonTable(val connection: Connection) extends DatabaseOperations[Person,
     populateDB(1)
 
   def insert(entity: Person): Unit =
-    val stmt = connection.prepareStatement("INSERT INTO person (cf, name, surname, birthYear) VALUES (?, ?, ?, ?)")
+    val query = "INSERT INTO person (cf, name, surname, birthYear) VALUES (?, ?, ?, ?)"
+    val stmt = connection.prepareStatement(query)
     stmt.setString(1, entity.cf)
     stmt.setString(2, entity.name)
     stmt.setString(3, entity.surname)
@@ -39,7 +41,8 @@ class PersonTable(val connection: Connection) extends DatabaseOperations[Person,
     .toSeq
 
   def update(entity: Person): Unit =
-    val stmt = connection.prepareStatement("UPDATE person SET name = ?, surname = ?, birthYear = ? WHERE cf = ?")
+    val query = "UPDATE person SET name = ?, surname = ?, birthYear = ? WHERE cf = ?"
+    val stmt = connection.prepareStatement(query)
     stmt.setString(1, entity.name)
     stmt.setString(2, entity.surname)
     stmt.setInt(3, entity.birthYear)
@@ -47,7 +50,8 @@ class PersonTable(val connection: Connection) extends DatabaseOperations[Person,
     stmt.executeUpdate
 
   def delete(cf: String): Unit =
-    val stmt = connection.prepareStatement("DELETE FROM person WHERE cf = ?")
+    val query = "DELETE FROM person WHERE cf = ?"
+    val stmt = connection.prepareStatement(query)
     stmt.setString(1, cf)
     stmt.executeUpdate
 

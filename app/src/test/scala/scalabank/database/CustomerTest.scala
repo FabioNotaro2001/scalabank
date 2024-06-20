@@ -8,7 +8,7 @@ import scalabank.entities.Customer
 
 @RunWith(classOf[JUnitRunner])
 class CustomerTest extends AnyFlatSpec with Matchers:
-  val db: Database = Database("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1")
+  val db: Database = Database("jdbc:h2:mem:test0;DB_CLOSE_DELAY=-1")
   val customer: Customer = Customer("CST12345L67T890M", "Mario", "Rossi", 1990)
 
   "CustomerTable" should "insert and find a customer" in:

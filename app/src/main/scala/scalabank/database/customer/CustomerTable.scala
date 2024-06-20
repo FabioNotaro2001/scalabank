@@ -1,7 +1,6 @@
 package scalabank.database.customer
 
-import scalabank.database.DatabaseOperations
-import scalabank.database.person.PopulateEntityTable
+import scalabank.database.{DatabaseOperations, PopulateEntityTable}
 import scalabank.entities.Customer
 
 import java.sql.{Connection, ResultSet}
@@ -10,7 +9,7 @@ class CustomerTable(val connection: Connection) extends DatabaseOperations[Custo
   if !tableExists("customer", connection) then
     val query = "CREATE TABLE IF NOT EXISTS customer (cf VARCHAR(16) PRIMARY KEY, name VARCHAR(255), surname VARCHAR(255), birthYear INT)"
     connection.createStatement.execute(query)
-    populateDB(1)
+    populateDB(2)
 
   def insert(entity: Customer): Unit =
     val query = "INSERT INTO customer (cf, name, surname, birthYear) VALUES (?, ?, ?, ?)"
@@ -57,7 +56,7 @@ class CustomerTable(val connection: Connection) extends DatabaseOperations[Custo
     stmt.setString(1, cf)
     stmt.executeUpdate
 
-  def populateDB(numberOfEntries: Int): Unit =
+  private def populateDB(numberOfEntries: Int): Unit =
     PopulateEntityTable.createInstancesDB[Customer](numberOfEntries, 
       (cf, name, surname, birthYear) => Customer(cf, name, surname, birthYear)
     ).foreach(insert)

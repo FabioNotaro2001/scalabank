@@ -17,7 +17,7 @@ trait Database:
 
 object Database:
   def apply(url: String): Database = TablesImpl(url)
-  
+
   private case class TablesImpl(url: String) extends Database:
     private val connection: Connection = DriverManager.getConnection(url)
     private val personTab: PersonTable = PersonTable(connection)
