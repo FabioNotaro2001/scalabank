@@ -6,7 +6,7 @@ import scalabank.currency.Currency
 import scalabank.currency.MoneyADT.Money
 import scalabank.entities.Customer.logger
 import scalabank.entities.StateBankAccount.Active
-import scalabank.entities.{BankAccount, BaseBankAccount, Customer, Employee}
+import scalabank.entities.{BankAccount, Customer, Employee}
 import scalabank.logger.{Logger, LoggerDependency, LoggerImpl}
 import scalabank.currency.MoneyADT.toMoney
 
@@ -27,14 +27,12 @@ extension [A](opt: Option[A])
 trait BankInformation
 
 trait BankAccountType:
-  def create: (id: Int, currency: Currency) => BankAccount
+  def create: (Int, Currency, Customer) => BankAccount
 
-enum BankAccountTypes(override val create: (id: Int, currency: Money) => BankAccount) extends BankAccountType:
+enum BankAccountTypes(override val create: (Int, Currency, Customer) => BankAccount) extends BankAccountType:
   case BaseAccount extends BankAccountTypes(
-    (id: Int, currency: Currency) => BaseBankAccount(id, 0.toMoney, currency, Active)
+    (id: Int, currency: Currency, customer: Customer) => BankAccount(id, customer, 0.toMoney, currency, Active)
   )
-
-  case C
 
 /**
  * Trait for representing a bank, which can have customers, employees and appointments
@@ -44,6 +42,20 @@ trait Bank:
    * @return the information associayed to the bank
    */
   def bankInformation: BankInformation
+
+  /**
+   * Attempts to login as customer
+   * @param cf the customer's CF
+   * @return the customer if the login is successful
+   */
+  def customerLogin(cf: String): Option[Customer]
+
+  /**
+   * Attempts to login as employee
+   * @param cf the employee's CF
+   * @return the employee if the login is successful
+   */
+  def employeeLogin(cf: String): Option[Employee]
 
   /**
    * Adds an employee to the bank
@@ -80,18 +92,37 @@ trait Bank:
    */
   def cancelAppointment(appointment: Appointment): Unit
 
+  /**
+   * Creates a new bank account for the customer
+   * @param customer the customer
+   * @param bankAccountType the type of bank account
+   * @param currency the currency of the bank account
+   * @return the created bank account
+   */
+  def addBankAccount(customer: Customer, bankAccountType: BankAccountType, currency: Currency): BankAccount
+
 
 abstract class AbstractBankImpl[T <: BankInformation](override val bankInformation: T) extends Bank:
   protected val employees: ListBuffer[Employee] = ListBuffer()
   protected val customers: ListBuffer[Customer] = ListBuffer()
 
+  override def customerLogin(cf: String): Option[Customer] =
+    customers.find(_.cf == cf)
+
+  override def employeeLogin(cf: String): Option[Employee] =
+    employees.find(_.cf == cf)
+
   override def addEmployee(employee: Employee): Unit =
     employees.addOne(employee)
-  // TODO: impostare la banca nel dipendente
 
   override def addCustomer(customer: Customer): Unit =
     customers.addOne(customer)
-// TODO: impostare la banca nel cliente
+
+  override def addBankAccount(customer: Customer, bankAccountType: BankAccountType, currency: Currency): BankAccount =
+    val acc = bankAccountType.create(LocalDateTime.now.getNano, currency, customer)
+    customer.addBankAccount(acc)
+    acc
+
 
 trait BankComponent:
   loggerDependency: LoggerDependency =>
