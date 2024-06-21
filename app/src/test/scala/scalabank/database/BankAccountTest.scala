@@ -8,7 +8,6 @@ import scalabank.entities.{BankAccount, BaseBankAccount, StateBankAccount, Super
 import scalabank.currency.Currency
 import scalabank.currency.MoneyADT.*
 import scalabank.database.bank.BankAccountTable
-
 import java.sql.{Connection, DriverManager}
 
 @RunWith(classOf[JUnitRunner])
