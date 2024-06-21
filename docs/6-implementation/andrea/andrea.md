@@ -145,6 +145,8 @@ L'oggetto `MoneyADT` rappresenta l'oggetto con cui si può lavorare sul denaro. 
 - **Riutilizzo del Codice:** Le operazioni comuni alle varie tabelle seguono il principio CRUD (Create, Read, Update, Delete) e implementano tutte lo stesso trait, garantendo un'implementazione consistente e riutilizzabile.
 - **Utilizzo di Generics:** I generici sono ampiamente utilizzati per evitare la ripetizione del codice, migliorando la manutenibilità e la flessibilità del sistema. In particolare nelle classi: `DatabaseOperations` e `PopulateEntityTable`
 
+![UML Persona](img/db.png)
+
 ### Principi di Buona Programmazione
 
 - **Single Responsibility Principle:** Ogni classe è responsabile di un singolo compito, come la gestione di una specifica tabella del database.
