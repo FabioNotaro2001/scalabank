@@ -2,9 +2,13 @@ package scalabank.bank
 
 import scalabank.appointment.Appointment
 import scalabank.bank
+import scalabank.currency.Currency
+import scalabank.currency.MoneyADT.Money
 import scalabank.entities.Customer.logger
-import scalabank.entities.{Customer, Employee}
+import scalabank.entities.StateBankAccount.Active
+import scalabank.entities.{BankAccount, BaseBankAccount, Customer, Employee}
 import scalabank.logger.{Logger, LoggerDependency, LoggerImpl}
+import scalabank.currency.MoneyADT.toMoney
 
 import java.time.LocalDateTime
 import scala.annotation.targetName
@@ -21,6 +25,16 @@ extension [A](opt: Option[A])
  * Empty trait for representing information regarding a bank
  */
 trait BankInformation
+
+trait BankAccountType:
+  def create: (id: Int, currency: Currency) => BankAccount
+
+enum BankAccountTypes(override val create: (id: Int, currency: Money) => BankAccount) extends BankAccountType:
+  case BaseAccount extends BankAccountTypes(
+    (id: Int, currency: Currency) => BaseBankAccount(id, 0.toMoney, currency, Active)
+  )
+
+  case C
 
 /**
  * Trait for representing a bank, which can have customers, employees and appointments
@@ -65,6 +79,7 @@ trait Bank:
    * @param appointment the appointment to be deleted
    */
   def cancelAppointment(appointment: Appointment): Unit
+
 
 abstract class AbstractBankImpl[T <: BankInformation](override val bankInformation: T) extends Bank:
   protected val employees: ListBuffer[Employee] = ListBuffer()

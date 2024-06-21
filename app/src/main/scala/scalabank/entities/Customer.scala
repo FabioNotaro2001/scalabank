@@ -15,9 +15,8 @@ trait Customer extends Person:
   def addAppointment(appointment: Appointment): Unit
   def removeAppointment(appointment: Appointment): Unit
   def updateAppointment(appointment: Appointment)(newAppointment: Appointment): Unit
-  def createBaseBankAccount(_id : Int): Unit
-  def createSuperBankAccount(_id : Int): Unit
-  def bankAccount: Option[BankAccount]
+  def addBankAccount(bankAccount: BankAccount): Unit
+  def bankAccount: Iterable[BankAccount]
 
 
 trait YoungCustomer extends Customer with CustomerBehaviour
@@ -26,20 +25,20 @@ trait OldCustomer extends Customer with CustomerBehaviour
 
 trait BaseCustomer extends Customer with CustomerBehaviour
 
-trait CustomerBehaviour:
+trait CustomerBehaviour extends Customer:
   private var appointments: List[Appointment] = List()
-  private var _bankAccount: Option[BankAccount] = None
-  def fidelity: Fidelity = Fidelity(0)
-  def getAppointments: Iterable[Appointment] = appointments
-  def addAppointment(appointment: Appointment): Unit = appointments = appointments :+ appointment
-  def removeAppointment(appointment: Appointment): Unit = appointments = appointments.filterNot(_ == appointment)
-  def updateAppointment(appointment: Appointment)(newAppointment: Appointment): Unit =
+  private var _bankAccounts: List[BankAccount] = List()
+  override def fidelity: Fidelity = Fidelity(0)
+  override def getAppointments: Iterable[Appointment] = appointments
+  override def addAppointment(appointment: Appointment): Unit = appointments = appointments :+ appointment
+  override def removeAppointment(appointment: Appointment): Unit = appointments = appointments.filterNot(_ == appointment)
+  override def updateAppointment(appointment: Appointment)(newAppointment: Appointment): Unit =
     appointments = appointments.map:
       case app if app == appointment => newAppointment
       case app => app
-  def createBaseBankAccount(_id : Int): Unit = _bankAccount = Some(BaseBankAccount(id = _id, balance = 100.toMoney, currency = Currency("EUR", "€"), state = Active));
-  def createSuperBankAccount(_id : Int): Unit = _bankAccount = Some(SuperBankAccount(id = _id, balance = 100.toMoney, currency = Currency("EUR", "€"), state = Active));
-  def bankAccount: Option[BankAccount] = _bankAccount
+  override def addBankAccount(bankAccount: BankAccount): Unit =
+    _bankAccounts = _bankAccounts :+ bankAccount
+  override def bankAccount: Iterable[BankAccount] = _bankAccounts
 
 
 trait BaseFeeCalculator:

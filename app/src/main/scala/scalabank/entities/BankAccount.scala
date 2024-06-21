@@ -6,7 +6,7 @@ import scalabank.currency.Currency
 import scalabank.logger.{Logger, LoggerDependency, LoggerImpl}
 
 enum StateBankAccount:
-    case Active, Disactive, Closed
+    case Active, Inactive, Closed
 
 trait BankAccount:
     def id: Int
