@@ -7,7 +7,7 @@ import scalabank.currency.MoneyADT
 import scalabank.currency.MoneyADT.toMoney
 import scalabank.currency.Currency
 import scalabank.entities.StateBankAccount.Active
-import scalabank.bank.Bank
+import scalabank.bank.{Bank, BankAccountType}
 import scalabank.bank.Bank.VirtualBank
 import scalabank.bank.Bank.PhysicalBank
 
@@ -26,7 +26,6 @@ trait Customer extends Person:
   def bankAccount: Iterable[BankAccount]
 
 
-
 trait YoungCustomer extends Customer with CustomerBehaviour
 
 trait OldCustomer extends Customer with CustomerBehaviour
@@ -34,20 +33,23 @@ trait OldCustomer extends Customer with CustomerBehaviour
 trait BaseCustomer extends Customer with CustomerBehaviour
 
 trait CustomerBehaviour extends Customer:
+
   private var appointments: List[Appointment] = List()
   private var _bank: Option[Bank] = None
   private var _bankAccounts: List[BankAccount] = List()
+
   override def fidelity: Fidelity = Fidelity(0)
+
   override def getAppointments: Iterable[Appointment] = appointments
+
   override def addAppointment(appointment: Appointment): Unit = appointments = appointments :+ appointment
+
   override def removeAppointment(appointment: Appointment): Unit = appointments = appointments.filterNot(_ == appointment)
+
   override def updateAppointment(appointment: Appointment)(newAppointment: Appointment): Unit =
     appointments = appointments.map:
       case app if app == appointment => newAppointment
       case app => app
-  override def addBankAccount(bankAccount: BankAccount): Unit =
-    _bankAccounts = _bankAccounts :+ bankAccount
-  override def bankAccount: Iterable[BankAccount] = _bankAccounts
 
   override def bank: Option[Bank] = _bank
 
@@ -56,6 +58,12 @@ trait CustomerBehaviour extends Customer:
     case _ =>
 
   override def deregisterBank(bank: Bank): Unit = _bank = None
+
+  override def addBankAccount(bankAccount: BankAccount, bankAccountType: BankAccountType, currency: Currency): Unit = _bank match
+    case Bank => _bankAccounts :+ Some(_bank).addBankAccount(this, bankAccountType , currency)
+    case _ =>
+
+  override def bankAccount: Iterable[BankAccount] = _bankAccounts
 
 
 trait BaseFeeCalculator:
