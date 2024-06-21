@@ -7,6 +7,10 @@ import scalabank.currency.MoneyADT
 import scalabank.currency.MoneyADT.toMoney
 import scalabank.currency.Currency
 import scalabank.entities.StateBankAccount.Active
+import scalabank.bank.Bank
+import scalabank.bank.Bank.VirtualBank
+import scalabank.bank.Bank.PhysicalBank
+
 
 trait Customer extends Person:
   def fidelity: Fidelity
@@ -15,8 +19,12 @@ trait Customer extends Person:
   def addAppointment(appointment: Appointment): Unit
   def removeAppointment(appointment: Appointment): Unit
   def updateAppointment(appointment: Appointment)(newAppointment: Appointment): Unit
+  def bank: Option[Bank]
+  def registerBank(bank: Bank): Unit
+  def deregisterBank(bank: Bank): Unit
   def addBankAccount(bankAccount: BankAccount): Unit
   def bankAccount: Iterable[BankAccount]
+
 
 
 trait YoungCustomer extends Customer with CustomerBehaviour
@@ -27,6 +35,7 @@ trait BaseCustomer extends Customer with CustomerBehaviour
 
 trait CustomerBehaviour extends Customer:
   private var appointments: List[Appointment] = List()
+  private var _bank: Option[Bank] = None
   private var _bankAccounts: List[BankAccount] = List()
   override def fidelity: Fidelity = Fidelity(0)
   override def getAppointments: Iterable[Appointment] = appointments
@@ -39,6 +48,14 @@ trait CustomerBehaviour extends Customer:
   override def addBankAccount(bankAccount: BankAccount): Unit =
     _bankAccounts = _bankAccounts :+ bankAccount
   override def bankAccount: Iterable[BankAccount] = _bankAccounts
+
+  override def bank: Option[Bank] = _bank
+
+  override def registerBank(bank: Bank): Unit = _bank match
+    case None => _bank = bank
+    case _ =>
+
+  override def deregisterBank(bank: Bank): Unit = _bank = None
 
 
 trait BaseFeeCalculator:
