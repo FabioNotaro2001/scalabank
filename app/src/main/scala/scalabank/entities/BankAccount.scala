@@ -10,54 +10,41 @@ enum StateBankAccount:
 
 trait BankAccount:
     def id: Int
+    def customer: Customer
     def balance: Money
     def currency: Currency
     def state: StateBankAccount
     def computeFee: Money
     def computeInterest: Money
 
-trait BankAccountBehavior extends BankAccount:
-    val _id: Int
-    val _balance: Money
-    val _currency: Currency
-    val _state: StateBankAccount
-    val loggerDependency: LoggerDependency
-
-    loggerDependency.logger.log(loggerDependency.logger.getPrefixFormatter().getPrefixForBankAccountOpening + this)
-
-    override def id: Int = _id
-    override def balance: Money = _balance
-    override def currency: Currency = _currency
-    override def state: StateBankAccount = _state
-
-    override def computeFee: Money = ???
-    override def computeInterest: Money = ???
-
-object BaseBankAccount extends LoggerDependency with BankAccountComponent:
+object BankAccount extends LoggerDependency with BankAccountComponent:
     override val logger: Logger = LoggerImpl()
-    def apply(id: Int, balance: Money, currency: Currency, state: StateBankAccount): BaseBankAccountImpl =
-        BaseBankAccountImpl(id, balance, currency, state, this)
-
-object SuperBankAccount extends LoggerDependency with BankAccountComponent:
-    override val logger: Logger = LoggerImpl()
-    def apply(id: Int, balance: Money, currency: Currency, state: StateBankAccount): SuperBankAccountImpl =
-        SuperBankAccountImpl(id, balance, currency, state, this)
+    def apply(id: Int, customer: Customer, balance: Money, currency: Currency, state: StateBankAccount): BankAccountImpl =
+        BankAccountImpl(id, customer, balance, currency, state)
 
 trait BankAccountComponent:
     loggerDependency: LoggerDependency =>
 
-    case class BaseBankAccountImpl(
-                                    _id: Int,
-                                    _balance: Money,
-                                    _currency: Currency,
-                                    _state: StateBankAccount,
-                                    loggerDependency: LoggerDependency
-                                  ) extends BankAccount with BankAccountBehavior
+    case class BankAccountImpl(
+                                _id: Int,
+                                _customer: Customer,
+                                _balance: Money,
+                                _currency: Currency,
+                                _state: StateBankAccount,
+                              ) extends BankAccount:
+        override def id: Int = _id
 
-    case class SuperBankAccountImpl(
-                                     _id: Int,
-                                     _balance: Money,
-                                     _currency: Currency,
-                                     _state: StateBankAccount,
-                                     loggerDependency: LoggerDependency
-                                   ) extends BankAccount with BankAccountBehavior
+        override def customer: Customer = _customer
+
+        override def balance: Money = _balance
+
+        override def currency: Currency = _currency
+
+        override def state: StateBankAccount = _state
+
+        override def computeFee: Money = ???
+
+        override def computeInterest: Money = ???
+
+        loggerDependency.logger.log(loggerDependency.logger.getPrefixFormatter().getPrefixForBankAccountOpening + this)
+
