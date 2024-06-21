@@ -136,7 +136,86 @@ L'oggetto `MoneyADT` rappresenta l'oggetto con cui si può lavorare sul denaro. 
 - **Asynchronous Programming:** Uso di `Future` per operazioni di rete non bloccanti.
 - **Encapsulation:** Uso di metodi privati e case class per nascondere i dettagli di implementazione e fornire un'interfaccia pulita.
 
+## Parte 3
 
+### Struttura del Database
+
+- **Creazione del Database:** Se le tabelle non esistono, vengono create e popolate con alcuni elementi, alcuni dei quali generati in modo randomico.
+- **Istanziazione del Database:** La classe `Database` è istanziabile con diversi URL, permettendo l'utilizzo di un database temporaneo per i test e di un database persistente per l'uso normale del programma.
+- **Riutilizzo del Codice:** Le operazioni comuni alle varie tabelle seguono il principio CRUD (Create, Read, Update, Delete) e implementano tutte lo stesso trait, garantendo un'implementazione consistente e riutilizzabile.
+- **Utilizzo di Generics:** I generici sono ampiamente utilizzati per evitare la ripetizione del codice, migliorando la manutenibilità e la flessibilità del sistema. In particolare nelle classi: `DatabaseOperations` e `PopulateEntityTable`
+
+### Principi di Buona Programmazione
+
+- **Single Responsibility Principle:** Ogni classe è responsabile di un singolo compito, come la gestione di una specifica tabella del database.
+- **Open/Closed Principle:** Il codice è strutturato in modo che le nuove funzionalità possano essere aggiunte senza modificare il codice esistente.
+- **Liskov Substitution Principle:** Le classi derivate possono essere sostituite alle loro basi senza alterare il funzionamento del programma.
+- **Interface Segregation Principle:** Le interfacce sono specifiche per ogni tipo di entità, evitando metodi non necessari.
+
+### Implementazione
+
+#### Trait `Database`
+L'interfaccia `Database` definisce le tabelle principali:
+```scala
+trait Database:
+  def personTable: PersonTable
+  def employeeTable: EmployeeTable
+  def customerTable: CustomerTable
+  def appointmentTable: AppointmentTable
+  def bankAccountTable: BankAccountTable
+```
+
+#### Trait `DatabaseOperations`
+
+- Definisce le operazioni CRUD comuni a tutte le tabelle.
+- Metodo `tableExists` per verificare l'esistenza di una tabella.
+
+```scala
+trait DatabaseOperations[T, Q]:
+    def insert(entity: T): Unit
+    def findById(id: Q): Option[T]
+    def findAll(): Seq[T]
+    def update(entity: T): Unit
+    def delete(id: Q): Unit
+    def tableExists(tableName: String, connection: Connection): Boolean =
+      val statement = connection.createStatement
+      try
+        val query = s"SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '$tableName'"
+        val resultSet: ResultSet = statement.executeQuery(query)
+        resultSet.next
+      finally
+        statement.close()
+```
+
+#### Classe `PersonTable`
+
+- Crea e popola la tabella `person` se non esiste.
+- Implementa le operazioni CRUD per la tabella `person`.
+
+#### Classe `EmployeeTable`
+
+- Crea e popola la tabella `employee` se non esiste.
+- Implementa le operazioni CRUD per la tabella `employee`.
+
+#### Classe `CustomerTable`
+
+- Crea e popola la tabella `customer` se non esiste.
+- Implementa le operazioni CRUD per la tabella `customer`.
+
+#### Classe `BankAccountTable`
+
+- Crea e popola la tabella `bankAccount` se non esiste.
+- Implementa le operazioni CRUD per la tabella `bankAccount`.
+
+#### Classe `AppointmentTable`
+
+- Crea e popola la tabella `appointment` se non esiste.
+- Implementa le operazioni CRUD per la tabella `appointment`.
+- Fornisce metodi per trovare appuntamenti per codice fiscale di cliente o dipendente.
+
+# Popolamento delle Tabelle
+
+- **Random Data Generation:** La classe `PopulateEntityTable` crea istanze casuali per popolare le tabelle inizialmente, migliorando il testing e la simulazione di scenari realistici.
 
 
 

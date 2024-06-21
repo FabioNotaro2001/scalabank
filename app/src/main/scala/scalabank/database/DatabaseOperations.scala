@@ -9,12 +9,11 @@ trait DatabaseOperations[T, Q]:
   def update(entity: T): Unit
   def delete(id: Q): Unit
   def tableExists(tableName: String, connection: Connection): Boolean =
-    val statement = connection.createStatement()
+    val statement = connection.createStatement
     try
-      val resultSet: ResultSet = statement.executeQuery(
-        s"SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '$tableName'"
-      )
-      resultSet.next()
+      val query = s"SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '$tableName'"
+      val resultSet: ResultSet = statement.executeQuery(query)
+      resultSet.next
     finally
       statement.close()
 
