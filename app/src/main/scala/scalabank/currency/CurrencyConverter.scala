@@ -30,16 +30,6 @@ trait CurrencyConverter:
    */
   def convertWithFee(amount: Money, from: Currency, to: Currency)(using feePercentage: BigDecimal): Money
 
-  /**
-   * Applies a fee to the amount.
-   *
-   * @param amount        The amount to apply the fee.
-   * @param feePercentage The fee percentage.
-   * @return The amount after the fee is applied.
-   */
-  def applyFee(amount: Money, feePercentage: BigDecimal): Money =
-    amount - (amount * feePercentage / 100)
-
 
 object CurrencyConverter:
   def apply(): CurrencyConverter = OnlineCurrencyConverter()
@@ -57,7 +47,7 @@ object CurrencyConverter:
 
     override def convertWithFee(amount: Money, from: Currency, to: Currency)(using feePercentage: BigDecimal): Money =
       val convertedAmount = convert(amount, from, to)
-      applyFee(convertedAmount, feePercentage)
+      FeeManager.applyFee(convertedAmount, feePercentage)
 
 
 
