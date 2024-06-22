@@ -15,6 +15,25 @@ I componenti che compongono il package entities sono dunque:
 - esiste poi anche il trait Promotable, per esprimere che è possibile che un Employee venga promosso ad una nuova posizione
 - esiste infine anche il trait+implementazione Project che esprime in quali progetti è impegnato ciascun membro dello staff &rarr; si noti che ogni progetto ha un manager come supervisore e una lista di impiegati coinvolti.
 
+## Design di dettaglio del logger
+Il design dettagliato del logger ha subito numerose ristrutturazioni incrementali durante tutta la fase di design, siccome partendo dalla soluzione più facile ci si è resi conto che tale componente poteva essere ulteriormente rifinito per applicarvi pattern di progettazione e principi (descritti più dettagliatamente nel capitolo dedicato all'implementazione).
+![uml logger](img/UMLLogger.png)
+- Il componente principale è il trait Logger, che offre (come suggerisce il nome) tutte le funzionalità di logging &rarr; si noti che alcuni metodi del Logger riguardano l'output media, inteso come mezzo su cui verranno stampati gli eventi &rarr; sebbene di solito tale medium sia la console, ci è sembrato ragionevole renderlo mutabile, in modo da favorire l'estendibilità del framework e rendere meno rigida la libreria, rispettando al contempo il principio DIP (abbiamo reso il Logger dipendente non più direttamente dalla console concreta ma dalla sua astrazione OutputMedia)
+- Il trait Logger è implementato grazie alla classe LoggerImpl, che tra l'altro ha un campo di tipo PrefixFormatter &rarr; ciò è stato fatto siccome per rispettare il principio SRP si è dovuto spostare all'esterno del Logger la responsabilità dei prefissi (similmente a quanto visto a lezione)
+- Il trait+classe PrefixFormatter è infatti il componente responsabile di offrire i prefissi secondo necessità (sicuramente occerrerà che esso possegga un prefisso rappresentante il momento temporale attuale ed un prefisso dedicato alla creazione di nuove entità come persone, conti, impiegati ecc.).
+
+Invece i tre trait rappresentati nella parte destra del diagramma UML sono necessari in quanto, sempre dopo dei raffinamenti incrementali, è emerso che per gestire in modo più corretto le dipendenze verso il logger sarebbe molto utile applicare il cake pattern presentatoci alla fine del corso.
+
+Il cake pattern è un pattern funzionale fondamentale per gestire correttamente le dipendenze ed ottenere dei componenti più flessibili e che rispettino meglio la modularità.
+
+Per meglio comprendere i dettagli di come sarà implementato il cake pattern si rimanda alla relativa sezione nel capitolo dedicato all'implementazione, tuttavia già dal design emerge la necessità di avere:
+- un trait LoggerDependency che rappresenta la dipendenza esposta ed offerta dal logger
+- ed un trait ClientComponent che specifica la dipendenza tra il logger e la classe client (colei che necessita del logger per stampare qualcosa).
+
+Infine, come si nota anche dal diagramma, la classe client dovrà estendere entrambi i trait sopra riportati, in modo appunto da specificare l'implementazione concreta del logger di cui necessita.
+
+Già dal design sono emerse diverse classi client che potrebbero avere bisogno del logger: Customer, Employee, Manager, Loan, BankAccount e BankOperation.
+
 ## Design di dettaglio del database
 Il database è un componente che inizialmente non avevamo previsto di inserire nel nostro progetto, tuttavia è subito emersa la necessità di adottarlo a causa dei seguenti vantaggi:
 - presenza di dati iniziali utili per la GUI &rarr; senza un database ogni volta che si apre la GUI occorre inserire un sacco di istanze manualmente (diversi clienti, diversi impiegati, assegnare conti a clienti...)
