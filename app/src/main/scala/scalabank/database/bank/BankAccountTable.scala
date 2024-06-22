@@ -8,6 +8,7 @@ import scalabank.currency.MoneyADT.*
 import scalabank.database.customer.CustomerTable
 
 import java.sql.{Connection, ResultSet}
+import scala.util.Random
 
 class BankAccountTable(val connection: Connection, val customerTable: CustomerTable) extends DatabaseOperations[BankAccount, Int] :
   if !tableExists("bankAccount", connection) then
@@ -90,8 +91,9 @@ class BankAccountTable(val connection: Connection, val customerTable: CustomerTa
     yield
       val id = idCounter
       idCounter += 1
-      val balance = BigDecimal(scala.util.Random.nextDouble() * 10000).toMoney
-      val currency = Currency("EUR", "€")
+      println(idCounter)
+      val balance = Random.nextInt(10000).toMoney
+      val currency = Currency("USD", "$")
       val state = StateBankAccount.Active
       BankAccount(id, customer, balance, currency, state, accountType)
     bankAccounts.foreach(insert)

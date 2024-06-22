@@ -15,7 +15,7 @@ import java.sql.{Connection, DriverManager}
 
 @RunWith(classOf[JUnitRunner])
 class BankAccountTest extends AnyFlatSpec with Matchers:
-  private val connection: Connection = DriverManager.getConnection("jdbc:h2:mem:test1;DB_CLOSE_DELAY=-1")
+  private val connection: Connection = DriverManager.getConnection("jdbc:h2:mem:test10;DB_CLOSE_DELAY=-1")
   private val customerTable = new CustomerTable(connection)
   private val bankAccountTable = new BankAccountTable(connection, customerTable)
 
@@ -24,11 +24,11 @@ class BankAccountTest extends AnyFlatSpec with Matchers:
     val customer = customers.head
     val accountType = BankAccountType("Checking", BigDecimal(0.01))
     val balance = BigDecimal(1000).toMoney
-    val currency = Currency("EUR", "€")
+    val currency = Currency("USD", "$")
     val state = StateBankAccount.Active
-    val bankAccount = BankAccount(1, customer, balance, currency, state, accountType)
+    val bankAccount = BankAccount(10, customer, balance, currency, state, accountType)
     bankAccountTable.insert(bankAccount)
-    val retrievedBankAccount = bankAccountTable.findById(1)
+    val retrievedBankAccount = bankAccountTable.findById(10)
     retrievedBankAccount shouldBe Some(bankAccount)
 
   it should "update a bank account correctly" in:
@@ -36,9 +36,9 @@ class BankAccountTest extends AnyFlatSpec with Matchers:
     val customer = customers.head
     val accountType = BankAccountType("Checking", BigDecimal(0.01))
     val balance = BigDecimal(1000).toMoney
-    val currency = Currency("EUR", "€")
+    val currency = Currency("USD", "$")
     val state = StateBankAccount.Active
-    val bankAccount = BankAccount(2, customer, balance, currency, state, accountType)
+    val bankAccount = BankAccount(20, customer, balance, currency, state, accountType)
     bankAccountTable.insert(bankAccount)
     val updatedBalance = BigDecimal(2000).toMoney
     val updatedBankAccount = BankAccount(2, customer, updatedBalance, currency, state, accountType)
@@ -51,9 +51,9 @@ class BankAccountTest extends AnyFlatSpec with Matchers:
     val customer = customers.head
     val accountType = BankAccountType("Checking", BigDecimal(0.01))
     val balance = BigDecimal(1000).toMoney
-    val currency = Currency("EUR", "€")
+    val currency = Currency("USD", "$")
     val state = StateBankAccount.Active
-    val bankAccount = BankAccount(3, customer, balance, currency, state, accountType)
+    val bankAccount = BankAccount(30, customer, balance, currency, state, accountType)
     bankAccountTable.insert(bankAccount)
     bankAccountTable.delete(3)
     val retrievedBankAccount = bankAccountTable.findById(3)
@@ -64,10 +64,10 @@ class BankAccountTest extends AnyFlatSpec with Matchers:
     val customer = customers.head
     val accountType = BankAccountType("Checking", BigDecimal(0.01))
     val balance = BigDecimal(1000).toMoney
-    val currency = Currency("EUR", "€")
+    val currency = Currency("USD", "$")
     val state = StateBankAccount.Active
-    val bankAccount1 = BankAccount(4, customer, balance, currency, state, accountType)
-    val bankAccount2 = BankAccount(5, customer, balance, currency, state, accountType)
+    val bankAccount1 = BankAccount(40, customer, balance, currency, state, accountType)
+    val bankAccount2 = BankAccount(50, customer, balance, currency, state, accountType)
     bankAccountTable.insert(bankAccount1)
     bankAccountTable.insert(bankAccount2)
     val allBankAccounts = bankAccountTable.findAll()
