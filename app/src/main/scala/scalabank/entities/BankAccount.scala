@@ -1,5 +1,6 @@
 package scalabank.entities
 
+import scalabank.bank.BankAccountType
 import scalabank.currency.MoneyADT.Money
 import scalabank.currency.MoneyADT
 import scalabank.currency.Currency
@@ -14,13 +15,12 @@ trait BankAccount:
     def balance: Money
     def currency: Currency
     def state: StateBankAccount
-    def computeFee: Money
-    def computeInterest: Money
+    def bankAccountType: BankAccountType
 
 object BankAccount extends LoggerDependency with BankAccountComponent:
     override val logger: Logger = LoggerImpl()
-    def apply(id: Int, customer: Customer, balance: Money, currency: Currency, state: StateBankAccount): BankAccountImpl =
-        BankAccountImpl(id, customer, balance, currency, state)
+    def apply(id: Int, customer: Customer, balance: Money, currency: Currency, state: StateBankAccount, bankAccountType: BankAccountType): BankAccountImpl =
+        BankAccountImpl(id, customer, balance, currency, state, bankAccountType)
 
 trait BankAccountComponent:
     loggerDependency: LoggerDependency =>
@@ -31,6 +31,7 @@ trait BankAccountComponent:
                                 _balance: Money,
                                 _currency: Currency,
                                 _state: StateBankAccount,
+                                _bankAccountType: BankAccountType
                               ) extends BankAccount:
         override def id: Int = _id
 
@@ -42,9 +43,7 @@ trait BankAccountComponent:
 
         override def state: StateBankAccount = _state
 
-        override def computeFee: Money = ???
-
-        override def computeInterest: Money = ???
+        override def bankAccountType: BankAccountType = _bankAccountType
 
         loggerDependency.logger.log(loggerDependency.logger.getPrefixFormatter().getPrefixForBankAccountOpening + this)
 

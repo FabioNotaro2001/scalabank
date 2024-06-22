@@ -3,14 +3,8 @@ package scalabank.entities
 import scalabank.entities.Person
 import scalabank.logger.{Logger, LoggerDependency, LoggerImpl}
 import scalabank.appointment.Appointment
-import scalabank.currency.MoneyADT
-import scalabank.currency.MoneyADT.toMoney
 import scalabank.currency.Currency
-import scalabank.entities.StateBankAccount.Active
 import scalabank.bank.{Bank, BankAccountType}
-import scalabank.bank.Bank.VirtualBank
-import scalabank.bank.Bank.PhysicalBank
-
 
 trait Customer extends Person:
   def fidelity: Fidelity
@@ -22,7 +16,7 @@ trait Customer extends Person:
   def bank: Option[Bank]
   def registerBank(bank: Bank): Unit
   def deregisterBank(bank: Bank): Unit
-  def addBankAccount(bankAccount: BankAccount): Unit
+  def addBankAccount(bankAccountType: BankAccountType, currency: Currency): Unit
   def bankAccounts: Iterable[BankAccount]
 
 
@@ -59,8 +53,8 @@ trait CustomerBehaviour extends Customer:
 
   override def deregisterBank(bank: Bank): Unit = _bank = None
 
-  override def addBankAccount(bankAccount: BankAccount, bankAccountType: BankAccountType, currency: Currency): Unit = _bank match
-    case Bank => _bankAccounts :+ _bank.get.addBankAccount(this, bankAccountType , currency)
+  override def addBankAccount(bankAccountType: BankAccountType, currency: Currency): Unit = _bank match
+    case Bank => _bankAccounts :+ _bank.get.createBankAccount(this, bankAccountType , currency)
     case _ =>
 
   override def bankAccounts: Iterable[BankAccount] = _bankAccounts

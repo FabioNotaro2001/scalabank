@@ -24,7 +24,7 @@ object Database:
     private val employeeTab: EmployeeTable = EmployeeTable(connection)
     private val customerTab: CustomerTable = CustomerTable(connection)
     private val appointmentTab: AppointmentTable = AppointmentTable(connection, customerTab, employeeTab)
-    private val bankAccountTab: BankAccountTable = BankAccountTable(connection)
+    private val bankAccountTab: BankAccountTable = BankAccountTable(connection, customerTab)
 
     override def personTable: PersonTable = personTab
     override def employeeTable: EmployeeTable = employeeTab

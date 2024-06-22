@@ -1,33 +1,33 @@
 package scalabank.database.bank
 
+import scalabank.bank.BankAccountType
 import scalabank.currency.Currency
 import scalabank.database.DatabaseOperations
 import scalabank.entities.*
 import scalabank.currency.MoneyADT.*
+import scalabank.database.customer.CustomerTable
 
 import java.sql.{Connection, ResultSet}
 
-class BankAccountTable(val connection: Connection) extends DatabaseOperations[BankAccount, Int] :
+class BankAccountTable(val connection: Connection, val customerTable: CustomerTable) extends DatabaseOperations[BankAccount, Int] :
   if !tableExists("bankAccount", connection) then
     val query = "CREATE TABLE IF NOT EXISTS bankAccount (id INT PRIMARY KEY," +
       " balance VARCHAR(30), currencyCode VARCHAR(3), currencySymbol VARCHAR(3)," +
-      " state VARCHAR(10), accountType VARCHAR(10))"
+      " state VARCHAR(10), accountType VARCHAR(10), fee VARCHAR(30), cfOwner VARCHAR(16))"
     connection.createStatement.execute(query)
     populateDB()
 
-  private def bankAccountType(entity: BankAccount) = entity match
-    case _: BaseBankAccount.BaseBankAccountImpl => "Base"
-    case _: SuperBankAccount.SuperBankAccountImpl => "Super"
-
   def insert(entity: BankAccount): Unit =
-    val query = "INSERT INTO bankAccount (id, balance, currencyCode, currencySymbol, state, accountType) VALUES (?, ?, ?, ?, ?, ?)"
+    val query = "INSERT INTO bankAccount (id, balance, currencyCode, currencySymbol, state, accountType, fee, cfOwner) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
     val stmt = connection.prepareStatement(query)
     stmt.setInt(1, entity.id)
     stmt.setString(2, entity.balance.toString)
     stmt.setString(3, entity.currency.code)
     stmt.setString(4, entity.currency.symbol)
     stmt.setString(5, entity.state.toString)
-    stmt.setString(6, bankAccountType(entity))
+    stmt.setString(6, entity.bankAccountType.nameType)
+    stmt.setString(7, entity.bankAccountType.feeXOperation.toString())
+    stmt.setString(8, entity.customer.cf)
     stmt.executeUpdate
 
   private def createBankAccount(resultSet: ResultSet): BankAccount =
@@ -35,11 +35,9 @@ class BankAccountTable(val connection: Connection) extends DatabaseOperations[Ba
     val balance = resultSet.getString("balance")
     val currency = Currency(resultSet.getString("currencyCode"), resultSet.getString("currencySymbol"))
     val state = StateBankAccount.valueOf(resultSet.getString("state"))
-    val accountType = resultSet.getString("accountType")
-
-    accountType match
-      case "Base"  => BaseBankAccount(id, balance.toMoney, currency, state)
-      case "Super" => SuperBankAccount(id, balance.toMoney, currency, state)
+    val accountType = BankAccountType(resultSet.getString("accountType"), BigDecimal(resultSet.getString("fee")))
+    val customer = customerTable.findById(resultSet.getString("cfOwner")).get
+    BankAccount(id, customer, balance.toMoney, currency, state, accountType)
 
 
   def findById(id: Int): Option[BankAccount] =
@@ -61,14 +59,15 @@ class BankAccountTable(val connection: Connection) extends DatabaseOperations[Ba
 
   def update(entity: BankAccount): Unit =
     val query = "UPDATE bankAccount SET balance = ?, currencyCode = ?, " +
-      "currencySymbol = ?, state = ?, accountType = ? WHERE id = ?"
+      "currencySymbol = ?, state = ?, accountType = ?, fee = ? WHERE id = ?"
     val stmt = connection.prepareStatement(query)
     stmt.setString(1, entity.balance.toString)
     stmt.setString(2, entity.currency.code)
     stmt.setString(3, entity.currency.symbol)
     stmt.setString(4, entity.state.toString)
-    stmt.setString(5, bankAccountType(entity))
-    stmt.setInt(6, entity.id)
+    stmt.setString(5, entity.bankAccountType.nameType)
+    stmt.setString(6, entity.bankAccountType.feeXOperation.toString())
+    stmt.setInt(7, entity.id)
     stmt.executeUpdate
 
   def delete(id: Int): Unit =
@@ -77,8 +76,23 @@ class BankAccountTable(val connection: Connection) extends DatabaseOperations[Ba
     stmt.setInt(1, id)
     stmt.executeUpdate
 
-  def populateDB(): Unit =
-    List(
-      BaseBankAccount(1, 1000.toMoney, Currency("USD", "$"), StateBankAccount.Active),
-      SuperBankAccount(2, 2000.00.toMoney, Currency("EUR", "€"), StateBankAccount.Active)
-    ).foreach(insert)
+  private def populateDB(): Unit =
+    val customers = customerTable.findAll()
+    val bankAccountTypes = Seq(
+      BankAccountType("Checking", BigDecimal(0.01)),
+      BankAccountType("Savings", BigDecimal(0.02)),
+      BankAccountType("Business", BigDecimal(0.015))
+    )
+    var idCounter = 1
+    val bankAccounts = for
+      customer <- customers
+      accountType <- bankAccountTypes
+    yield
+      val id = idCounter
+      idCounter += 1
+      val balance = BigDecimal(scala.util.Random.nextDouble() * 10000).toMoney
+      val currency = Currency("EUR", "€")
+      val state = StateBankAccount.Active
+      BankAccount(id, customer, balance, currency, state, accountType)
+    bankAccounts.foreach(insert)
+

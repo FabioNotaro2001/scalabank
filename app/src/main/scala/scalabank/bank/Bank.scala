@@ -26,13 +26,6 @@ extension [A](opt: Option[A])
  */
 trait BankInformation
 
-trait BankAccountType:
-  def create: (Int, Currency, Customer) => BankAccount
-
-enum BankAccountTypes(override val create: (Int, Currency, Customer) => BankAccount) extends BankAccountType:
-  case BaseAccount extends BankAccountTypes(
-    (id: Int, currency: Currency, customer: Customer) => BankAccount(id, customer, 0.toMoney, currency, Active)
-  )
 
 /**
  * Trait for representing a bank, which can have customers, employees and appointments
@@ -99,12 +92,16 @@ trait Bank:
    * @param currency the currency of the bank account
    * @return the created bank account
    */
-  def addBankAccount(customer: Customer, bankAccountType: BankAccountType, currency: Currency): BankAccount
+  def createBankAccount(customer: Customer, bankAccountType: BankAccountType, currency: Currency): BankAccount
+
+  def addBankAccountType(nameType: String, feePerOperation: BigDecimal): Unit
+  def getBankAccountTypes: ListBuffer[BankAccountType]
 
 
 abstract class AbstractBankImpl[T <: BankInformation](override val bankInformation: T) extends Bank:
   protected val employees: ListBuffer[Employee] = ListBuffer()
   protected val customers: ListBuffer[Customer] = ListBuffer()
+  protected val bankAccountTypes: ListBuffer[BankAccountType] = ListBuffer() 
 
   override def customerLogin(cf: String): Option[Customer] =
     customers.find(_.cf == cf)
@@ -118,10 +115,14 @@ abstract class AbstractBankImpl[T <: BankInformation](override val bankInformati
   override def addCustomer(customer: Customer): Unit =
     customers.addOne(customer)
 
-  override def addBankAccount(customer: Customer, bankAccountType: BankAccountType, currency: Currency): BankAccount =
-    val acc = bankAccountType.create(LocalDateTime.now.getNano, currency, customer)
-    //customer.addBankAccount(acc)
-    acc
+  override def createBankAccount(customer: Customer, bankAccountType: BankAccountType, currency: Currency): BankAccount =
+    BankAccount(LocalDateTime.now.getNano, customer, 0.toMoney, currency, Active, bankAccountType)
+
+  override def addBankAccountType(nameType: String, feePerOperation: BigDecimal): Unit = 
+    val bankAccountType = BankAccountType(nameType, feePerOperation)
+    bankAccountTypes.addOne(bankAccountType)
+
+  override def getBankAccountTypes: ListBuffer[BankAccountType] = bankAccountTypes
 
 
 trait BankComponent:
