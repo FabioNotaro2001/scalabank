@@ -23,7 +23,7 @@ trait Customer extends Person:
   def registerBank(bank: Bank): Unit
   def deregisterBank(bank: Bank): Unit
   def addBankAccount(bankAccount: BankAccount): Unit
-  def bankAccount: Iterable[BankAccount]
+  def bankAccounts: Iterable[BankAccount]
 
 
 trait YoungCustomer extends Customer with CustomerBehaviour
@@ -54,16 +54,16 @@ trait CustomerBehaviour extends Customer:
   override def bank: Option[Bank] = _bank
 
   override def registerBank(bank: Bank): Unit = _bank match
-    case None => _bank = bank
+    case None => _bank = Some(bank)
     case _ =>
 
   override def deregisterBank(bank: Bank): Unit = _bank = None
 
   override def addBankAccount(bankAccount: BankAccount, bankAccountType: BankAccountType, currency: Currency): Unit = _bank match
-    case Bank => _bankAccounts :+ Some(_bank).addBankAccount(this, bankAccountType , currency)
+    case Bank => _bankAccounts :+ _bank.get.addBankAccount(this, bankAccountType , currency)
     case _ =>
 
-  override def bankAccount: Iterable[BankAccount] = _bankAccounts
+  override def bankAccounts: Iterable[BankAccount] = _bankAccounts
 
 
 trait BaseFeeCalculator:

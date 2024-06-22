@@ -120,7 +120,7 @@ abstract class AbstractBankImpl[T <: BankInformation](override val bankInformati
 
   override def addBankAccount(customer: Customer, bankAccountType: BankAccountType, currency: Currency): BankAccount =
     val acc = bankAccountType.create(LocalDateTime.now.getNano, currency, customer)
-    customer.addBankAccount(acc)
+    //customer.addBankAccount(acc)
     acc
 
 
