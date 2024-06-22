@@ -21,7 +21,7 @@ Nell'elenco che segue si descrivono un po' più in dettaglio i package che sonos
 - Currency &rarr; avrà un duplice scopo, non solo fornire funzioni di utilità per lavorare con monete e denaro, ma anche offrire funzioni di utilità per la conversione tra varie valute
 - Loan &rarr; contiene tutte le classi legate alla simulazione di prestiti/mutui
 - Appointment &rarr; conterrà la classe e le funzioni di utilità per gli appuntamenti tra clienti e personale bancario
-- GUI &rarr; racchiude tutti i file utili per mostrare tramite GUI alcuni risultati ed operazioni
+- GUI &rarr; racchiude le classi necessarie per la realizzazione dell'interfaccia grafica
 - Logger &rarr; contiene tutte le classi legate al logger, componente in grado di riportare ed elencare i principali eventi accaduti
 - Database &rarr; package emerso successivamente rispetto agli altri, contiene tutti i file di utilità per salvare ed estrarre informazioni dal database.
 

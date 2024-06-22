@@ -15,6 +15,20 @@ I componenti che compongono il package entities sono dunque:
 - esiste poi anche il trait Promotable, per esprimere che è possibile che un Employee venga promosso ad una nuova posizione
 - esiste infine anche il trait+implementazione Project che esprime in quali progetti è impegnato ciascun membro dello staff &rarr; si noti che ogni progetto ha un manager come supervisore e una lista di impiegati coinvolti.
 
+## Design di dettaglio della simulazione di mutui
+Un ulteriore requisito emerso durante la fase di requirements/engineering analysis è stata la possibilità di simulare mutui/prestiti: un cliente può dunque simulare la richiesta di un prestito di un quantitativo di denaro di cui necessita per sapere informazioni utili quali il tasso d'interesse applicato, il numero di pagamenti previsti, l'ammontare del singolo pagamento e quanto dovrà sborsare per ripagare il debito (somma tra cifra richiesta ed interessi applicati).
+
+Si noti che gli interessi applicati, come spesso accade nella realtà, si basano fortemente su alcuni parametri del cliente: nel nostro caso sono strettamente legati alla sua età ma, come si nota anche dal diagramma sotto riportato, è possibile separare bene le varie responsabilità in componenti diversi per generalizzare questo aspetto e renderlo facilmente modificabile (rispetto dei principi di SRP, modularità ed AOC) in modo che si adatti a qualsivoglia strategia diversa (ad esempio molto comune nell'ambito dei prestiti è anche calcolare il tasso d'interesse da applicare in base all'orizzonte temporale con cui il cliente desidera ripagare il debito contratto).
+
+![uml loans](img/UMLPrestito.png)
+
+I componenti presenti sono dunque:
+- LoanCalculator è il trait che mette a disposizione il metodo calculateLoan() per calcolare un mutuo/prestito
+- LoanCalculatorImpl è la classe che implementa il trait sopra descritto &rarr; si noti che essa contiene un campo privato dedicato all'InterestManager
+- il trait InterestManager offre un metodo findInterestRateForCustomer() in grado di individuare il più adatto tasso d'interesse per un cliente &rarr; il fatto di aver spostato tale responsabilità in un trait agevola di molto l'estendibilità della libreria, in quanto basterebbe solo agire su questa limitata parte del codice per modificare la strategie con cui si individua il corretto tasso d'interesse da applicare (ad esempio per renderlo dipendente non più dal cliente ma dall'orizzonte temporale)
+- la classe InterestManagerImpl dovrà però avere un campo dedicato ad un altro componente noto come InterestProvider, il quale contiene il valore di tutti i vari tassi d'interesse disponibili &rarr; tale trait+classe può essere vista come una sorta di container che mette a disposizione (magari previa interrogazione di database) tutti i tassi d'interesse possibili
+- il trait Loan, che è anche il tipo di ritorno del metodo calculateLoan() del trait LoanCalculator, rappresenta come suggerisce il nome un prestituo/mutuo, dunque conterrà dei metodi per interagire con vari parametri rilevanti come il numero di rate o l'ammontare di una rata
+- il trait Loan, per funzionare correttamente, necessita di interagire con altre componenti della libreria quali Money (per rappresentare valori e quantità monetarie al posto di Int, evitando di fatto la primitive type obsession), Customer e InterestRate.
 ## Design di dettaglio del logger
 Il design dettagliato del logger ha subito numerose ristrutturazioni incrementali durante tutta la fase di design, siccome partendo dalla soluzione più facile ci si è resi conto che tale componente poteva essere ulteriormente rifinito per applicarvi pattern di progettazione e principi (descritti più dettagliatamente nel capitolo dedicato all'implementazione).
 ![uml logger](img/UMLLogger.png)
