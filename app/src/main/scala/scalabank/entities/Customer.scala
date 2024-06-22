@@ -3,6 +3,7 @@ package scalabank.entities
 import scalabank.entities.Person
 import scalabank.logger.{Logger, LoggerDependency, LoggerImpl}
 import scalabank.appointment.Appointment
+import scalabank.bank.Bank.PhysicalBank
 import scalabank.currency.Currency
 import scalabank.bank.{Bank, BankAccountType}
 
@@ -54,9 +55,11 @@ trait CustomerBehaviour extends Customer:
   override def deregisterBank(bank: Bank): Unit = _bank = None
 
   override def addBankAccount(bankAccountType: BankAccountType, currency: Currency): Unit = _bank match
-    case Bank => _bankAccounts :+ _bank.get.createBankAccount(this, bankAccountType , currency)
-    case _ =>
-
+    case Some(bank) =>
+      val newBankAccount = bank.createBankAccount(this, bankAccountType, currency)
+      _bankAccounts = _bankAccounts :+ newBankAccount
+    case None =>
+  
   override def bankAccounts: Iterable[BankAccount] = _bankAccounts
 
 

@@ -5,6 +5,7 @@ import org.junit.runner.RunWith
 import org.scalatestplus.junit.JUnitRunner
 import org.scalatest.matchers.should.Matchers.*
 import scalabank.appointment.Appointment
+import scalabank.bank.Bank.{PhysicalBank, PhysicalBankInformation}
 import scalabank.currency.Currency
 import scalabank.entities.defaultBaseFeeCalculator
 import scalabank.entities.*
@@ -74,31 +75,25 @@ class CustomerTest extends AnyFunSuite:
     customer.getAppointments should contain (newAppointment)
     customer.getAppointments should not contain (oldAppointment)
 
-/*
-  test("Customer should be able to create a base bank account"):
+  test("Customer should be able to register a bank"):
     val customer = Customer("JHNDOE22B705Y", "John", "Doe", 1980)
-    customer.addBankAccount(VirtualBank())
-    customer.bankAccount shouldBe defined
-    customer.bankAccount.get shouldBe a[BankAccount]
+    val bank = PhysicalBank(PhysicalBankInformation("Cesena Bank", "via Roma 3", "12345678"))
+    customer.registerBank(bank)
+    customer.bank should contain(bank)
 
-  test("Customer should be able to create a super bank account"):
+  test("Customer should be able to deregister a bank"):
     val customer = Customer("JHNDOE22B705Y", "John", "Doe", 1980)
-    customer.createSuperBankAccount(2)
-    customer.bankAccount shouldBe defined
-    customer.bankAccount.get shouldBe a[BankAccount]
+    val bank = PhysicalBank(PhysicalBankInformation("Cesena Bank", "via Roma 3", "12345678"))
+    customer.registerBank(bank)
+    customer.deregisterBank(bank)
+    customer.bank should be(None)
 
-  test("Customer should initially have no bank account"):
+  test("Customer should be able to add bank accounts"):
     val customer = Customer("JHNDOE22B705Y", "John", "Doe", 1980)
-    customer.bankAccount shouldBe empty
-
-  test("Customer should be able to access bank account details if exists"):
-    val customer = Customer("JHNDOE22B705Y", "John", "Doe", 1980)
-    customer.createBankAccount(1)
-    customer.bankAccount shouldBe defined
-    val account = customer.bankAccount.get
-    account.id shouldBe 1
-    account.balance shouldBe 100.toMoney
-    account.currency shouldBe Currency("EUR", "€")
-    account.state shouldBe StateBankAccount.Active
-    
- */
+    val bank = PhysicalBank(PhysicalBankInformation("Cesena Bank", "via Roma 3", "12345678"))
+    bank.addBankAccountType("Base BankAccount", 2)
+    customer.registerBank(bank)
+    customer.addBankAccount(bank.getBankAccountTypes.head, Currency(code = "EUR", symbol = "€"))
+    println(customer.bankAccounts)
+    customer.bankAccounts.size should be(1)
+    customer.bankAccounts.head shouldBe a [BankAccount]
