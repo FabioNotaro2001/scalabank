@@ -5,6 +5,11 @@ import scalabank.entities.Customer
 
 import java.sql.{Connection, ResultSet}
 
+/**
+ * Class representing the customer table in the database.
+ *
+ * @param connection The database connection to use.
+ */
 class CustomerTable(val connection: Connection) extends DatabaseOperations[Customer, String]:
   if !tableExists("customer", connection) then
     val query = "CREATE TABLE IF NOT EXISTS customer (cf VARCHAR(16) PRIMARY KEY, name VARCHAR(255), surname VARCHAR(255), birthYear INT)"

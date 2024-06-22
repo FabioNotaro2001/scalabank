@@ -6,8 +6,19 @@ import scalabank.entities.Person
 import scala.collection.mutable.ListBuffer
 import scala.util.Random
 
+/**
+ * Populates a table with randomly generated entity instances.
+ */
 object PopulateEntityTable:
 
+  /**
+   * Creates a list of randomly generated instances and stores them in a database.
+   *
+   * @param numberOfEntries The number of entries to create.
+   * @param createEntity    A function that creates an entity given a fiscal code, name, surname, and birth year.
+   * @tparam T The type of the entity to create.
+   * @return A list of created entities.
+   */
   def createInstancesDB[T](numberOfEntries: Int, createEntity: (String, String, String, Int) => T): List[T] =
     val random = new Random()
     val names = List("Mario", "Luigi", "Giovanni", "Francesca", "Luca", "Alessandro", "Chiara", "Giulia", "Martina", "Simone")

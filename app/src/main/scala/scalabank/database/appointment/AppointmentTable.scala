@@ -9,6 +9,13 @@ import java.sql.{Connection, PreparedStatement, ResultSet}
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
+/**
+ * Class representing the appointment table in the database.
+ *
+ * @param connection    The database connection to use.
+ * @param customerTable The customer table to reference.
+ * @param employeeTable The employee table to reference.
+ */
 class AppointmentTable(val connection: Connection, customerTable: CustomerTable, employeeTable: EmployeeTable) extends DatabaseOperations[Appointment, (String, String, LocalDateTime)]:
   private val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 
@@ -76,10 +83,22 @@ class AppointmentTable(val connection: Connection, customerTable: CustomerTable,
     stmt.setString(3, date.format(dateFormat))
     stmt.executeUpdate
 
+  /**
+   * Finds appointments by the employee's fiscal code.
+   *
+   * @param employeeCf The fiscal code of the employee.
+   * @return A sequence of appointments associated with the given employee fiscal code.
+   */
   def findByEmployeeCf(employeeCf: String): Seq[Appointment] =
     val stmt = connection.prepareStatement("SELECT * FROM appointment WHERE employeeCf = ?")
     findByCf(stmt, employeeCf)
 
+  /**
+   * Finds appointments by the customer's fiscal code.
+   *
+   * @param customerCf The fiscal code of the customer.
+   * @return A sequence of appointments associated with the given customer fiscal code.
+   */
   def findByCustomerCf(customerCf: String): Seq[Appointment] =
     val stmt = connection.prepareStatement("SELECT * FROM appointment WHERE customerCf = ?")
     findByCf(stmt, customerCf)

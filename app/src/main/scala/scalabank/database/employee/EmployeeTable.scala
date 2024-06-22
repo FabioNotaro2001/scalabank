@@ -6,6 +6,11 @@ import scalabank.entities.Employee.EmployeePosition
 
 import java.sql.{Connection, ResultSet}
 
+/**
+ * Class representing the employee table in the database.
+ *
+ * @param connection The database connection to use.
+ */
 class EmployeeTable(val connection: Connection) extends DatabaseOperations[Employee, String]:
   if !tableExists("employee", connection) then
     val query = "CREATE TABLE IF NOT EXISTS employee (cf VARCHAR(16) PRIMARY KEY, name VARCHAR(255), surname VARCHAR(255), birthYear INT, position VARCHAR(50), hiringYear INT)"

@@ -10,6 +10,12 @@ import scalabank.database.customer.CustomerTable
 import java.sql.{Connection, ResultSet}
 import scala.util.Random
 
+/**
+ * Class representing the bank account table in the database.
+ *
+ * @param connection    The database connection to use.
+ * @param customerTable The customer table to reference.
+ */
 class BankAccountTable(val connection: Connection, val customerTable: CustomerTable) extends DatabaseOperations[BankAccount, Int] :
   if !tableExists("bankAccount", connection) then
     val query = "CREATE TABLE IF NOT EXISTS bankAccount (id INT PRIMARY KEY," +

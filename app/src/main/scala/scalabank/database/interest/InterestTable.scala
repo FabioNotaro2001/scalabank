@@ -4,6 +4,11 @@ import scalabank.database.DatabaseOperations
 import scalabank.loan.InterestRate
 import java.sql.{Connection, ResultSet}
 
+/**
+ * Class representing the interest table in the database.
+ *
+ * @param connection The database connection to use.
+ */
 class InterestTable(val connection: Connection) extends DatabaseOperations[(String, InterestRate), String]:
   if !tableExists("interestRate", connection) then
     val query = "CREATE TABLE IF NOT EXISTS interestRate (id VARCHAR(30) PRIMARY KEY, rate DOUBLE)"
