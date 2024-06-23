@@ -29,7 +29,7 @@ class CurrencyTest extends AnyFlatSpec:
   it should "apply fees correctly" in:
     val converter = CurrencyConverter()
     val amount = 100.toMoney
-    val feeApplied = FeeManager.applyFee(amount, 0.5)
+    val feeApplied = FeeManager.applyPercentualFee(amount, 0.5)
     feeApplied should be(BigDecimal(99.50))
 
   "CurrencyConverter" should "convert an amount from one currency to another" in:
