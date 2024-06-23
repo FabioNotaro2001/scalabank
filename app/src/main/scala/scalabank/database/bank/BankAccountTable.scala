@@ -6,6 +6,7 @@ import scalabank.database.DatabaseOperations
 import scalabank.entities.*
 import scalabank.currency.MoneyADT.*
 import scalabank.database.customer.CustomerTable
+import scalabank.bankAccount.{BankAccount, StateBankAccount}
 
 import java.sql.{Connection, ResultSet}
 import scala.util.Random
@@ -42,7 +43,7 @@ class BankAccountTable(val connection: Connection, val customerTable: CustomerTa
     val balance = resultSet.getString("balance")
     val currency = Currency(resultSet.getString("currencyCode"), resultSet.getString("currencySymbol"))
     val state = StateBankAccount.valueOf(resultSet.getString("state"))
-    val accountType = BankAccountType(resultSet.getString("accountType"), BigDecimal(resultSet.getString("fee")))
+    val accountType = BankAccountType(resultSet.getString("accountType"), resultSet.getString("fee").toMoney)
     val customer = customerTable.findById(resultSet.getString("cfOwner")).get
     BankAccount(id, customer, balance.toMoney, currency, state, accountType)
 
@@ -86,9 +87,9 @@ class BankAccountTable(val connection: Connection, val customerTable: CustomerTa
   private def populateDB(): Unit =
     val customers = customerTable.findAll()
     val bankAccountTypes = Seq(
-      BankAccountType("Checking", BigDecimal(0.01)),
-      BankAccountType("Savings", BigDecimal(0.02)),
-      BankAccountType("Business", BigDecimal(0.015))
+      BankAccountType("Checking", 0.01.toMoney),
+      BankAccountType("Savings", 0.02.toMoney),
+      BankAccountType("Business", 0.015.toMoney)
     )
     var idCounter = 1
     val bankAccounts = for
