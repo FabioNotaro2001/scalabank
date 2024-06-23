@@ -1,4 +1,4 @@
-package scalabank
+package scalabank.entities
 
 import org.scalatest.funsuite.AnyFunSuite
 import org.junit.runner.RunWith
@@ -9,6 +9,7 @@ import scalabank.bank.Bank.{PhysicalBank, PhysicalBankInformation}
 import scalabank.currency.Currency
 import scalabank.entities.defaultBaseFeeCalculator
 import scalabank.entities.*
+import scalabank.bankAccount.BankAccount
 
 import java.time.LocalDateTime
 import scalabank.currency.MoneyADT.toMoney
@@ -91,7 +92,7 @@ class CustomerTest extends AnyFunSuite:
   test("Customer should be able to add bank accounts"):
     val customer = Customer("JHNDOE22B705Y", "John", "Doe", 1980)
     val bank = PhysicalBank(PhysicalBankInformation("Cesena Bank", "via Roma 3", "12345678"))
-    bank.addBankAccountType("Base BankAccount", 2)
+    bank.addBankAccountType("Base BankAccount", 2.toMoney)
     customer.registerBank(bank)
     customer.addBankAccount(bank.getBankAccountTypes.head, Currency(code = "EUR", symbol = "€"))
     println(customer.bankAccounts)
