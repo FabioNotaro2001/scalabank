@@ -1,28 +1,70 @@
 package scalabank.bankAccount
 
 import scalabank.bank.BankAccountType
-import scalabank.bankAccount.Movement
 import scalabank.currency.MoneyADT.Money
 import scalabank.currency.{Currency, FeeManager, MoneyADT}
 import scalabank.logger.{Logger, LoggerDependency, LoggerImpl}
-import scalabank.currency.MoneyADT.toMoney
 import scalabank.entities.*
-
 import scala.collection.SeqView
 import scala.collection.immutable.List
 
+/**
+ * Represents the state of a bank account.
+ */
 enum StateBankAccount:
     case Active, Inactive, Closed
 
+/**
+ * Trait representing a bank account.
+ */
 trait BankAccount:
+    /**
+     * @return the unique identifier of the bank account
+     */
     def id: Int
+
+    /**
+     * @return the customer who owns the bank account
+     */
     def customer: Customer
+
+    /**
+     * @return the current balance of the bank account
+     */
     def balance: Money
+
+    /**
+     * @return the currency of the bank account
+     */
     def currency: Currency
+
+    /**
+     * @return the current state of the bank account
+     */
     def state: StateBankAccount
+
+    /**
+     * @return the type of the bank account
+     */
     def bankAccountType: BankAccountType
+
+    /**
+     * @return a view of the movements (transactions) associated with the bank account
+     */
     def movements: SeqView[Movement]
+
+    /**
+     * Deposits a specified amount of money into the bank account.
+     *
+     * @param amount the amount of money to deposit
+     */
     def deposit(amount: Money): Unit
+
+    /**
+     * Withdraws a specified amount of money from the bank account.
+     *
+     * @param amount the amount of money to withdraw
+     */
     def withdraw(amount: Money): Unit
 
 
@@ -31,6 +73,9 @@ object BankAccount extends LoggerDependency with BankAccountComponent:
     def apply(id: Int, customer: Customer, balance: Money, currency: Currency, state: StateBankAccount, bankAccountType: BankAccountType): BankAccountImpl =
         BankAccountImpl(id, customer, balance, currency, state, bankAccountType)
 
+/**
+ * Component trait for BankAccount, defining the concrete implementation of the BankAccount trait.
+ */
 trait BankAccountComponent:
     loggerDependency: LoggerDependency =>
 
@@ -74,9 +119,3 @@ trait BankAccountComponent:
             val withdraw = Withdraw(amount, feePerOperation)
             _movements = _movements :+ withdraw
             loggerDependency.logger.log(withdraw.toString)
-
-
-
-
-
-
