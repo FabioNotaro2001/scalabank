@@ -61,11 +61,13 @@ trait BankAccount:
     def deposit(amount: Money): Unit
 
     /**
-     * Withdraws a specified amount of money from the bank account.
+     * Withdraws a specified amount of money from the bank account if there is enough money.
      *
      * @param amount the amount of money to withdraw
+     * @return the result of the operation
      */
-    def withdraw(amount: Money): Unit
+    def withdraw(amount: Money): Boolean
+    def makeMoneyTransfer(senderBankAccount: BankAccount, receiverBankAccount: BankAccount, amount: Money): Boolean
 
 
 object BankAccount extends LoggerDependency with BankAccountComponent:
@@ -82,7 +84,7 @@ trait BankAccountComponent:
     case class BankAccountImpl(
                                 _id: Int,
                                 _customer: Customer,
-                                var _balance: Money,
+                                override var balance: Money,
                                 _currency: Currency,
                                 _state: StateBankAccount,
                                 _bankAccountType: BankAccountType,
@@ -94,8 +96,6 @@ trait BankAccountComponent:
         override def id: Int = _id
 
         override def customer: Customer = _customer
-
-        override def balance: Money = _balance
 
         override def currency: Currency = _currency
 
@@ -111,11 +111,15 @@ trait BankAccountComponent:
             _movements = _movements :+ deposit
             loggerDependency.logger.log(deposit.toString)
 
-        override def withdraw(amount: Money): Unit =
-            val feePerOperation = _bankAccountType.feeXOperation
+        override def withdraw(amount: Money): Boolean =
+            val feePerOperation = _bankAccountType.feePerOperation
             val amountWithFee = FeeManager.calculateAmountWithFee(amount, feePerOperation)
-            require(_balance >= amountWithFee)
-            _balance = _balance - amountWithFee
-            val withdraw = Withdraw(amount, feePerOperation)
-            _movements = _movements :+ withdraw
-            loggerDependency.logger.log(withdraw.toString)
+            if _balance >= amountWithFee then
+                _balance = _balance - amountWithFee
+                val withdraw = Withdraw(amount, feePerOperation)
+                _movements = _movements :+ withdraw
+                loggerDependency.logger.log(withdraw.toString)
+                true
+            else false
+
+        override def makeMoneyTransfer(senderBankAccount: BankAccount, receiverBankAccount: BankAccount, amount: Money): Boolean = true

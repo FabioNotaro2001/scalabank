@@ -1,4 +1,4 @@
-package scalabank.Operations
+package scalabank.operations
 
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
@@ -30,18 +30,18 @@ class BankAccountOperationsTest extends AnyFlatSpec with Matchers:
     val account = BankAccount(2, customer, initialBalance, currency, StateBankAccount.Active, bankAccountType)
     val amount = 100.toMoney
     account.withdraw(amount)
-    val expectedBalance = 1000.toMoney - FeeManager.calculateAmountWithFee(amount, bankAccountType.feeXOperation)
+    val expectedBalance = 1000.toMoney - FeeManager.calculateAmountWithFee(amount, bankAccountType.feePerOperation)
     account.balance shouldEqual expectedBalance
     account.movements.size shouldBe 1
     account.movements.head shouldBe a[Withdraw]
     account.movements.head.value shouldEqual 100.toMoney
 
 
-  it should "throw an error when trying to withdraw more than the balance including the fee" in:
+  it should "return false when trying to withdraw more than the balance including the fee" in:
     val account = BankAccount(3, customer, initialBalance, currency, StateBankAccount.Active, bankAccountType)
     val largeWithdrawAmount = 2000.toMoney
-    assertThrows[IllegalArgumentException]:
-      account.withdraw(largeWithdrawAmount)
+    val result = account.withdraw(largeWithdrawAmount)
+    result shouldEqual false
     account.balance shouldEqual initialBalance
     account.movements shouldBe empty
 
@@ -53,7 +53,7 @@ class BankAccountOperationsTest extends AnyFlatSpec with Matchers:
     account.withdraw(amount)
     val amount2 = 50.toMoney
     account.withdraw(amount2)
-    val fee = bankAccountType.feeXOperation 
+    val fee = bankAccountType.feePerOperation 
     val expectedBalance = 1000.toMoney + 200.toMoney - FeeManager.calculateAmountWithFee(amount, fee) - FeeManager.calculateAmountWithFee(amount2, fee)
     account.balance shouldEqual expectedBalance
     account.movements.size shouldBe 3

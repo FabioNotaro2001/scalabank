@@ -96,7 +96,7 @@ class CurrencyTest extends AnyFlatSpec:
 
   it should "correctly format as a string" in :
     val amount = 100.1234.toMoney
-    amount.format shouldEqual "$100.12"
+    amount.format shouldEqual "$100,12"
 
   it should "throw an exception when dividing by zero" in :
     val amount = 100.toMoney

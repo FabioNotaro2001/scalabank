@@ -34,7 +34,7 @@ class BankAccountTable(val connection: Connection, val customerTable: CustomerTa
     stmt.setString(4, entity.currency.symbol)
     stmt.setString(5, entity.state.toString)
     stmt.setString(6, entity.bankAccountType.nameType)
-    stmt.setString(7, entity.bankAccountType.feeXOperation.toString())
+    stmt.setString(7, entity.bankAccountType.feePerOperation.toString())
     stmt.setString(8, entity.customer.cf)
     stmt.executeUpdate
 
@@ -74,7 +74,7 @@ class BankAccountTable(val connection: Connection, val customerTable: CustomerTa
     stmt.setString(3, entity.currency.symbol)
     stmt.setString(4, entity.state.toString)
     stmt.setString(5, entity.bankAccountType.nameType)
-    stmt.setString(6, entity.bankAccountType.feeXOperation.toString())
+    stmt.setString(6, entity.bankAccountType.feePerOperation.toString())
     stmt.setInt(7, entity.id)
     stmt.executeUpdate
 
