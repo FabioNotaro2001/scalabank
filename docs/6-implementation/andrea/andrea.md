@@ -131,20 +131,20 @@ L'oggetto `MoneyADT` rappresenta un modo sicuro e flessibile per lavorare con va
 Il codice presentato definisce l'ADT `Money` utilizzando un tipo opaco, che nasconde l'implementazione interna (un `BigDecimal`) e fornisce un'interfaccia sicura e controllata per le operazioni sul denaro. Ecco una panoramica delle componenti principali:
 
 ##### Estrazione del valore
-```scala
+```scala 3
 def unapply(money: Money): Option[BigDecimal] = Some(money)
 ```
 Questo metodo permette di estrarre il valore interno di un'istanza di Money come BigDecimal.
 
 ##### Conversione da tipi di dati comuni a Money
-```scala
+```scala 3
 extension (amount: Double | Int | Float | String | BigDecimal)
   def toMoney: Money = ...
 ```
 Questa estensione permette di creare istanze di Money da vari tipi di dati, assicurando che il valore sia non negativo.
 
 ##### Operazioni aritmetiche e di confronto
-```scala
+```scala 3
 extension (money: Money)
 def +(moneyToAdd: Money): Money = money + moneyToAdd
 def -(moneyToGet: Money): Money = money - moneyToGet
@@ -159,7 +159,7 @@ Queste estensioni definiscono le operazioni aritmetiche (addizione, sottrazione,
 Questa implementazione permette di ordinare istanze di `Money` in collezioni ordinate (`SortedSet`, `SortedMap`) o utilizzare funzioni di ordinamento (`sorted`, `max`, `min`) in modo naturale, grazie alla definizione implicita dell'ordine.
 La dichiarazione:
 
-```scala
+```scala 3
 given Ordering[Money] with
 override def compare(x: Money, y: Money): Int = x.compare(y)
 ```
@@ -203,7 +203,7 @@ override def compare(x: Money, y: Money): Int = x.compare(y)
 
 #### Trait `Database`
 L'interfaccia `Database` definisce le tabelle principali:
-```scala
+```scala 3
 trait Database:
   def personTable: PersonTable
   def employeeTable: EmployeeTable
@@ -217,7 +217,7 @@ trait Database:
 - Definisce le operazioni CRUD comuni a tutte le tabelle.
 - Metodo `tableExists` per verificare l'esistenza di una tabella.
 
-```scala
+```scala 3
 trait DatabaseOperations[T, Q]:
     def insert(entity: T): Unit
     def findById(id: Q): Option[T]
@@ -264,6 +264,56 @@ trait DatabaseOperations[T, Q]:
 
 - **Random Data Generation:** La classe `PopulateEntityTable` crea istanze casuali per popolare le tabelle inizialmente, migliorando il testing e la simulazione di scenari realistici.
 
+## Parte 4
+
+### Struttura del Codice
+- **Movimenti:** Le classi `Deposit` e `Withdraw` implementano il trait `Movement`, rappresentando rispettivamente un deposito e un prelievo. Ogni movimento ha un valore, una data, un conto ricevente e un metodo per eseguire l'operazione.
+- **Depositi:** La classe `Deposit` rappresenta un deposito di denaro. Esegue l'operazione aggiungendo il valore al saldo del conto ricevente e registra il movimento.
+- **Prelievi:** La classe `Withdraw` rappresenta un prelievo di denaro. Esegue l'operazione sottraendo il valore (inclusa la commissione) dal saldo del conto ricevente, se il saldo è sufficiente, e registra il movimento.
+- **Conto Bancario:** La classe `BankAccountImpl` implementa le funzionalità di base di un conto bancario, come depositi, prelievi, gestione del saldo e registrazione dei movimenti.
+
+![UML Persona](img/deposit.png)
+
+### Principi di Buona Programmazione
+- **Single Responsibility Principle:** Ogni classe ha una singola responsabilità. `Deposit` e `Withdraw` gestiscono specifici tipi di movimenti, mentre `BankAccountImpl` gestisce le operazioni sul conto bancario.
+- **Open/Closed Principle:** Le classi `Deposit` e `Withdraw` possono essere estese con nuove funzionalità senza modificare il codice esistente, grazie all'implementazione del trait `Movement`.
+- **Liskov Substitution Principle:** `Deposit` e `Withdraw` possono essere usate ovunque sia previsto un Movement, senza alterare il comportamento del programma.
+- **Interface Segregation Principle:** Il trait `Movement` è specifico e fornisce solo i metodi necessari per i movimenti bancari, evitando metodi non necessari.
+
+### Implementazione
+#### Trait `Movement`
+Il trait `Movement` definisce l'interfaccia per i movimenti bancari:
+```scala 3
+trait Movement:
+  def value: Money
+  def date: LocalDateTime
+  def receiverBankAccount: BankAccount
+  def dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+  def doOperation(): Boolean
+```
+
+#### Classe `Deposit`
+- Esegue un deposito di denaro sul conto ricevente.
+- Aggiorna il saldo del conto e registra il movimento.
+- Fornisce una rappresentazione stringa del deposito
+
+#### Classe `Withdraw`
+- Esegue un prelievo di denaro dal conto ricevente, tenendo conto di una commissione.
+- Verifica se il saldo è sufficiente prima di eseguire l'operazione.
+- Aggiorna il saldo del conto e registra il movimento.
+- Fornisce una rappresentazione stringa del prelievo.
+
+#### Metodo `filterMovements` in `BankAccount`
+Il metodo `filterMovements` permette di filtrare i movimenti del conto bancario in base al tipo specificato. È un metodo generico che utilizza `ClassTag` per ottenere una vista dei movimenti di un determinato tipo. Questo aumenta la flessibilità del sistema e consente di recuperare facilmente solo i movimenti desiderati.
+```scala 3
+import scala.reflect.ClassTag
+def filterMovements[T <: Movement : ClassTag]: SeqView[T] =
+    _movements.collect { case m: T => m }.view
+```
+- **Tipo Generico:** `T` è un tipo generico che deve essere un sottotipo di `Movement`.
+- **ClassTag:** Utilizza `ClassTag` per permettere il filtraggio in fase di esecuzione.
+- **collect:** Il metodo `collect` filtra e mappa gli elementi della lista _`movements` che corrispondono al tipo specificato.
+- **view:** Restituisce una vista dei movimenti filtrati per evitare la creazione di una nuova lista e migliorare l'efficienza.
 
 
 Per tutte le seguenti implementazioni si è deciso di utilizzare un approccio TDD.
