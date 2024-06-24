@@ -2,9 +2,13 @@ package scalabank.bank
 
 import scalabank.appointment.Appointment
 import scalabank.bank
-import scalabank.entities.Customer.logger
+import scalabank.bankAccount.BankAccount
+import scalabank.currency.Currency
+import scalabank.currency.MoneyADT.Money
+import scalabank.bankAccount.StateBankAccount.Active
 import scalabank.entities.{Customer, Employee}
 import scalabank.logger.{Logger, LoggerDependency, LoggerImpl}
+import scalabank.currency.MoneyADT.toMoney
 
 import java.time.LocalDateTime
 import scala.annotation.targetName
@@ -22,6 +26,7 @@ extension [A](opt: Option[A])
  */
 trait BankInformation
 
+
 /**
  * Trait for representing a bank, which can have customers, employees and appointments
  */
@@ -30,6 +35,20 @@ trait Bank:
    * @return the information associayed to the bank
    */
   def bankInformation: BankInformation
+
+  /**
+   * Attempts to login as customer
+   * @param cf the customer's CF
+   * @return the customer if the login is successful
+   */
+  def customerLogin(cf: String): Option[Customer]
+
+  /**
+   * Attempts to login as employee
+   * @param cf the employee's CF
+   * @return the employee if the login is successful
+   */
+  def employeeLogin(cf: String): Option[Employee]
 
   /**
    * Adds an employee to the bank
@@ -66,17 +85,45 @@ trait Bank:
    */
   def cancelAppointment(appointment: Appointment): Unit
 
+  /**
+   * Creates a new bank account for the customer
+   * @param customer the customer
+   * @param bankAccountType the type of bank account
+   * @param currency the currency of the bank account
+   * @return the created bank account
+   */
+  def createBankAccount(customer: Customer, bankAccountType: BankAccountType, currency: Currency): BankAccount
+
+  def addBankAccountType(nameType: String, feePerOperation: Money): Unit
+  def getBankAccountTypes: ListBuffer[BankAccountType]
+
+
 abstract class AbstractBankImpl[T <: BankInformation](override val bankInformation: T) extends Bank:
   protected val employees: ListBuffer[Employee] = ListBuffer()
   protected val customers: ListBuffer[Customer] = ListBuffer()
+  protected val bankAccountTypes: ListBuffer[BankAccountType] = ListBuffer() 
+
+  override def customerLogin(cf: String): Option[Customer] =
+    customers.find(_.cf == cf)
+
+  override def employeeLogin(cf: String): Option[Employee] =
+    employees.find(_.cf == cf)
 
   override def addEmployee(employee: Employee): Unit =
     employees.addOne(employee)
-  // TODO: impostare la banca nel dipendente
 
   override def addCustomer(customer: Customer): Unit =
     customers.addOne(customer)
-// TODO: impostare la banca nel cliente
+
+  override def createBankAccount(customer: Customer, bankAccountType: BankAccountType, currency: Currency): BankAccount =
+    BankAccount(LocalDateTime.now.getNano, customer, 0.toMoney, currency, Active, bankAccountType)
+
+  override def addBankAccountType(nameType: String, feePerOperation: Money): Unit = 
+    val bankAccountType = BankAccountType(nameType, feePerOperation)
+    bankAccountTypes.addOne(bankAccountType)
+
+  override def getBankAccountTypes: ListBuffer[BankAccountType] = bankAccountTypes
+
 
 trait BankComponent:
   loggerDependency: LoggerDependency =>

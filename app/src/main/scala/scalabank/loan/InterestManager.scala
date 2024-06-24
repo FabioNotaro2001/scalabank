@@ -1,6 +1,7 @@
 package scalabank.loan
 
 import scalabank.entities.*
+import scalabank.entities.Customer.OldCustomerImpl
 import scalabank.loan.*
 
 /**
@@ -40,6 +41,6 @@ object InterestManager:
      * @return the InterestRate deemed appropriate for the customer.
      */
     override def findAppropriateInterestForCustomer(customer: Customer): InterestRate = customer match
-      case customer: YoungCustomer => interestProvider.getInterestForYoungCustomer
-      case customer: OldCustomer => interestProvider.getInterestForOldCustomer
+      case customer: CustomerComponent#YoungCustomerImpl => interestProvider.getInterestForYoungCustomer
+      case customer: CustomerComponent#OldCustomerImpl => interestProvider.getInterestForOldCustomer
       case _ => interestProvider.getDefaultInterest

@@ -6,6 +6,11 @@ import scalabank.database.PopulateEntityTable
 
 import java.sql.{Connection, ResultSet}
 
+/**
+ * Class representing the person table in the database.
+ *
+ * @param connection The database connection to use.
+ */
 class PersonTable(val connection: Connection) extends DatabaseOperations[Person, String]:
   if !tableExists("person", connection) then
     val query = "CREATE TABLE IF NOT EXISTS person (cf VARCHAR(16) PRIMARY KEY, name VARCHAR(255), surname VARCHAR(255), birthYear INT)"

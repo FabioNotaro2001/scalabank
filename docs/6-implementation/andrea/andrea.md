@@ -117,7 +117,52 @@ Il trait `ExchangeRateProvider` rappresenta un provider di tassi di cambio. Ho d
 
 ### MoneyADT
 
-L'oggetto `MoneyADT` rappresenta l'oggetto con cui si può lavorare sul denaro. In questo modo ho limitato le operazioni che si possono fare con i soldi, solo a quelle descritte. Si ha la possibilità di decidere noi la tipologia di dato. In questo caso, ho creato un tipo opaco `Money`, visto che lavoriamo con dei soldi esso è rappresentato come un `BigDecimal`.
+L'oggetto `MoneyADT` rappresenta un modo sicuro e flessibile per lavorare con valori monetari. Questo approccio limita le operazioni consentite sul denaro, garantendo maggiore sicurezza e integrità dei dati finanziari.
+
+#### Meccanismi utilizzati:
+
+- **Type Safety:** Uso di un tipo opaco (`opaque type`) per rappresentare una quantità di denaro in modo sicuro, prevenendo operazioni errate che potrebbero compromettere l'integrità dei dati.
+- **Extension Methods:** Metodi di estensione per operazioni aritmetiche e formattazione, limitando le operazioni possibili a quelle definite, migliorando la leggibilità del codice e riducendo gli errori.
+- **Immutabilità:** Le istanze di `Money` sono immutabili, garantendo che il valore del denaro non possa essere modificato una volta creato.
+- **Validazione dei dati:** Controlli per garantire che le quantità di denaro siano non negative, evitando errori logici nell'uso delle cifre.
+
+#### Descrizione del codice
+
+Il codice presentato definisce l'ADT `Money` utilizzando un tipo opaco, che nasconde l'implementazione interna (un `BigDecimal`) e fornisce un'interfaccia sicura e controllata per le operazioni sul denaro. Ecco una panoramica delle componenti principali:
+
+##### Estrazione del valore
+```scala 3
+def unapply(money: Money): Option[BigDecimal] = Some(money)
+```
+Questo metodo permette di estrarre il valore interno di un'istanza di Money come BigDecimal.
+
+##### Conversione da tipi di dati comuni a Money
+```scala 3
+extension (amount: Double | Int | Float | String | BigDecimal)
+  def toMoney: Money = ...
+```
+Questa estensione permette di creare istanze di Money da vari tipi di dati, assicurando che il valore sia non negativo.
+
+##### Operazioni aritmetiche e di confronto
+```scala 3
+extension (money: Money)
+def +(moneyToAdd: Money): Money = money + moneyToAdd
+def -(moneyToGet: Money): Money = money - moneyToGet
+...
+def *(factor: BigDecimal): Money = money * factor
+def /(factor: BigDecimal): Money = money / factor
+```
+Queste estensioni definiscono le operazioni aritmetiche (addizione, sottrazione, moltiplicazione, divisione) e di confronto (maggiore, minore, ecc.) su istanze di Money.
+
+##### Ordinamento
+
+Questa implementazione permette di ordinare istanze di `Money` in collezioni ordinate (`SortedSet`, `SortedMap`) o utilizzare funzioni di ordinamento (`sorted`, `max`, `min`) in modo naturale, grazie alla definizione implicita dell'ordine.
+La dichiarazione:
+
+```scala 3
+given Ordering[Money] with
+override def compare(x: Money, y: Money): Int = x.compare(y)
+```
 
 #### Meccanismi utilizzati:
 
@@ -136,8 +181,139 @@ L'oggetto `MoneyADT` rappresenta l'oggetto con cui si può lavorare sul denaro. 
 - **Asynchronous Programming:** Uso di `Future` per operazioni di rete non bloccanti.
 - **Encapsulation:** Uso di metodi privati e case class per nascondere i dettagli di implementazione e fornire un'interfaccia pulita.
 
+## Parte 3
 
+### Struttura del Database
 
+- **Creazione del Database:** Se le tabelle non esistono, vengono create e popolate con alcuni elementi, alcuni dei quali generati in modo randomico.
+- **Istanziazione del Database:** La classe `Database` è istanziabile con diversi URL, permettendo l'utilizzo di un database temporaneo per i test e di un database persistente per l'uso normale del programma.
+- **Riutilizzo del Codice:** Le operazioni comuni alle varie tabelle seguono il principio CRUD (Create, Read, Update, Delete) e implementano tutte lo stesso trait, garantendo un'implementazione consistente e riutilizzabile.
+- **Utilizzo di Generics:** I generici sono ampiamente utilizzati per evitare la ripetizione del codice, migliorando la manutenibilità e la flessibilità del sistema. In particolare nelle classi: `DatabaseOperations` e `PopulateEntityTable`
+
+![UML Persona](img/db.png)
+
+### Principi di Buona Programmazione
+
+- **Single Responsibility Principle:** Ogni classe è responsabile di un singolo compito, come la gestione di una specifica tabella del database.
+- **Open/Closed Principle:** Il codice è strutturato in modo che le nuove funzionalità possano essere aggiunte senza modificare il codice esistente.
+- **Liskov Substitution Principle:** Le classi derivate possono essere sostituite alle loro basi senza alterare il funzionamento del programma.
+- **Interface Segregation Principle:** Le interfacce sono specifiche per ogni tipo di entità, evitando metodi non necessari.
+
+### Implementazione
+
+#### Trait `Database`
+L'interfaccia `Database` definisce le tabelle principali:
+```scala 3
+trait Database:
+  def personTable: PersonTable
+  def employeeTable: EmployeeTable
+  def customerTable: CustomerTable
+  def appointmentTable: AppointmentTable
+  def bankAccountTable: BankAccountTable
+```
+
+#### Trait `DatabaseOperations`
+
+- Definisce le operazioni CRUD comuni a tutte le tabelle.
+- Metodo `tableExists` per verificare l'esistenza di una tabella.
+
+```scala 3
+trait DatabaseOperations[T, Q]:
+    def insert(entity: T): Unit
+    def findById(id: Q): Option[T]
+    def findAll(): Seq[T]
+    def update(entity: T): Unit
+    def delete(id: Q): Unit
+    def tableExists(tableName: String, connection: Connection): Boolean =
+      val statement = connection.createStatement
+      try
+        val query = s"SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '$tableName'"
+        val resultSet: ResultSet = statement.executeQuery(query)
+        resultSet.next
+      finally
+        statement.close()
+```
+
+#### Classe `PersonTable`
+
+- Crea e popola la tabella `person` se non esiste.
+- Implementa le operazioni CRUD per la tabella `person`.
+
+#### Classe `EmployeeTable`
+
+- Crea e popola la tabella `employee` se non esiste.
+- Implementa le operazioni CRUD per la tabella `employee`.
+
+#### Classe `CustomerTable`
+
+- Crea e popola la tabella `customer` se non esiste.
+- Implementa le operazioni CRUD per la tabella `customer`.
+
+#### Classe `BankAccountTable`
+
+- Crea e popola la tabella `bankAccount` se non esiste.
+- Implementa le operazioni CRUD per la tabella `bankAccount`.
+
+#### Classe `AppointmentTable`
+
+- Crea e popola la tabella `appointment` se non esiste.
+- Implementa le operazioni CRUD per la tabella `appointment`.
+- Fornisce metodi per trovare appuntamenti per codice fiscale di cliente o dipendente.
+
+# Popolamento delle Tabelle
+
+- **Random Data Generation:** La classe `PopulateEntityTable` crea istanze casuali per popolare le tabelle inizialmente, migliorando il testing e la simulazione di scenari realistici.
+
+## Parte 4
+
+### Struttura del Codice
+- **Movimenti:** Le classi `Deposit` e `Withdraw` implementano il trait `Movement`, rappresentando rispettivamente un deposito e un prelievo. Ogni movimento ha un valore, una data, un conto ricevente e un metodo per eseguire l'operazione.
+- **Depositi:** La classe `Deposit` rappresenta un deposito di denaro. Esegue l'operazione aggiungendo il valore al saldo del conto ricevente e registra il movimento.
+- **Prelievi:** La classe `Withdraw` rappresenta un prelievo di denaro. Esegue l'operazione sottraendo il valore (inclusa la commissione) dal saldo del conto ricevente, se il saldo è sufficiente, e registra il movimento.
+- **Conto Bancario:** La classe `BankAccountImpl` implementa le funzionalità di base di un conto bancario, come depositi, prelievi, gestione del saldo e registrazione dei movimenti.
+
+![UML Persona](img/deposit.png)
+
+### Principi di Buona Programmazione
+- **Single Responsibility Principle:** Ogni classe ha una singola responsabilità. `Deposit` e `Withdraw` gestiscono specifici tipi di movimenti, mentre `BankAccountImpl` gestisce le operazioni sul conto bancario.
+- **Open/Closed Principle:** Le classi `Deposit` e `Withdraw` possono essere estese con nuove funzionalità senza modificare il codice esistente, grazie all'implementazione del trait `Movement`.
+- **Liskov Substitution Principle:** `Deposit` e `Withdraw` possono essere usate ovunque sia previsto un Movement, senza alterare il comportamento del programma.
+- **Interface Segregation Principle:** Il trait `Movement` è specifico e fornisce solo i metodi necessari per i movimenti bancari, evitando metodi non necessari.
+
+### Implementazione
+#### Trait `Movement`
+Il trait `Movement` definisce l'interfaccia per i movimenti bancari:
+```scala 3
+trait Movement:
+  def value: Money
+  def date: LocalDateTime
+  def receiverBankAccount: BankAccount
+  def dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+  def doOperation(): Boolean
+```
+
+#### Classe `Deposit`
+- Esegue un deposito di denaro sul conto ricevente.
+- Aggiorna il saldo del conto e registra il movimento.
+- Fornisce una rappresentazione stringa del deposito
+
+#### Classe `Withdraw`
+- Esegue un prelievo di denaro dal conto ricevente, tenendo conto di una commissione.
+- Verifica se il saldo è sufficiente prima di eseguire l'operazione.
+- Aggiorna il saldo del conto e registra il movimento.
+- Fornisce una rappresentazione stringa del prelievo.
+
+#### Metodo `filterMovements` in `BankAccount`
+Il metodo `filterMovements` permette di filtrare i movimenti del conto bancario in base al tipo specificato. È un metodo generico che utilizza `ClassTag` per ottenere una vista dei movimenti di un determinato tipo. Questo aumenta la flessibilità del sistema e consente di recuperare facilmente solo i movimenti desiderati.
+```scala 3
+import scala.reflect.ClassTag
+def filterMovements[T <: Movement : ClassTag]: SeqView[T] =
+    _movements.collect { case m: T => m }.view
+```
+- **Tipo Generico:** `T` è un tipo generico che deve essere un sottotipo di `Movement`.
+- **ClassTag:** Utilizza `ClassTag` per permettere il filtraggio in fase di esecuzione.
+- **collect:** Il metodo `collect` filtra e mappa gli elementi della lista _`movements` che corrispondono al tipo specificato.
+- **view:** Restituisce una vista dei movimenti filtrati per evitare la creazione di una nuova lista e migliorare l'efficienza.
 
 
 Per tutte le seguenti implementazioni si è deciso di utilizzare un approccio TDD.
