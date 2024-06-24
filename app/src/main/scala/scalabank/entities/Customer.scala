@@ -20,18 +20,18 @@ trait Customer extends Person:
   def addBankAccount(bankAccountType: BankAccountType, currency: Currency): Unit
   def bankAccounts: Iterable[BankAccount]
 
-
-trait YoungCustomer extends Customer with CustomerBehaviour
-
-trait OldCustomer extends Customer with CustomerBehaviour
-
-trait BaseCustomer extends Customer with CustomerBehaviour
-
-trait CustomerBehaviour extends Customer:
+trait AbstractCustomer(_cf: String,
+                       _name: String,
+                       _surname: String,
+                       _birthYear: Int) extends Customer:
 
   private var appointments: List[Appointment] = List()
   private var _bank: Option[Bank] = None
   private var _bankAccounts: List[BankAccount] = List()
+
+  private val person = Person(_cf, _name, _surname, _birthYear)
+
+  export person.*
 
   override def fidelity: Fidelity = Fidelity(0)
 
@@ -59,9 +59,8 @@ trait CustomerBehaviour extends Customer:
       val newBankAccount = bank.createBankAccount(this, bankAccountType, currency)
       _bankAccounts = _bankAccounts :+ newBankAccount
     case None =>
-  
-  override def bankAccounts: Iterable[BankAccount] = _bankAccounts
 
+  override def bankAccounts: Iterable[BankAccount] = _bankAccounts
 
 trait BaseFeeCalculator:
   def calculateBaseFee(fidelity: Fidelity, isYoung: Boolean): Double
@@ -80,32 +79,30 @@ trait CustomerComponent:
   case class YoungCustomerImpl(_cf: String,
                                _name: String,
                                _surname: String,
-                               _birthYear: Int) extends YoungCustomer:
+                               _birthYear: Int) extends AbstractCustomer(_cf: String, _name: String, _surname: String, _birthYear: Int):
     override def baseFee(using calc: BaseFeeCalculator): Double = calc.calculateBaseFee(fidelity, true)
     loggerDependency.logger.log(logger.getPrefixFormatter().getCreationPrefix + this)
-    private val person = Person(_cf, _name, _surname, _birthYear)
-    export person.*
 
-  case class OldCustomerImpl( _cf: String,
-                              _name: String,
-                              _surname: String,
-                              _birthYear: Int) extends OldCustomer:
+
+  case class OldCustomerImpl(_cf: String,
+                             _name: String,
+                             _surname: String,
+                             _birthYear: Int) extends AbstractCustomer(_cf: String, _name: String, _surname: String, _birthYear: Int):
     override def baseFee(using calc: BaseFeeCalculator): Double = calc.calculateBaseFee(fidelity, true)
     loggerDependency.logger.log(logger.getPrefixFormatter().getCreationPrefix + this)
-    private val person = Person(_cf, _name, _surname, _birthYear)
-    export person.*
+
 
   case class BaseCustomerImpl(_cf: String,
                               _name: String,
                               _surname: String,
-                              _birthYear: Int) extends BaseCustomer:
+                              _birthYear: Int) extends AbstractCustomer(_cf: String, _name: String, _surname: String, _birthYear: Int):
     override def baseFee(using calc: BaseFeeCalculator): Double = calc.calculateBaseFee(fidelity, false)
     loggerDependency.logger.log(logger.getPrefixFormatter().getCreationPrefix + this)
-    private val person = Person(_cf, _name, _surname, _birthYear)
-    export person.*
+
 
 object Customer extends LoggerDependency with CustomerComponent:
   override val logger: Logger = LoggerImpl()
+
   def apply(cf: String, name: String, surname: String, birthYear: Int): Customer = Person(cf, name, surname, birthYear) match
     case person if person.age < 35 =>
       val customer = YoungCustomerImpl(cf, name, surname, birthYear)

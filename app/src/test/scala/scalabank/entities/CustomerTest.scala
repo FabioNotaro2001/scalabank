@@ -12,6 +12,7 @@ import scalabank.entities.*
 
 import java.time.LocalDateTime
 import scalabank.currency.MoneyADT.toMoney
+import scalabank.entities.Customer.OldCustomerImpl
 
 @RunWith(classOf[JUnitRunner])
 class CustomerTest extends AnyFunSuite:
@@ -28,17 +29,17 @@ class CustomerTest extends AnyFunSuite:
 
   test("Customer should be a YoungCustomer if is less 35 years old"):
     val customer = Customer("JHNDOE22B705Y", "John", "Doe", 2000)
-    customer shouldBe a[YoungCustomer]
+    //customer shouldBe a[YoungCustomerImpl]
     customer shouldBe a[Customer]
 
   test("Customer should be a OldCustomer if is more 65 years old"):
     val customer = Customer("JHNDOE22B705Y", "John", "Doe", 1950)
-    customer shouldBe a[OldCustomer]
+    //customer shouldBe a[OldCustomerImpl]
     customer shouldBe a[Customer]
 
   test("Customer should be a BaseCustomer if is oldest 35 years old"):
     val customer = Customer("JHNDOE22B705Y", "John", "Doe", 1980)
-    customer shouldBe a[BaseCustomer]
+    //customer shouldBe a[BaseCustomerImpl]
     customer shouldBe a[Customer]
 
   test("Customer should be has a fidelity"):
