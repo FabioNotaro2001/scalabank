@@ -73,6 +73,14 @@ trait BankAccount:
      * @return the result of the operation
      */
     def withdraw(amount: Money): Boolean
+
+    /**
+     * Make a money transfer between the specified bank accounts.
+     *
+     * @param senderBankAccount is the bank account of the sender.
+     * @param receiverBankAccount is the bank account of the receiver.
+     * @return the result of the operation.
+     */
     def makeMoneyTransfer(senderBankAccount: BankAccount, receiverBankAccount: BankAccount, amount: Money): Boolean
 
 
@@ -122,5 +130,5 @@ trait BankAccountComponent:
             val result = moneyTransferInstance.doOperation()
             if result then
                 _movements = _movements :+ moneyTransferInstance
-                loggerDependency.logger.log(logger.getPrefixFormatter().getPrefixForMoneyTransfer + moneyTransferInstance.toString)  // TODO: cambiare logger e prefisso.
+                loggerDependency.logger.log(logger.getPrefixFormatter().getPrefixForMoneyTransfer + moneyTransferInstance.toString) 
             result

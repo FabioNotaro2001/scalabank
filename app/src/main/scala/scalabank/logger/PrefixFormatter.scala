@@ -27,11 +27,10 @@ trait PrefixFormatter:
    */
   def getLoanSimulationPrefix: String
 
-
   /**
-   * Retrieves the bankAccount opening prefix.
+   * Retrieves the bank account opening prefix.
    *
-   * @return a string representing the bankAccount opening prefix.
+   * @return a string representing the bank account opening prefix.
    */
   def getPrefixForBankAccountOpening: String
 
@@ -57,18 +56,18 @@ trait PrefixFormatter:
   def getPrefixForMoneyTransfer: String
 
 /**
- * Companion object for the `PrefixFormatter` trait.
+ * Companion object for the PrefixFormatter trait.
  */
 object PrefixFormatter:
   /**
-   * Instantiates a new `PrefixFormatter`.
+   * Instantiates a new PrefixFormatter.
    *
-   * @return a new instance of `PrefixFormatter`.
+   * @return a new instance of PrefixFormatter.
    */
   def apply(): PrefixFormatter = new PrefixFormatterImpl()
 
   /**
-   * Private class implementing the `PrefixFormatter` trait.
+   * Private class implementing the PrefixFormatter trait.
    */
   private class PrefixFormatterImpl extends PrefixFormatter:
     private val timeFormatter = TimeFormatter()
@@ -95,14 +94,29 @@ object PrefixFormatter:
     override def getLoanSimulationPrefix: String = "[LOAN SIMULATION] "
 
     /**
-     * Retrieves the bankAccount opening prefix.
+     * Retrieves the bank account opening prefix.
      *
-     * @return a string representing the bankAccount opening prefix.
+     * @return a string representing the bank account opening prefix.
      */
     override def getPrefixForBankAccountOpening: String = "[BANK ACCOUNT OPENING] "
 
+    /**
+     * Retrieves the deposit prefix.
+     *
+     * @return a string representing the deposit prefix.
+     */
     override def getPrefixForDeposit: String = "[BANK ACCOUNT DEPOSIT] "
 
+    /**
+     * Retrieves the withdraw prefix.
+     *
+     * @return a string representing the withdraw prefix.
+     */
     override def getPrefixForWithdraw: String = "[BANK ACCOUNT WITHDRAW] "
 
+    /**
+     * Retrieves the money transfer prefix.
+     *
+     * @return a string representing the money transfer prefix.
+     */
     override def getPrefixForMoneyTransfer: String = "[BANK ACCOUNT MONEY TRANSFER] "
