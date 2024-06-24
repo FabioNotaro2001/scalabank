@@ -7,15 +7,15 @@ import scalabank.currency.MoneyADT.Money
  */
 trait BankAccountType:
   def nameType: String
-  def feeXOperation: BigDecimal
+  def feePerOperation: Money
 
 
 object BankAccountType:
 
-  def apply(nameType: String, feePerOperation: BigDecimal): BankAccountType = BankAccountTypeImpl(nameType, feePerOperation)
+  def apply(nameType: String, feePerOperation: Money): BankAccountType = BankAccountTypeImpl(nameType, feePerOperation)
 
   private case class BankAccountTypeImpl(override val nameType: String,
-                                         override val feeXOperation: BigDecimal ) extends BankAccountType
+                                         override val feePerOperation: Money ) extends BankAccountType
 
 
 

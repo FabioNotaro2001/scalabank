@@ -110,7 +110,7 @@ object MoneyADT:
      *
      * @return The formatted string representation of the Money instance.
      */
-    def format: String = f"$$${money}%.2f"
+    def format: String = f"${money}%.2f"
 
     /**
      * Converts the Money instance to a BigDecimal.

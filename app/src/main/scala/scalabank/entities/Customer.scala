@@ -3,8 +3,8 @@ package scalabank.entities
 import scalabank.entities.Person
 import scalabank.logger.{Logger, LoggerDependency, LoggerImpl}
 import scalabank.appointment.Appointment
-import scalabank.bank.Bank.PhysicalBank
 import scalabank.currency.Currency
+import scalabank.bankAccount.BankAccount
 import scalabank.bank.{Bank, BankAccountType}
 
 trait Customer extends Person:

@@ -47,7 +47,7 @@ object CurrencyConverter:
 
     override def convertWithFee(amount: Money, from: Currency, to: Currency)(using feePercentage: BigDecimal): Money =
       val convertedAmount = convert(amount, from, to)
-      FeeManager.applyFee(convertedAmount, feePercentage)
+      FeeManager.applyPercentualFee(convertedAmount, feePercentage)
 
 
 

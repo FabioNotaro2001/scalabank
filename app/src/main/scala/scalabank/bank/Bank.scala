@@ -2,11 +2,11 @@ package scalabank.bank
 
 import scalabank.appointment.Appointment
 import scalabank.bank
+import scalabank.bankAccount.BankAccount
 import scalabank.currency.Currency
 import scalabank.currency.MoneyADT.Money
-import scalabank.entities.Customer.logger
-import scalabank.entities.StateBankAccount.Active
-import scalabank.entities.{BankAccount, Customer, Employee}
+import scalabank.bankAccount.StateBankAccount.Active
+import scalabank.entities.{Customer, Employee}
 import scalabank.logger.{Logger, LoggerDependency, LoggerImpl}
 import scalabank.currency.MoneyADT.toMoney
 
@@ -94,7 +94,7 @@ trait Bank:
    */
   def createBankAccount(customer: Customer, bankAccountType: BankAccountType, currency: Currency): BankAccount
 
-  def addBankAccountType(nameType: String, feePerOperation: BigDecimal): Unit
+  def addBankAccountType(nameType: String, feePerOperation: Money): Unit
   def getBankAccountTypes: ListBuffer[BankAccountType]
 
 
@@ -118,7 +118,7 @@ abstract class AbstractBankImpl[T <: BankInformation](override val bankInformati
   override def createBankAccount(customer: Customer, bankAccountType: BankAccountType, currency: Currency): BankAccount =
     BankAccount(LocalDateTime.now.getNano, customer, 0.toMoney, currency, Active, bankAccountType)
 
-  override def addBankAccountType(nameType: String, feePerOperation: BigDecimal): Unit = 
+  override def addBankAccountType(nameType: String, feePerOperation: Money): Unit = 
     val bankAccountType = BankAccountType(nameType, feePerOperation)
     bankAccountTypes.addOne(bankAccountType)
 
