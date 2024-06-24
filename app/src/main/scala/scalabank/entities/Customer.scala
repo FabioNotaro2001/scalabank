@@ -14,9 +14,10 @@ trait Customer extends Person:
   def addAppointment(appointment: Appointment): Unit
   def removeAppointment(appointment: Appointment): Unit
   def updateAppointment(appointment: Appointment)(newAppointment: Appointment): Unit
-  def bank: Option[Bank]
-  def registerBank(bank: Bank): Unit
-  def deregisterBank(bank: Bank): Unit
+  def bank: Option[Bank]  // FIXME: togliere
+  def registerBank(bank: Bank): Unit  // FIXME: togliere
+  def deregisterBank(bank: Bank): Unit // FIXME: togliere
+  def addBankAccount(bankAccount: BankAccount): Unit
   def addBankAccount(bankAccountType: BankAccountType, currency: Currency): Unit
   def bankAccounts: Iterable[BankAccount]
 
@@ -54,6 +55,9 @@ trait AbstractCustomer(_cf: String,
 
   override def deregisterBank(bank: Bank): Unit = _bank = None
 
+  override def addBankAccount(bankAccount: BankAccount): Unit =
+    _bankAccounts = _bankAccounts :+ bankAccount
+  
   override def addBankAccount(bankAccountType: BankAccountType, currency: Currency): Unit = _bank match
     case Some(bank) =>
       val newBankAccount = bank.createBankAccount(this, bankAccountType, currency)

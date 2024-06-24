@@ -1,21 +1,33 @@
 package scalabank.database.person
 
-import scalabank.database.DatabaseOperations
+import scalabank.database.{Database, DatabaseOperations, PopulateEntityTable}
 import scalabank.entities.Person
-import scalabank.database.PopulateEntityTable
 
 import java.sql.{Connection, ResultSet}
+import scala.collection.mutable.Map as MutableMap
 
 /**
  * Class representing the person table in the database.
  *
  * @param connection The database connection to use.
+ * @param database The database reference.
  */
-class PersonTable(val connection: Connection) extends DatabaseOperations[Person, String]:
-  if !tableExists("person", connection) then
-    val query = "CREATE TABLE IF NOT EXISTS person (cf VARCHAR(16) PRIMARY KEY, name VARCHAR(255), surname VARCHAR(255), birthYear INT)"
-    connection.createStatement().execute(query)
-    populateDB(1)
+class PersonTable(val connection: Connection, override val database: Database) extends DatabaseOperations[Person, String]:
+  import database.*
+
+  private val fetchedPeople = MutableMap[String, Person]()
+
+  private val tableCreated =
+    if !tableExists("person", connection) then
+      val query = "CREATE TABLE IF NOT EXISTS person (cf VARCHAR(16) PRIMARY KEY, name VARCHAR(255), surname VARCHAR(255), birthYear INT)"
+      connection.createStatement().execute(query)
+      true
+    else false
+
+  override def initialize(): Unit =
+    if tableCreated then 
+      populateDB(1)
+
 
   def insert(entity: Person): Unit =
     val query = "INSERT INTO person (cf, name, surname, birthYear) VALUES (?, ?, ?, ?)"
@@ -27,7 +39,13 @@ class PersonTable(val connection: Connection) extends DatabaseOperations[Person,
     stmt.executeUpdate
 
   private def createPerson(resultSet: ResultSet) =
-    Person(resultSet.getString("cf"), resultSet.getString("name"), resultSet.getString("surname"), resultSet.getInt("birthYear"))
+    val cf = resultSet.getString("cf")
+    fetchedPeople.get(cf) match
+      case Some(p) => p
+      case None =>
+        val person = Person(cf, resultSet.getString("name"), resultSet.getString("surname"), resultSet.getInt("birthYear"))
+        fetchedPeople.put(cf, person)
+        person
 
   def findById(cf: String): Option[Person] =
     val stmt = connection.prepareStatement("SELECT * FROM person WHERE cf = ?")

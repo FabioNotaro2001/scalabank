@@ -15,9 +15,8 @@ import java.sql.{Connection, DriverManager}
 
 @RunWith(classOf[JUnitRunner])
 class BankAccountTest extends AnyFlatSpec with Matchers:
-  private val connection: Connection = DriverManager.getConnection("jdbc:h2:mem:test10;DB_CLOSE_DELAY=-1")
-  private val customerTable = new CustomerTable(connection)
-  private val bankAccountTable = new BankAccountTable(connection, customerTable)
+  private val database = Database("jdbc:h2:mem:test10;DB_CLOSE_DELAY=-1")
+  import database.*
 
   "BankAccountTable" should "insert and retrieve a bank account correctly" in:
     val customers = customerTable.findAll()

@@ -9,6 +9,7 @@ import scalabank.bankAccount.StateBankAccount.Active
 import scalabank.entities.{Customer, Employee}
 import scalabank.logger.{Logger, LoggerDependency, LoggerImpl}
 import scalabank.currency.MoneyADT.toMoney
+import scalabank.database.Database
 
 import java.time.LocalDateTime
 import scala.annotation.targetName
@@ -95,7 +96,13 @@ trait Bank:
   def createBankAccount(customer: Customer, bankAccountType: BankAccountType, currency: Currency): BankAccount
 
   def addBankAccountType(nameType: String, feePerOperation: Money): Unit
-  def getBankAccountTypes: ListBuffer[BankAccountType]
+  def getBankAccountTypes: Iterable[BankAccountType]
+
+  /**
+   * Fetches objects from the database to create the bank
+   * @param source the source database
+   */
+  def populate(source: Database): Unit
 
 
 abstract class AbstractBankImpl[T <: BankInformation](override val bankInformation: T) extends Bank:
@@ -122,8 +129,11 @@ abstract class AbstractBankImpl[T <: BankInformation](override val bankInformati
     val bankAccountType = BankAccountType(nameType, feePerOperation)
     bankAccountTypes.addOne(bankAccountType)
 
-  override def getBankAccountTypes: ListBuffer[BankAccountType] = bankAccountTypes
+  override def getBankAccountTypes: Iterable[BankAccountType] = bankAccountTypes.view
 
+  override def populate(source: Database): Unit =
+    customers addAll source.customerTable.findAll()
+    employees addAll source.employeeTable.findAll()
 
 trait BankComponent:
   loggerDependency: LoggerDependency =>
@@ -180,6 +190,18 @@ trait BankComponent:
           appointment.employee.removeAppointment(appointment)
         case None =>
           throw AssertionError("Customer has no appointments registered")
+
+    override def populate(source: Database): Unit =
+      super.populate(source)
+      source.appointmentTable
+        .findAll()
+        .groupBy(apt => apt.customer)
+        .foreach:
+          (c, apts) =>
+            appointments.get(c) match
+              case Some(list) => list.addAll(apts)
+              case None => appointments.put(c, ListBuffer.from(apts))
+
 
   case class VirtualBankInformation(name: String, phoneNumber: String) extends BankInformation
   case class VirtualBank(bankInfo: VirtualBankInformation) extends AbstractBankImpl[VirtualBankInformation](bankInfo):

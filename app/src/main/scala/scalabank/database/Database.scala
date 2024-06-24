@@ -61,12 +61,20 @@ object Database:
 
   private case class TablesImpl(url: String) extends Database:
     private val connection: Connection = DriverManager.getConnection(url)
-    private val personTab: PersonTable = PersonTable(connection)
-    private val employeeTab: EmployeeTable = EmployeeTable(connection)
-    private val customerTab: CustomerTable = CustomerTable(connection)
-    private val appointmentTab: AppointmentTable = AppointmentTable(connection, customerTab, employeeTab)
-    private val bankAccountTab: BankAccountTable = BankAccountTable(connection, customerTab)
-    private val interestTab: InterestTable = InterestTable(connection)
+    private val personTab: PersonTable = PersonTable(connection, this)
+    private val employeeTab: EmployeeTable = EmployeeTable(connection, this)
+    private val customerTab: CustomerTable = CustomerTable(connection, this)
+    private val appointmentTab: AppointmentTable = AppointmentTable(connection, this)
+    private val bankAccountTab: BankAccountTable = BankAccountTable(connection, this)
+    private val interestTab: InterestTable = InterestTable(connection, this)
+
+    personTab.initialize()
+    employeeTab.initialize()
+    employeeTab.initialize()
+    customerTab.initialize()
+    appointmentTab.initialize()
+    bankAccountTab.initialize()
+    interestTab.initialize()
 
     override def personTable: PersonTable = personTab
     override def employeeTable: EmployeeTable = employeeTab

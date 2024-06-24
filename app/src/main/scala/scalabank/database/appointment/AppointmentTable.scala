@@ -1,6 +1,6 @@
 package scalabank.database.appointment
 
-import scalabank.database.DatabaseOperations
+import scalabank.database.{Database, DatabaseOperations}
 import scalabank.appointment.Appointment
 import scalabank.database.customer.CustomerTable
 import scalabank.database.employee.EmployeeTable
@@ -8,22 +8,31 @@ import scalabank.database.employee.EmployeeTable
 import java.sql.{Connection, PreparedStatement, ResultSet}
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import scala.collection.mutable.Map as MutableMap
 
 /**
  * Class representing the appointment table in the database.
  *
  * @param connection    The database connection to use.
- * @param customerTable The customer table to reference.
- * @param employeeTable The employee table to reference.
+ * @param database The database reference.
  */
-class AppointmentTable(val connection: Connection, customerTable: CustomerTable, employeeTable: EmployeeTable) extends DatabaseOperations[Appointment, (String, String, LocalDateTime)]:
-  private val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+class AppointmentTable(val connection: Connection, override val database: Database) extends DatabaseOperations[Appointment, (String, String, LocalDateTime)]:
+  import database.*
 
-  if (!tableExists("appointment", connection))
-    val query = "CREATE TABLE IF NOT EXISTS appointment ( customerCf VARCHAR(16), employeeCf VARCHAR(16)," +
-      " description TEXT, date DATETIME, duration INT, PRIMARY KEY (customerCf, employeeCf, date))"
-    connection.createStatement.execute(query)
-    populateDB()
+  private val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+  private val fetchedAppointments = MutableMap[(String, String, String), Appointment]()
+
+  private val tableCreated =
+    if !tableExists("appointment", connection) then
+      val query = "CREATE TABLE IF NOT EXISTS appointment ( customerCf VARCHAR(16), employeeCf VARCHAR(16)," +
+        " description TEXT, date DATETIME, duration INT, PRIMARY KEY (customerCf, employeeCf, date))"
+      connection.createStatement.execute(query)
+      true
+    else false
+
+  override def initialize(): Unit =
+    if tableCreated then
+      populateDB()
 
   def insert(entity: Appointment): Unit =
     val query = "INSERT INTO appointment (customerCf, employeeCf, description, date, duration) VALUES (?, ?, ?, ?, ?)"
@@ -38,12 +47,18 @@ class AppointmentTable(val connection: Connection, customerTable: CustomerTable,
   private def createAppointment(resultSet: ResultSet): Appointment =
     val customer = customerTable.findById(resultSet.getString("customerCf")).get
     val employee = employeeTable.findById(resultSet.getString("employeeCf")).get
-    Appointment(customer,
-                employee,
-                resultSet.getString("description"),
-                LocalDateTime.parse(resultSet.getString("date"), dateFormat),
-                resultSet.getInt("duration")
-    )
+    val dateString = resultSet.getString("date")
+    val key = (customer.cf, employee.cf, dateString)
+    fetchedAppointments.get(key) match
+      case Some(a) => a
+      case None =>
+        val appointment = Appointment(customer,
+                    employee,
+                    resultSet.getString("description"),
+                    LocalDateTime.parse(dateString, dateFormat),
+                    resultSet.getInt("duration"))
+        fetchedAppointments.put(key, appointment)
+        appointment
 
   def findById(id: (String, String, LocalDateTime)): Option[Appointment] =
     val (customerCf, employeeCf, date) = id

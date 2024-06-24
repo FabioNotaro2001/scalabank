@@ -10,6 +10,16 @@ import java.sql.{Connection, ResultSet}
  */
 trait DatabaseOperations[T, Q]:
   /**
+   * @return the database containing the table
+   */
+  def database: Database
+
+  /**
+   * Initializes the object
+   */
+  def initialize(): Unit
+
+  /**
    * Inserts a new entity into the database.
    *
    * @param entity The entity to insert.
@@ -56,7 +66,7 @@ trait DatabaseOperations[T, Q]:
     val statement = connection.createStatement
     try
       val query = s"SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '$tableName'"
-      val resultSet: ResultSet = statement.executeQuery(query)
+      val resultSet: ResultSet = statement.executeQuery(query)  // FIXME: errato
       resultSet.next
     finally
       statement.close()
