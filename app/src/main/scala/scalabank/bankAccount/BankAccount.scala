@@ -34,6 +34,12 @@ trait BankAccount:
     def balance: Money
 
     /**
+     * Set the new balance.
+     * @param newBalance the new balance.
+     */
+    def setBalance(newBalance: Money): Unit
+
+    /**
      * @return the currency of the bank account
      */
     def currency: Currency
@@ -82,44 +88,33 @@ trait BankAccountComponent:
     loggerDependency: LoggerDependency =>
 
     case class BankAccountImpl(
-                                _id: Int,
-                                _customer: Customer,
-                                override var balance: Money,
-                                _currency: Currency,
-                                _state: StateBankAccount,
-                                _bankAccountType: BankAccountType,
+                                override val id: Int,
+                                override val customer: Customer,
+                                var balance: Money,
+                                override val currency: Currency,
+                                override val state: StateBankAccount,
+                                override val bankAccountType: BankAccountType,
                               ) extends BankAccount:
         loggerDependency.logger.log(loggerDependency.logger.getPrefixFormatter().getPrefixForBankAccountOpening + this)
 
         private var _movements: List[Movement] = List()
 
-        override def id: Int = _id
-
-        override def customer: Customer = _customer
-
-        override def currency: Currency = _currency
-
-        override def state: StateBankAccount = _state
-
-        override def bankAccountType: BankAccountType = _bankAccountType
+        override def setBalance(newBalance: Money): Unit = balance = newBalance
 
         override def movements: SeqView[Movement] = _movements.view
 
         override def deposit(amount: Money): Unit =
-            _balance = _balance + amount
-            val deposit = Deposit(amount)
-            _movements = _movements :+ deposit
-            loggerDependency.logger.log(deposit.toString)
+            val depositInstance = Deposit(this, amount)
+            depositInstance.doOperation()
+            _movements = _movements :+ depositInstance
+            loggerDependency.logger.log(depositInstance.toString)
 
         override def withdraw(amount: Money): Boolean =
-            val feePerOperation = _bankAccountType.feePerOperation
-            val amountWithFee = FeeManager.calculateAmountWithFee(amount, feePerOperation)
-            if _balance >= amountWithFee then
-                _balance = _balance - amountWithFee
-                val withdraw = Withdraw(amount, feePerOperation)
+            val withdraw = Withdraw(this, amount, bankAccountType.feePerOperation)
+            val result = withdraw.doOperation()
+            if result then
                 _movements = _movements :+ withdraw
                 loggerDependency.logger.log(withdraw.toString)
-                true
-            else false
+            result
 
         override def makeMoneyTransfer(senderBankAccount: BankAccount, receiverBankAccount: BankAccount, amount: Money): Boolean = true
