@@ -4,7 +4,7 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import org.junit.runner.RunWith
 import org.scalatestplus.junit.JUnitRunner
-import scalabank.bankAccount.{BankAccount, Deposit, StateBankAccount, Withdraw}
+import scalabank.bankAccount.{BankAccount, Deposit, StateBankAccount, Withdraw, MoneyTransfer}
 import scalabank.bank.BankAccountType
 import scalabank.currency.{Currency, FeeManager, MoneyADT}
 import scalabank.currency.MoneyADT.toMoney
@@ -25,7 +25,6 @@ class BankAccountOperationsTest extends AnyFlatSpec with Matchers:
     account.movements.head shouldBe a[Deposit]
     account.movements.head.value shouldEqual 500.toMoney
 
-
   it should "allow withdrawals and update the balance correctly with fee applied" in:
     val account = BankAccount(2, customer, initialBalance, currency, StateBankAccount.Active, bankAccountType)
     val amount = 100.toMoney
@@ -36,7 +35,6 @@ class BankAccountOperationsTest extends AnyFlatSpec with Matchers:
     account.movements.head shouldBe a[Withdraw]
     account.movements.head.value shouldEqual 100.toMoney
 
-
   it should "return false when trying to withdraw more than the balance including the fee" in:
     val account = BankAccount(3, customer, initialBalance, currency, StateBankAccount.Active, bankAccountType)
     val largeWithdrawAmount = 2000.toMoney
@@ -45,7 +43,6 @@ class BankAccountOperationsTest extends AnyFlatSpec with Matchers:
     account.balance shouldEqual initialBalance
     account.movements shouldBe empty
 
-
   it should "record multiple movements correctly" in:
     val account = BankAccount(4, customer, initialBalance, currency, StateBankAccount.Active, bankAccountType)
     account.deposit(200.toMoney)
@@ -53,7 +50,7 @@ class BankAccountOperationsTest extends AnyFlatSpec with Matchers:
     account.withdraw(amount)
     val amount2 = 50.toMoney
     account.withdraw(amount2)
-    val fee = bankAccountType.feePerOperation 
+    val fee = bankAccountType.feePerOperation
     val expectedBalance = 1000.toMoney + 200.toMoney - FeeManager.calculateAmountWithFee(amount, fee) - FeeManager.calculateAmountWithFee(amount2, fee)
     account.balance shouldEqual expectedBalance
     account.movements.size shouldBe 3
@@ -64,3 +61,31 @@ class BankAccountOperationsTest extends AnyFlatSpec with Matchers:
     account.movements(2) shouldBe a[Withdraw]
     account.movements(2).value shouldEqual 50.toMoney
 
+  "A MoneyTransfer" should "update the balances of both accounts correctly" in:
+    val sender = BankAccount(5, customer, initialBalance, currency, StateBankAccount.Active, bankAccountType)
+    val receiver = BankAccount(6, Customer("CUS67890A12B345C", "Jane", "Smith", 1990), 500.toMoney, currency, StateBankAccount.Active, bankAccountType)
+    val amount = 200.toMoney
+
+    val result = sender.makeMoneyTransfer(sender, receiver, amount)
+
+    result shouldBe true
+    sender.balance shouldEqual (initialBalance - FeeManager.calculateAmountWithFee(amount, bankAccountType.feePerOperation))
+    receiver.balance shouldEqual (500.toMoney + amount)
+    sender.movements.size shouldBe 1
+    sender.movements.head shouldBe a[MoneyTransfer]
+    sender.movements.head.value shouldEqual amount
+
+    receiver.movements.size shouldBe 0 // Assuming receiver movements are not tracked in this implementation*/
+
+  "A MoneyTransfer" should "return false when trying to transfer more than the sender's balance including the fee" in:
+    val sender = BankAccount(7, customer, initialBalance, currency, StateBankAccount.Active, bankAccountType)
+    val receiver = BankAccount(8, Customer("CUS67890A12B345C", "Jane", "Smith", 1990), 500.toMoney, currency, StateBankAccount.Active, bankAccountType)
+    val largeTransferAmount = 2000.toMoney
+
+    val result = sender.makeMoneyTransfer(sender, receiver, largeTransferAmount)
+
+    result shouldBe false
+    sender.balance shouldEqual initialBalance
+    receiver.balance shouldEqual 500.toMoney
+    sender.movements shouldBe empty
+    receiver.movements shouldBe empty

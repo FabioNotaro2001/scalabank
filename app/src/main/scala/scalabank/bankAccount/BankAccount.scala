@@ -117,4 +117,10 @@ trait BankAccountComponent:
                 loggerDependency.logger.log(withdraw.toString)
             result
 
-        override def makeMoneyTransfer(senderBankAccount: BankAccount, receiverBankAccount: BankAccount, amount: Money): Boolean = true
+        override def makeMoneyTransfer(senderBankAccount: BankAccount, receiverBankAccount: BankAccount, amount: Money): Boolean =
+            val moneyTransferInstance = MoneyTransfer(senderBankAccount, receiverBankAccount, amount)
+            val result = moneyTransferInstance.doOperation()
+            if result then
+                _movements = _movements :+ moneyTransferInstance
+                loggerDependency.logger.log(moneyTransferInstance.toString)  // TODO: cambiare logger e prefisso.
+            result
