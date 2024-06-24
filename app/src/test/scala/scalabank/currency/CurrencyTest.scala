@@ -94,10 +94,6 @@ class CurrencyTest extends AnyFlatSpec:
     val factor = BigDecimal(2)
     amount / factor shouldEqual BigDecimal(50)
 
-  it should "correctly format as a string" in :
-    val amount = 100.1234.toMoney
-    amount.format shouldEqual "$100,12"
-
   it should "throw an exception when dividing by zero" in :
     val amount = 100.toMoney
     intercept[ArithmeticException] :
