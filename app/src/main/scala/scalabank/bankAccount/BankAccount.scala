@@ -5,8 +5,10 @@ import scalabank.currency.MoneyADT.Money
 import scalabank.currency.{Currency, FeeManager, MoneyADT}
 import scalabank.logger.{Logger, LoggerDependency, LoggerImpl}
 import scalabank.entities.*
+
 import scala.collection.SeqView
 import scala.collection.immutable.List
+import scala.reflect.ClassTag
 
 /**
  * Represents the state of a bank account.
@@ -73,6 +75,15 @@ trait BankAccount:
      * @return the result of the operation
      */
     def withdraw(amount: Money): Boolean
+
+    /**
+     * Filter account transactions based on the specified type.
+     *
+     * @tparam T The type of motion to filter.
+     * @return A view of movements that are of the specified type.
+     */
+    def filterMovements[T <: Movement : ClassTag]: SeqView[T]
+
     def makeMoneyTransfer(senderBankAccount: BankAccount, receiverBankAccount: BankAccount, amount: Money): Boolean
 
 
@@ -102,6 +113,9 @@ trait BankAccountComponent:
         override def setBalance(newBalance: Money): Unit = balance = newBalance
 
         override def movements: SeqView[Movement] = _movements.view
+
+        override def filterMovements[T <: Movement : ClassTag]: SeqView[T] =
+            _movements.collect { case m: T => m }.view
 
         override def deposit(amount: Money): Unit =
             val depositInstance = Deposit(this, amount)
