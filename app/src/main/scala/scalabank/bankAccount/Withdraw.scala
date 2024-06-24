@@ -18,4 +18,4 @@ class Withdraw(override val receiverBankAccount: BankAccount, override val value
       true
     else false
 
-  override def toString: String = s"Withdraw of $value with a fee of: $fee at ${date.format(super.dateFormatter)}"
+  override def toString: String = s"Withdraw of $value with a fee of: $fee at ${date.format(super.dateFormatter)} on bank account ${receiverBankAccount.id}"

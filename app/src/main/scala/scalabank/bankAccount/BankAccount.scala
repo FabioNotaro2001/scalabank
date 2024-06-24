@@ -84,6 +84,14 @@ trait BankAccount:
      */
     def filterMovements[T <: Movement : ClassTag]: SeqView[T]
 
+
+    /**
+     * Make a money transfer between the specified bank accounts.
+     *
+     * @param senderBankAccount is the bank account of the sender.
+     * @param receiverBankAccount is the bank account of the receiver.
+     * @return the result of the operation.
+     */
     def makeMoneyTransfer(senderBankAccount: BankAccount, receiverBankAccount: BankAccount, amount: Money): Boolean
 
 
@@ -121,14 +129,20 @@ trait BankAccountComponent:
             val depositInstance = Deposit(this, amount)
             depositInstance.doOperation()
             _movements = _movements :+ depositInstance
-            loggerDependency.logger.log(depositInstance.toString)
+            loggerDependency.logger.log(logger.getPrefixFormatter().getPrefixForDeposit + depositInstance.toString)
 
         override def withdraw(amount: Money): Boolean =
             val withdraw = Withdraw(this, amount, bankAccountType.feePerOperation)
             val result = withdraw.doOperation()
             if result then
                 _movements = _movements :+ withdraw
-                loggerDependency.logger.log(withdraw.toString)
+                loggerDependency.logger.log(logger.getPrefixFormatter().getPrefixForWithdraw + withdraw.toString)
             result
 
-        override def makeMoneyTransfer(senderBankAccount: BankAccount, receiverBankAccount: BankAccount, amount: Money): Boolean = true
+        override def makeMoneyTransfer(senderBankAccount: BankAccount, receiverBankAccount: BankAccount, amount: Money): Boolean =
+            val moneyTransferInstance = MoneyTransfer(senderBankAccount, receiverBankAccount, amount)
+            val result = moneyTransferInstance.doOperation()
+            if result then
+                _movements = _movements :+ moneyTransferInstance
+                loggerDependency.logger.log(logger.getPrefixFormatter().getPrefixForMoneyTransfer + moneyTransferInstance.toString) 
+            result
