@@ -107,14 +107,14 @@ trait BankAccountComponent:
             val depositInstance = Deposit(this, amount)
             depositInstance.doOperation()
             _movements = _movements :+ depositInstance
-            loggerDependency.logger.log(depositInstance.toString)
+            loggerDependency.logger.log(logger.getPrefixFormatter().getPrefixForDeposit + depositInstance.toString)
 
         override def withdraw(amount: Money): Boolean =
             val withdraw = Withdraw(this, amount, bankAccountType.feePerOperation)
             val result = withdraw.doOperation()
             if result then
                 _movements = _movements :+ withdraw
-                loggerDependency.logger.log(withdraw.toString)
+                loggerDependency.logger.log(logger.getPrefixFormatter().getPrefixForWithdraw + withdraw.toString)
             result
 
         override def makeMoneyTransfer(senderBankAccount: BankAccount, receiverBankAccount: BankAccount, amount: Money): Boolean =
@@ -122,5 +122,5 @@ trait BankAccountComponent:
             val result = moneyTransferInstance.doOperation()
             if result then
                 _movements = _movements :+ moneyTransferInstance
-                loggerDependency.logger.log(moneyTransferInstance.toString)  // TODO: cambiare logger e prefisso.
+                loggerDependency.logger.log(logger.getPrefixFormatter().getPrefixForMoneyTransfer + moneyTransferInstance.toString)  // TODO: cambiare logger e prefisso.
             result

@@ -14,4 +14,4 @@ class Deposit(override val receiverBankAccount: BankAccount, override val value:
     receiverBankAccount.setBalance(receiverBankAccount.balance + value)
     true
 
-  override def toString: String = s"Deposit of $value at ${date.format(super.dateFormatter)}"
+  override def toString: String = s"Deposit of $value at ${date.format(super.dateFormatter)} on bank account ${receiverBankAccount.id}"

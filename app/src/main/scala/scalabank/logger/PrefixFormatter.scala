@@ -35,6 +35,27 @@ trait PrefixFormatter:
    */
   def getPrefixForBankAccountOpening: String
 
+  /**
+   * Retrieves the deposit prefix.
+   *
+   * @return a string representing the deposit prefix.
+   */
+  def getPrefixForDeposit: String
+
+  /**
+   * Retrieves the withdraw prefix.
+   *
+   * @return a string representing the withdraw prefix.
+   */
+  def getPrefixForWithdraw: String
+
+  /**
+   * Retrieves the money transfer prefix.
+   *
+   * @return a string representing the money transfer prefix.
+   */
+  def getPrefixForMoneyTransfer: String
+
 /**
  * Companion object for the `PrefixFormatter` trait.
  */
@@ -79,3 +100,9 @@ object PrefixFormatter:
      * @return a string representing the bankAccount opening prefix.
      */
     override def getPrefixForBankAccountOpening: String = "[BANK ACCOUNT OPENING] "
+
+    override def getPrefixForDeposit: String = "[BANK ACCOUNT DEPOSIT] "
+
+    override def getPrefixForWithdraw: String = "[BANK ACCOUNT WITHDRAW] "
+
+    override def getPrefixForMoneyTransfer: String = "[BANK ACCOUNT MONEY TRANSFER] "
