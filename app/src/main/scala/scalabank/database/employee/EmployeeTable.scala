@@ -84,12 +84,14 @@ class EmployeeTable(val connection: Connection, override val database: Database)
     stmt.setInt(5, entity.hiringYear)
     stmt.setString(6, entity.cf)
     stmt.executeUpdate
+    fetchedEmployees.remove(entity.cf)
 
   def delete(cf: String): Unit =
     val query = "DELETE FROM employee WHERE cf = ?"
     val stmt = connection.prepareStatement(query)
     stmt.setString(1, cf)
     stmt.executeUpdate
+    fetchedEmployees.remove(cf)
 
   private def populateDB(numberOfEntries: Int): Unit =
     PopulateEntityTable.createInstancesDB[Employee](numberOfEntries,

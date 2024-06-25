@@ -100,12 +100,14 @@ class BankAccountTable(val connection: Connection, override val database: Databa
     stmt.setString(6, entity.bankAccountType.feePerOperation.toString())
     stmt.setInt(7, entity.id)
     stmt.executeUpdate
+    fetchedBankAccounts.remove(entity.id)
 
   def delete(id: Int): Unit =
     val query = "DELETE FROM bankAccount WHERE id = ?"
     val stmt = connection.prepareStatement(query)
     stmt.setInt(1, id)
     stmt.executeUpdate
+    fetchedBankAccounts.remove(id)
 
   private def populateDB(): Unit =
     val customers = customerTable.findAll()

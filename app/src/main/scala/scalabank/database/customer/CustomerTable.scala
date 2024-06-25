@@ -76,12 +76,14 @@ class CustomerTable(val connection: Connection, override val database: Database)
     stmt.setInt(3, entity.birthYear)
     stmt.setString(4, entity.cf)
     stmt.executeUpdate
+    fetchedCustomers.remove(entity.cf)
 
   def delete(cf: String): Unit =
     val query = "DELETE FROM customer WHERE cf = ?"
     val stmt = connection.prepareStatement(query)
     stmt.setString(1, cf)
     stmt.executeUpdate
+    fetchedCustomers.remove(cf)
 
   private def populateDB(numberOfEntries: Int): Unit =
     PopulateEntityTable.createInstancesDB[Customer](numberOfEntries, 

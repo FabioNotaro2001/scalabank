@@ -88,6 +88,8 @@ class AppointmentTable(val connection: Connection, override val database: Databa
     stmt.setString(4, appointment.employee.cf)
     stmt.setString(5, appointment.date.format(dateFormat))
     stmt.executeUpdate
+    fetchedAppointments.remove((appointment.customer.cf, appointment.employee.cf, appointment.date.format(dateFormat)))
+
 
   def delete(id: (String, String, LocalDateTime)): Unit =
     val (customerCf, employeeCf, date) = id
@@ -97,6 +99,7 @@ class AppointmentTable(val connection: Connection, override val database: Databa
     stmt.setString(2, employeeCf)
     stmt.setString(3, date.format(dateFormat))
     stmt.executeUpdate
+    fetchedAppointments.remove((customerCf, employeeCf, date.format(dateFormat)))
 
   /**
    * Finds appointments by the employee's fiscal code.

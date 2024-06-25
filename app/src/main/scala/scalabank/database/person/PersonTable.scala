@@ -71,12 +71,14 @@ class PersonTable(val connection: Connection, override val database: Database) e
     stmt.setInt(3, entity.birthYear)
     stmt.setString(4, entity.cf)
     stmt.executeUpdate
+    fetchedPeople.remove(entity.cf)
 
   def delete(cf: String): Unit =
     val query = "DELETE FROM person WHERE cf = ?"
     val stmt = connection.prepareStatement(query)
     stmt.setString(1, cf)
     stmt.executeUpdate
+    fetchedPeople.remove(cf)
 
   private def populateDB(numberOfEntries: Int): Unit =
       PopulateEntityTable.createInstancesDB(numberOfEntries, (cf, name, surname, birthYear) => Person(cf, name, surname, birthYear)).foreach(_ => insert(_))
