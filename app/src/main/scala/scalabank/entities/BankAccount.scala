@@ -16,6 +16,8 @@ trait BankAccount:
     def currency: Currency
     def state: StateBankAccount
     def bankAccountType: BankAccountType
+    def savingsJar: Option[SavingsJar]
+    def createSavingJar(annualInterest: Double, monthlyDeposit: Money): Unit
 
 object BankAccount extends LoggerDependency with BankAccountComponent:
     override val logger: Logger = LoggerImpl()
@@ -33,6 +35,9 @@ trait BankAccountComponent:
                                 _state: StateBankAccount,
                                 _bankAccountType: BankAccountType
                               ) extends BankAccount:
+
+        var _savingsJar: Option[SavingsJar] = Option.empty
+
         override def id: Int = _id
 
         override def customer: Customer = _customer
@@ -44,6 +49,11 @@ trait BankAccountComponent:
         override def state: StateBankAccount = _state
 
         override def bankAccountType: BankAccountType = _bankAccountType
+
+        override def savingsJar: Option[SavingsJar] = _savingsJar
+
+        def createSavingJar(annualInterest: Double, monthlyDeposit: Money): Unit = _savingsJar =
+            Some(SavingsJar(annualInterest, monthlyDeposit, currency))
 
         loggerDependency.logger.log(loggerDependency.logger.getPrefixFormatter().getPrefixForBankAccountOpening + this)
 

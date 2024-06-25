@@ -23,7 +23,7 @@ trait SavingsJar:
 //def transition: List[Transition]
 
 case class SavingJarImpl(var _annualInterest: Double,
-                         var _montlyDeposit: Money,
+                         var _monthlyDeposit: Money,
                          var _currency: Currency) extends SavingsJar:
 
   var _balance: Money = 0.toMoney
@@ -34,11 +34,11 @@ case class SavingJarImpl(var _annualInterest: Double,
 
   override def annualInterest: Double = _annualInterest
 
-  override def monthlyDeposit: Money = _montlyDeposit
+  override def monthlyDeposit: Money = _monthlyDeposit
 
   override def setAnnualInterest(interest: Double): Unit = _annualInterest = interest
 
-  override def setMonthlyDeposit(amount: Money): Unit = _montlyDeposit = amount
+  override def setMonthlyDeposit(amount: Money): Unit = _monthlyDeposit = amount
 
   override def changeCurrency(newCurrency: Currency, conversionFee: BigDecimal): Unit =
     val converter = CurrencyConverter()
@@ -72,5 +72,5 @@ case class SavingJarImpl(var _annualInterest: Double,
 
 object SavingsJar:
   def apply(annualInterest: Double,
-            montlyDeposit: Money,
-            currency: Currency): SavingsJar = SavingJarImpl(annualInterest, montlyDeposit, currency)
+            monthlyDeposit: Money,
+            currency: Currency): SavingsJar = SavingJarImpl(annualInterest, monthlyDeposit, currency)
