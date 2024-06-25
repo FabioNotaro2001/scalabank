@@ -12,26 +12,28 @@ trait Fidelity:
     def currentLevel: FidelityLevel
     def pointsUsed: Int
 
+case class FidelityImpl(var _points: Int) extends Fidelity:
+    var _pointsUsed: Int = 0
+
+    override def points: Int = _points
+
+    override def pointsUsed: Int = _pointsUsed
+
+    override def addPoints(pointsToAdd: Int): Unit = _points = _points + pointsToAdd
+
+    override def redeemPoints(pointsToRedeem: Int): Boolean = pointsToRedeem match
+        case _pointsToRedeem if _points >= _pointsToRedeem =>
+            _points = _points - _pointsToRedeem
+            _pointsUsed = _pointsUsed + _pointsToRedeem
+            true
+        case _ => false
+
+    override def currentLevel: FidelityLevel = _pointsUsed match
+        case p if p >= 1000 => FidelityLevel.Platinum
+        case p if p >= 500 => FidelityLevel.Gold
+        case p if p >= 250 => FidelityLevel.Silver
+        case _ => FidelityLevel.Bronze
+
 object Fidelity:
 
     def apply(_points: Int): Fidelity = FidelityImpl(_points)
-
-    case class FidelityImpl(var _points: Int) extends Fidelity:
-        var _pointsUsed : Int = 0
-        override def points: Int = _points
-
-        override def pointsUsed: Int = _pointsUsed
-
-        override def addPoints(pointsToAdd: Int): Unit = _points =  _points + pointsToAdd
-        override def redeemPoints(pointsToRedeem: Int): Boolean = pointsToRedeem match
-            case _pointsToRedeem if _points >= _pointsToRedeem => 
-                _points = _points - _pointsToRedeem
-                _pointsUsed = _pointsUsed + _pointsToRedeem 
-                true
-            case _ => false
-        override def currentLevel: FidelityLevel = _pointsUsed match
-            case p if p >= 1000 => FidelityLevel.Platinum
-            case p if p >= 500 => FidelityLevel.Gold
-            case p if p >= 250 => FidelityLevel.Silver
-            case _ => FidelityLevel.Bronze
-        
