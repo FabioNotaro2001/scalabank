@@ -2,8 +2,7 @@ package scalabank.entities
 
 import scalabank.bank.BankAccountType
 import scalabank.currency.MoneyADT.Money
-import scalabank.currency.MoneyADT
-import scalabank.currency.Currency
+import scalabank.currency.{Currency, CurrencyConverter, MoneyADT}
 import scalabank.logger.{Logger, LoggerDependency, LoggerImpl}
 
 enum StateBankAccount:
@@ -14,7 +13,9 @@ trait BankAccount:
     def customer: Customer
     def balance: Money
     def currency: Currency
+    def changeCurrency(newCurrency: Currency, conversionFee: BigDecimal): Unit
     def state: StateBankAccount
+    def setState(stateBankAccount: StateBankAccount): Unit
     def bankAccountType: BankAccountType
     def savingsJar: Option[SavingsJar]
     def createSavingJar(annualInterest: Double, monthlyDeposit: Money): Unit
@@ -30,9 +31,9 @@ trait BankAccountComponent:
     case class BankAccountImpl(
                                 _id: Int,
                                 _customer: Customer,
-                                _balance: Money,
-                                _currency: Currency,
-                                _state: StateBankAccount,
+                                var _balance: Money,
+                                var _currency: Currency,
+                                var _state: StateBankAccount,
                                 _bankAccountType: BankAccountType
                               ) extends BankAccount:
 
@@ -46,7 +47,15 @@ trait BankAccountComponent:
 
         override def currency: Currency = _currency
 
+        override def changeCurrency(newCurrency: Currency, conversionFee: BigDecimal): Unit =
+            val converter = CurrencyConverter()
+            _balance = converter.convertWithFee(_balance, _currency, newCurrency)(using conversionFee)
+            _currency = newCurrency
+
         override def state: StateBankAccount = _state
+
+        def setState(stateBankAccount: StateBankAccount): Unit =
+            _state = stateBankAccount
 
         override def bankAccountType: BankAccountType = _bankAccountType
 
