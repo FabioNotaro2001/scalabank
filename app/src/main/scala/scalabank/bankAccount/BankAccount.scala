@@ -2,7 +2,7 @@ package scalabank.bankAccount
 
 import scalabank.bank.BankAccountType
 import scalabank.currency.MoneyADT.Money
-import scalabank.currency.{Currency, FeeManager, MoneyADT}
+import scalabank.currency.{Currency, CurrencyConverter, FeeManager, MoneyADT}
 import scalabank.logger.{Logger, LoggerDependency, LoggerImpl}
 import scalabank.entities.*
 
@@ -46,10 +46,14 @@ trait BankAccount:
      */
     def currency: Currency
 
+    def changeCurrency(newCurrency: Currency, conversionFee: BigDecimal): Unit
+
     /**
      * @return the current state of the bank account
      */
     def state: StateBankAccount
+
+    def setState(stateBankAccount: StateBankAccount): Unit
 
     /**
      * @return the type of the bank account
@@ -83,8 +87,7 @@ trait BankAccount:
      * @return A view of movements that are of the specified type.
      */
     def filterMovements[T <: Movement : ClassTag]: SeqView[T]
-
-
+    
     /**
      * Make a money transfer between the specified bank accounts.
      *
@@ -94,6 +97,9 @@ trait BankAccount:
      */
     def makeMoneyTransfer(senderBankAccount: BankAccount, receiverBankAccount: BankAccount, amount: Money): Boolean
 
+    def savingsJar: Option[SavingsJar]
+
+    def createSavingJar(annualInterest: Double, monthlyDeposit: Money): Unit
 
 object BankAccount extends LoggerDependency with BankAccountComponent:
     override val logger: Logger = LoggerImpl()
@@ -110,16 +116,30 @@ trait BankAccountComponent:
                                 override val id: Int,
                                 override val customer: Customer,
                                 var balance: Money,
-                                override val currency: Currency,
-                                override val state: StateBankAccount,
+                                var currency: Currency,
+                                var state: StateBankAccount,
                                 override val bankAccountType: BankAccountType,
                               ) extends BankAccount:
         loggerDependency.logger.log(loggerDependency.logger.getPrefixFormatter().getPrefixForBankAccountOpening + this)
 
         private var _movements: List[Movement] = List()
-
+        private var _savingsJar: Option[SavingsJar] = Option.empty
+        
         override def setBalance(newBalance: Money): Unit = balance = newBalance
 
+        override def changeCurrency(newCurrency: Currency, conversionFee: BigDecimal): Unit =
+            val converter = CurrencyConverter()
+            balance = converter.convertWithFee(balance, currency, newCurrency)(using conversionFee)
+            currency = newCurrency
+
+        override def setState(stateBankAccount: StateBankAccount): Unit =
+            state = stateBankAccount
+
+        override def savingsJar: Option[SavingsJar] = _savingsJar
+
+        override def createSavingJar(annualInterest: Double, monthlyDeposit: Money): Unit = _savingsJar =
+            Some(SavingsJar(annualInterest, monthlyDeposit, currency))
+        
         override def movements: SeqView[Movement] = _movements.view
 
         override def filterMovements[T <: Movement : ClassTag]: SeqView[T] =
