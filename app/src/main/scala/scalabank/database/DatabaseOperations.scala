@@ -63,12 +63,22 @@ trait DatabaseOperations[T, Q]:
    * @return True if the table exists, false otherwise.
    */
   def tableExists(tableName: String, connection: Connection): Boolean =
-    val statement = connection.createStatement
+    val metaData = connection.getMetaData
+    val resultSet = metaData.getTables(null, null, tableName.toUpperCase, null)
+    try
+      resultSet.next()
+    finally
+      resultSet.close()
+    /*val statement = connection.createStatement
     try
       val query = s"SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '$tableName'"
       val resultSet: ResultSet = statement.executeQuery(query)  // FIXME: errato
       resultSet.next
     finally
-      statement.close()
+      statement.close()*/
+
+
+
+
 
 
