@@ -131,6 +131,8 @@ trait BankAccountComponent:
             _movements = _movements :+ depositInstance
             loggerDependency.logger.log(logger.getPrefixFormatter().getPrefixForDeposit + depositInstance.toString)
 
+        //FIXME: AGGIORNARE CONTO SUL DB DOPO OPERAZIONI
+        
         override def withdraw(amount: Money): Boolean =
             val withdraw = Withdraw(this, amount, bankAccountType.feePerOperation)
             val result = withdraw.doOperation()

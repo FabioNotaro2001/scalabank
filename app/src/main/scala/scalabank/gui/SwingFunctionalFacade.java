@@ -102,6 +102,13 @@ class SwingFunctionalFacade {
         String getInputText(String name);
 
         /**
+         * Sets the text inside an input element
+         * @param name the name of the input element
+         * @param text the new text
+         */
+        Frame setInputText(String name, String text);
+
+        /**
          * Adds an combobox to a panel
          * @param name the name of the combobox
          * @param options the list of options for the combobox
@@ -117,6 +124,14 @@ class SwingFunctionalFacade {
          * @return the selected element in the combobox
          */
         String getComboBoxSelection(String name);
+
+        /**
+         * Updates the contents of a combobox
+         * @param name the name of the combobox
+         * @param options the list of options for the combobox
+         * @return the frame itself
+         */
+        Frame updateComboBox(String name, String[] options);
 
         /**
          * Adds a list to a panel
@@ -269,6 +284,16 @@ class SwingFunctionalFacade {
         }
 
         @Override
+        public Frame setInputText(String name, String text) {
+            if (!this.textFields.containsKey(name)) {
+                throw new IllegalArgumentException("An input with name " + name + " does not exist.");
+            }
+
+            this.textFields.get(name).setText(text);
+            return this;
+        }
+
+        @Override
         public Frame addComboBox(String name, String[] options, String panel, Object constraints) {
             if (this.comboBoxes.containsKey(name)) {
                 throw new IllegalArgumentException("A combobox with name " + name + " already exists.");
@@ -291,6 +316,19 @@ class SwingFunctionalFacade {
         }
 
         @Override
+        public Frame updateComboBox(String name, String[] options) {
+            if (!this.comboBoxes.containsKey(name)) {
+                throw new IllegalArgumentException("A combobox with name " + name + " does not exist.");
+            }
+
+            var comboBox = this.comboBoxes.get(name);
+            comboBox.removeAllItems();
+            comboBox.setModel(new DefaultComboBoxModel<>(options));
+            return this;
+        }
+
+
+        @Override
         public Frame addList(String name, Vector<String> contents, String panel, Object constraints) {
             if (this.lists.containsKey(name)) {
                 throw new IllegalArgumentException("A list with name " + name + " already exists.");
@@ -299,7 +337,9 @@ class SwingFunctionalFacade {
 
             JList<String> jl = new JList<>(contents);
             this.lists.put(name, jl);
-            this.panels.get(panel).add(jl, constraints);
+            var pane = new JScrollPane(jl);
+            pane.setPreferredSize(new Dimension(pane.getPreferredSize().width, 70));
+            this.panels.get(panel).add(pane, constraints);
             return this;
         }
 
@@ -347,8 +387,14 @@ class SwingFunctionalFacade {
                 throw new IllegalArgumentException("A panel with name " + name + " already exists.");
             }
             verifyPanelExists(panel);
+
+            JPanel jp = new JPanel();
+            if (layout instanceof BoxLayout) {
+                jp.setLayout(new BoxLayout(jp, ((BoxLayout) layout).getAxis()));
+            } else {
+                jp.setLayout(layout);
+            }
             
-            JPanel jp = new JPanel(layout);
             this.panels.put(name, jp);
             this.panels.get(panel).add(jp, constraints);
             jp.setVisible(true);

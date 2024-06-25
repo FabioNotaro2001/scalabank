@@ -39,7 +39,6 @@ trait AppointmentComponent:
   protected case class AppointmentImpl(override val customer: Customer, override val employee: Employee, override val description: String, override val date: LocalDateTime, override val duration: Int) extends Appointment:
     require(customer != null, "The customer must be defined")
     require(employee != null, "The employee must be defined")
-    require(date != null && date.isAfter(LocalDateTime.now), "Date of appointment has to be valid and in the future")
     require(duration > 0, "Duration of the appointment must be positive")
     loggerDependency.logger.log(loggerDependency.logger.getPrefixFormatter().getCreationPrefix + this)
 
