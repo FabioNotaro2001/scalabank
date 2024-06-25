@@ -54,9 +54,11 @@ class SavingJarImpl extends AnyFunSuite {
     val res = (((monthsLeft * 100) * 1.005 + (12 * 100)) * 1.005 + (12 * 100)) * 1.005
     savingJar.annualProjection(3).setScale(2) shouldBe res.toMoney.setScale(2)
 */
-  test("changeCurrency should convert balance correctly with conversion fee"):
+  test("ChangeCurrency should convert balance correctly with conversion fee"):
     val savingJar = SavingsJar(0.5, 100.toMoney, Currency("EUR", "€"))
+    savingJar.deposit(100.toMoney)
     val newCurrency = Currency("USD", "$")
     savingJar.changeCurrency(newCurrency, 5)
     savingJar.currency shouldBe newCurrency
+    savingJar.balance shouldBe 95.toMoney
 }
