@@ -81,3 +81,19 @@ class MovementTest extends AnyFlatSpec with Matchers:
     movements.foreach(movementTable.insert)
     val retrievedMovements = movementTable.findAll()
     retrievedMovements should contain allElementsOf movements
+
+  it should "find movements by bank account correctly" in :
+    val accounts = bankAccountTable.findAll()
+    val receiverAccount = accounts.head
+    val senderAccount = accounts(1)
+    val movements = Seq(
+      Deposit(receiverAccount, 100.toMoney, convertDateInFuture(9)),
+      Withdraw(receiverAccount, 50.toMoney, convertDateInFuture(10)),
+      MoneyTransfer(senderAccount, receiverAccount, 75.toMoney, convertDateInFuture(11)),
+      MoneyTransfer(receiverAccount, senderAccount, 80.toMoney, convertDateInFuture(12))
+    )
+    movements.foreach(movementTable.insert)
+    val retrievedMovementsReceiver = movementTable.findByBankAccount(receiverAccount.id)
+    val retrievedMovementsSender = movementTable.findByBankAccount(senderAccount.id)
+    retrievedMovementsReceiver should contain allElementsOf movements.take(3)
+    retrievedMovementsSender should contain allElementsOf Seq(movements(2), movements(3))
