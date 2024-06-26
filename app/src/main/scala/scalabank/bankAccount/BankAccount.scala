@@ -81,9 +81,7 @@ trait BankAccount:
      * @return the result of the operation
      */
     def withdraw(amount: Money): Boolean
-
-    def withdrawNoFee(amount: Money): Boolean
-
+    
     /**
      * Filter account transactions based on the specified type.
      *
@@ -103,7 +101,7 @@ trait BankAccount:
 
     def savingsJar: Option[SavingsJar]
 
-    def createSavingJar(annualInterest: Double, monthlyDeposit: Money): Unit
+    def createSavingJar(monthlyDeposit: Money, annualInterest: Double = bankAccountType.interestSavingJar): Unit
 
     /*
     def depositSavingJar(amount: Money): Unit
@@ -150,7 +148,7 @@ trait BankAccountComponent:
 
         override def savingsJar: Option[SavingsJar] = _savingsJar
 
-        override def createSavingJar(annualInterest: Double, monthlyDeposit: Money): Unit = _savingsJar =
+        override def createSavingJar(monthlyDeposit: Money, annualInterest: Double = bankAccountType.interestSavingJar): Unit = _savingsJar =
             Some(SavingsJar(annualInterest, monthlyDeposit, currency, this))
         
         override def movements: SeqView[Movement] = _movements.view
@@ -167,14 +165,6 @@ trait BankAccountComponent:
         //FIXME: AGGIORNARE CONTO SUL DB DOPO OPERAZIONI
         
         override def withdraw(amount: Money): Boolean =
-            val withdraw = Withdraw(this, amount)
-            val result = withdraw.doOperation()
-            if result then
-                _movements = _movements :+ withdraw
-                loggerDependency.logger.log(logger.getPrefixFormatter().getPrefixForWithdraw + withdraw.toString)
-            result
-
-        override def withdrawNoFee(amount: Money): Boolean =
             val withdraw = Withdraw(this, amount)
             val result = withdraw.doOperation()
             if result then

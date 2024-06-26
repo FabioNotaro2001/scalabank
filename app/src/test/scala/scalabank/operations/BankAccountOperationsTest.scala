@@ -13,7 +13,7 @@ import scalabank.entities.Customer
 @RunWith(classOf[JUnitRunner])
 class BankAccountOperationsTest extends AnyFlatSpec with Matchers:
   val customer: Customer = Customer("CUS12345L67T890M", "John", "Doe", 1980)
-  val bankAccountType: BankAccountType = BankAccountType("Checking", 0.01.toMoney)
+  val bankAccountType: BankAccountType = BankAccountType("Checking", 0.01.toMoney, 0.5)
   val currency: Currency = Currency("EUR", "€")
   val differentCurrency: Currency = Currency("USD", "$")
   val initialBalance: MoneyADT.Money = 1000.toMoney

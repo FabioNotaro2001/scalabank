@@ -21,7 +21,7 @@ class BankAccountTest extends AnyFlatSpec with Matchers:
   "BankAccountTable" should "insert and retrieve a bank account correctly" in:
     val customers = customerTable.findAll()
     val customer = customers.head
-    val accountType = BankAccountType("Checking", 0.01.toMoney)
+    val accountType = BankAccountType("Checking", 0.01.toMoney, 0.5)
     val balance = BigDecimal(1000).toMoney
     val currency = Currency("USD", "$")
     val state = StateBankAccount.Active
@@ -33,7 +33,7 @@ class BankAccountTest extends AnyFlatSpec with Matchers:
   it should "update a bank account correctly" in:
     val customers = customerTable.findAll()
     val customer = customers.head
-    val accountType = BankAccountType("Checking", 0.01.toMoney)
+    val accountType = BankAccountType("Checking", 0.01.toMoney, 0.5)
     val balance = BigDecimal(1000).toMoney
     val currency = Currency("USD", "$")
     val state = StateBankAccount.Active
@@ -48,7 +48,7 @@ class BankAccountTest extends AnyFlatSpec with Matchers:
   it should "delete a bank account correctly" in:
     val customers = customerTable.findAll()
     val customer = customers.head
-    val accountType = BankAccountType("Checking", 0.01.toMoney)
+    val accountType = BankAccountType("Checking", 0.01.toMoney, 0.5)
     val balance = BigDecimal(1000).toMoney
     val currency = Currency("USD", "$")
     val state = StateBankAccount.Active
@@ -61,7 +61,7 @@ class BankAccountTest extends AnyFlatSpec with Matchers:
   it should "find all bank accounts" in:
     val customers = customerTable.findAll()
     val customer = customers.head
-    val accountType = BankAccountType("Checking", 0.01.toMoney)
+    val accountType = BankAccountType("Checking", 0.01.toMoney, 0.5)
     val balance = BigDecimal(1000).toMoney
     val currency = Currency("USD", "$")
     val state = StateBankAccount.Active

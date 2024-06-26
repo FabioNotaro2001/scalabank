@@ -15,7 +15,7 @@ class SavingJarImpl extends AnyFunSuite {
 
   val customer = Customer("JHNDOE22B705Y", "John", "Doe", 2000)
   val bank = PhysicalBank(PhysicalBankInformation("Cesena Bank", "via Roma 3", "12345678"))
-  bank.addBankAccountType("Base BankAccount", 2.toMoney)
+  bank.addBankAccountType("Base BankAccount", 2.toMoney, 0.5)
   customer.registerBank(bank)
   customer.addBankAccount(bank.getBankAccountTypes.head, Currency(code = "EUR", symbol = "€"))
   val bankAccount = customer.bankAccounts.head

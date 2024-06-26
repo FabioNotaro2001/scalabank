@@ -8,14 +8,16 @@ import scalabank.currency.MoneyADT.Money
 trait BankAccountType:
   def nameType: String
   def feePerOperation: Money
+  def interestSavingJar: Double
 
 
 object BankAccountType:
 
-  def apply(nameType: String, feePerOperation: Money): BankAccountType = BankAccountTypeImpl(nameType, feePerOperation)
+  def apply(nameType: String, feePerOperation: Money, interestSavingJar: Double): BankAccountType = BankAccountTypeImpl(nameType, feePerOperation, interestSavingJar)
 
   private case class BankAccountTypeImpl(override val nameType: String,
-                                         override val feePerOperation: Money ) extends BankAccountType
+                                         override val feePerOperation: Money,
+                                         override val interestSavingJar: Double) extends BankAccountType
 
 
 

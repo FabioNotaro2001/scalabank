@@ -25,7 +25,7 @@ class BankAccountTable(override val connection: Connection, override val databas
     if !tableExists("bankAccount", connection) then
       val query = "CREATE TABLE IF NOT EXISTS bankAccount (id INT PRIMARY KEY," +
         " balance VARCHAR(30), currencyCode VARCHAR(3), currencySymbol VARCHAR(3)," +
-        " state VARCHAR(10), accountType VARCHAR(10), fee VARCHAR(30), cfOwner VARCHAR(16))"
+        " state VARCHAR(10), accountType VARCHAR(10), fee VARCHAR(30), interest VARCHAR(30), cfOwner VARCHAR(16))"
       connection.createStatement.execute(query)
       true
     else false
@@ -35,7 +35,7 @@ class BankAccountTable(override val connection: Connection, override val databas
       populateDB()
 
   def insert(entity: BankAccount): Unit =
-    val query = "INSERT INTO bankAccount (id, balance, currencyCode, currencySymbol, state, accountType, fee, cfOwner) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+    val query = "INSERT INTO bankAccount (id, balance, currencyCode, currencySymbol, state, accountType, fee, interest, cfOwner) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
     val stmt = connection.prepareStatement(query)
     stmt.setInt(1, entity.id)
     stmt.setString(2, entity.balance.toString)
@@ -44,7 +44,8 @@ class BankAccountTable(override val connection: Connection, override val databas
     stmt.setString(5, entity.state.toString)
     stmt.setString(6, entity.bankAccountType.nameType)
     stmt.setString(7, entity.bankAccountType.feePerOperation.toString())
-    stmt.setString(8, entity.customer.cf)
+    stmt.setString(8, entity.bankAccountType.interestSavingJar.toString())
+    stmt.setString(9, entity.customer.cf)
     stmt.executeUpdate
 
   private def createBankAccount(resultSet: ResultSet): BankAccount =
@@ -55,7 +56,7 @@ class BankAccountTable(override val connection: Connection, override val databas
         val balance = resultSet.getString("balance")
         val currency = Currency(resultSet.getString("currencyCode"), resultSet.getString("currencySymbol"))
         val state = StateBankAccount.valueOf(resultSet.getString("state"))
-        val accountType = BankAccountType(resultSet.getString("accountType"), resultSet.getString("fee").toMoney)
+        val accountType = BankAccountType(resultSet.getString("accountType"), resultSet.getString("fee").toMoney, resultSet.getString("interest").toDouble)
         val customer = customerTable.findById(resultSet.getString("cfOwner")).get
         val acc = BankAccount(id, customer, balance.toMoney, currency, state, accountType)
         fetchedBankAccounts.put(acc.id, acc)
@@ -90,7 +91,7 @@ class BankAccountTable(override val connection: Connection, override val databas
 
   def update(entity: BankAccount): Unit =
     val query = "UPDATE bankAccount SET balance = ?, currencyCode = ?, " +
-      "currencySymbol = ?, state = ?, accountType = ?, fee = ? WHERE id = ?"
+      "currencySymbol = ?, state = ?, accountType = ?, fee = ?, interest = ? WHERE id = ?"
     val stmt = connection.prepareStatement(query)
     stmt.setString(1, entity.balance.toString)
     stmt.setString(2, entity.currency.code)
@@ -98,7 +99,8 @@ class BankAccountTable(override val connection: Connection, override val databas
     stmt.setString(4, entity.state.toString)
     stmt.setString(5, entity.bankAccountType.nameType)
     stmt.setString(6, entity.bankAccountType.feePerOperation.toString())
-    stmt.setInt(7, entity.id)
+    stmt.setString(7, entity.bankAccountType.interestSavingJar.toString())
+    stmt.setInt(8, entity.id)
     stmt.executeUpdate
     fetchedBankAccounts.remove(entity.id)
 
@@ -112,9 +114,9 @@ class BankAccountTable(override val connection: Connection, override val databas
   private def populateDB(): Unit =
     val customers = customerTable.findAll()
     val bankAccountTypes = Seq(
-      BankAccountType("Checking", 0.01.toMoney),
-      BankAccountType("Savings", 0.02.toMoney),
-      BankAccountType("Business", 0.015.toMoney)
+      BankAccountType("Checking", 0.01.toMoney, 0.5.toDouble),
+      BankAccountType("Savings", 0.02.toMoney, 0.4.toDouble),
+      BankAccountType("Business", 0.015.toMoney, 0.8.toDouble)
     )
     var idCounter = 1
     val bankAccounts = for

@@ -95,7 +95,8 @@ trait Bank:
    */
   def createBankAccount(customer: Customer, bankAccountType: BankAccountType, currency: Currency): BankAccount
 
-  def addBankAccountType(nameType: String, feePerOperation: Money): Unit
+  def addBankAccountType(nameType: String, feePerOperation: Money, interestSavingJar: Double): Unit
+  
   def getBankAccountTypes: Iterable[BankAccountType]
 
   /**
@@ -125,8 +126,8 @@ abstract class AbstractBankImpl[T <: BankInformation](override val bankInformati
   override def createBankAccount(customer: Customer, bankAccountType: BankAccountType, currency: Currency): BankAccount =
     BankAccount(LocalDateTime.now.getNano, customer, 0.toMoney, currency, Active, bankAccountType)
 
-  override def addBankAccountType(nameType: String, feePerOperation: Money): Unit = 
-    val bankAccountType = BankAccountType(nameType, feePerOperation)
+  override def addBankAccountType(nameType: String, feePerOperation: Money, interestSavingJar: Double): Unit = 
+    val bankAccountType = BankAccountType(nameType, feePerOperation, interestSavingJar: Double)
     bankAccountTypes.addOne(bankAccountType)
 
   override def getBankAccountTypes: Iterable[BankAccountType] = bankAccountTypes.view
