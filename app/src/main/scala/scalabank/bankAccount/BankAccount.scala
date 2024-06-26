@@ -175,7 +175,7 @@ trait BankAccountComponent:
             result
 
         override def withdrawNoFee(amount: Money): Boolean =
-            val withdraw = Withdraw(this, amount, 0.toMoney)
+            val withdraw = Withdraw(this, amount)
             val result = withdraw.doOperation()
             if result then
                 _movements = _movements :+ withdraw

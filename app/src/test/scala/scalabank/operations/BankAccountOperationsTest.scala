@@ -15,6 +15,7 @@ class BankAccountOperationsTest extends AnyFlatSpec with Matchers:
   val customer: Customer = Customer("CUS12345L67T890M", "John", "Doe", 1980)
   val bankAccountType: BankAccountType = BankAccountType("Checking", 0.01.toMoney)
   val currency: Currency = Currency("EUR", "€")
+  val differentCurrency: Currency = Currency("USD", "$")
   val initialBalance: MoneyADT.Money = 1000.toMoney
 
   "BankAccount" should "allow deposits and update the balance correctly" in:
@@ -74,9 +75,22 @@ class BankAccountOperationsTest extends AnyFlatSpec with Matchers:
     sender.movements.head.value shouldEqual amount
     receiver.movements.size shouldBe 0 // Assuming receiver movements are not tracked in this implementation
 
-  "A MoneyTransfer" should "return false when trying to transfer more than the sender's balance including the fee" in:
+  "A MoneyTransfer between bank accounts with different currencies" should "update the balances of both accounts correctly" in:
     val sender = BankAccount(7, customer, initialBalance, currency, StateBankAccount.Active, bankAccountType)
-    val receiver = BankAccount(8, Customer("CUS67890A12B345C", "Jane", "Smith", 1990), 500.toMoney, currency, StateBankAccount.Active, bankAccountType)
+    val receiver = BankAccount(8, Customer("CUS67890A12B345C", "Jane", "Smith", 1990), 500.toMoney, differentCurrency, StateBankAccount.Active, bankAccountType)
+    val amount = 200.toMoney
+    val result = sender.makeMoneyTransfer(sender, receiver, amount)
+    result shouldBe true
+    sender.balance shouldEqual (initialBalance - FeeManager.calculateAmountWithFee(amount, bankAccountType.feePerOperation))
+    receiver.balance shouldBe (500.toMoney + amount)
+    sender.movements.size shouldBe 1
+    sender.movements.head shouldBe a[MoneyTransfer]
+    sender.movements.head.value shouldEqual amount
+    receiver.movements.size shouldBe 0 // Assuming receiver movements are not tracked in this implementation
+
+  "A MoneyTransfer" should "return false when trying to transfer more than the sender's balance including the fee" in:
+    val sender = BankAccount(9, customer, initialBalance, currency, StateBankAccount.Active, bankAccountType)
+    val receiver = BankAccount(10, Customer("CUS67890A12B345C", "Jane", "Smith", 1990), 500.toMoney, currency, StateBankAccount.Active, bankAccountType)
     val largeTransferAmount = 2000.toMoney
     val result = sender.makeMoneyTransfer(sender, receiver, largeTransferAmount)
     result shouldBe false
