@@ -12,16 +12,7 @@ import java.time.LocalDateTime
  * @param receiverBankAccount the bank account to which the money is transferred.
  * @param value the amount of money being transferred.
  */
-class MoneyTransfer(senderBankAccount: BankAccount, override val receiverBankAccount: BankAccount, override val value: Money) extends Movement:
-
-  private val emissionDate = LocalDateTime.now()
-
-  /**
-   * Gets the date and time when the money transfer was initiated.
-   *
-   * @return the date and time of the money transfer.
-   */
-  override def date: LocalDateTime = emissionDate
+case class MoneyTransfer(override val senderBankAccount: BankAccount, override val receiverBankAccount: BankAccount, override val value: Money, override val date: LocalDateTime = LocalDateTime.now()) extends Movement:
 
   /**
    * Provides a string representation of the money transfer.
