@@ -49,9 +49,11 @@ case class SavingJarImpl(var _annualInterest: Double,
 
   override def deposit(amount: Money): Boolean = amount match
     case am if am <= bankAccount.balance =>
-      _balance = _balance + amount
-      bankAccount.withdraw(amount)
-      true
+      if bankAccount.withdraw(amount) then
+        _balance = _balance + amount
+        true
+      else
+        false
     case _ => false
 
   override def withdraw(amount: Money): Boolean = amount match
