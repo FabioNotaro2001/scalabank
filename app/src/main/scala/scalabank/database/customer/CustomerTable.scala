@@ -89,3 +89,5 @@ class CustomerTable(override val connection: Connection, override val database: 
     PopulateEntityTable.createInstancesDB[Customer](numberOfEntries, 
       (cf, name, surname, birthYear) => Customer(cf, name, surname, birthYear)
     ).foreach(insert)
+    val customerFixed = Customer("BDE", "Andrea", "Bedei", 2001)
+    insert(customerFixed)

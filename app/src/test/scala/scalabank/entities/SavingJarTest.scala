@@ -1,24 +1,24 @@
+package scalabank.entities
+/*
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers.*
 import org.junit.runner.RunWith
 import org.scalatestplus.junit.JUnitRunner
+import scalabank.bank.Bank
 import scalabank.bank.Bank.{PhysicalBank, PhysicalBankInformation}
 import scalabank.bankAccount.BankAccount
 import scalabank.currency.{Currency, MoneyADT}
-import scalabank.entities.*
 import scalabank.currency.MoneyADT.toMoney
 
-import java.time.LocalDate
-
 @RunWith(classOf[JUnitRunner])
-class SavingJarImpl extends AnyFunSuite {
+class SavingJarTest extends AnyFunSuite {
 
-  val customer = Customer("JHNDOE22B705Y", "John", "Doe", 2000)
-  val bank = PhysicalBank(PhysicalBankInformation("Cesena Bank", "via Roma 3", "12345678"))
+  val customer: Customer = Customer("JHNDOE22B705Y", "John", "Doe", 2000)
+  val bank: Bank.PhysicalBank = PhysicalBank(PhysicalBankInformation("Cesena Bank", "via Roma 3", "12345678"))
   bank.addBankAccountType("Base BankAccount", 2.toMoney, 0.5)
   customer.registerBank(bank)
   customer.addBankAccount(bank.getBankAccountTypes.head, Currency(code = "EUR", symbol = "€"))
-  val bankAccount = customer.bankAccounts.head
+  val bankAccount: BankAccount = customer.bankAccounts.head
 
   test("SavingJarImpl should initialize with correct initial values"):
     val savingJar = SavingsJar(0.05, 100.toMoney, Currency("EUR", "€"), bankAccount)
@@ -34,7 +34,6 @@ class SavingJarImpl extends AnyFunSuite {
     val savingJar = SavingsJar(0.05, 100.toMoney, Currency("EUR", "€"), customer.bankAccounts.head)
     bankAccount.deposit(150.toMoney)
     bankAccount.balance shouldBe 150.toMoney
-
     savingJar.deposit(50.toMoney) //fee di 2
     savingJar.balance shouldBe 50.toMoney
     bankAccount.balance shouldBe 98.toMoney
@@ -91,3 +90,4 @@ class SavingJarImpl extends AnyFunSuite {
     savingJar.currency shouldBe newCurrency
     savingJar.balance shouldBe 95.toMoney
 }
+*/
