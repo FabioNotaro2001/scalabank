@@ -1,5 +1,6 @@
 package scalabank.entities
 
+import scalabank.bankAccount.BankAccount
 import scalabank.currency.{Currency, CurrencyConverter}
 import scalabank.currency.MoneyADT.Money
 import scalabank.currency.MoneyADT.toMoney
@@ -14,7 +15,7 @@ trait SavingsJar:
   def setAnnualInterest(interest: Double): Unit
   def setMonthlyDeposit(amount: Money): Unit
   def changeCurrency(newCurrency: Currency, conversionFee: BigDecimal): Unit
-  def deposit(amount: Money): Unit
+  def deposit(amount: Money): Boolean
   def withdraw(amount: Money): Boolean
   def applyMonthlyDeposit(): Unit
   def applyYearInterest(): Unit
@@ -24,7 +25,8 @@ trait SavingsJar:
 
 case class SavingJarImpl(var _annualInterest: Double,
                          var _monthlyDeposit: Money,
-                         var _currency: Currency) extends SavingsJar:
+                         var _currency: Currency,
+                         val bankAccount: BankAccount) extends SavingsJar:
 
   var _balance: Money = 0.toMoney
 
@@ -45,10 +47,17 @@ case class SavingJarImpl(var _annualInterest: Double,
     _balance = converter.convertWithFee(_balance, _currency, newCurrency)(using conversionFee)
     _currency = newCurrency
 
-  override def deposit(amount: Money): Unit = _balance = _balance + amount
+  override def deposit(amount: Money): Boolean = amount match
+    case am if am <= bankAccount.balance =>
+      _balance = _balance + amount
+      bankAccount.withdrawNoFee(amount)
+      true
+    case _ => false
 
   override def withdraw(amount: Money): Boolean = amount match
-    case am if am <= _balance => _balance = _balance - am
+    case am if am <= _balance =>
+      _balance = _balance - amount
+      bankAccount.deposit(amount)
       true
     case _ => false
 
@@ -73,4 +82,5 @@ case class SavingJarImpl(var _annualInterest: Double,
 object SavingsJar:
   def apply(annualInterest: Double,
             monthlyDeposit: Money,
-            currency: Currency): SavingsJar = SavingJarImpl(annualInterest, monthlyDeposit, currency)
+            currency: Currency,
+            bankAccount: BankAccount): SavingsJar = SavingJarImpl(annualInterest, monthlyDeposit, currency, bankAccount)

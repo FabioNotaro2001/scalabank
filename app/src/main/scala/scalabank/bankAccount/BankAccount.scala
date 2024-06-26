@@ -10,6 +10,8 @@ import scala.collection.SeqView
 import scala.collection.immutable.List
 import scala.reflect.ClassTag
 
+import scalabank.currency.MoneyADT.toMoney
+
 /**
  * Represents the state of a bank account.
  */
@@ -80,6 +82,8 @@ trait BankAccount:
      */
     def withdraw(amount: Money): Boolean
 
+    def withdrawNoFee(amount: Money): Boolean
+
     /**
      * Filter account transactions based on the specified type.
      *
@@ -100,6 +104,15 @@ trait BankAccount:
     def savingsJar: Option[SavingsJar]
 
     def createSavingJar(annualInterest: Double, monthlyDeposit: Money): Unit
+
+    /*
+    def depositSavingJar(amount: Money): Unit
+
+    def withdrawSavingJar(amount: Money): Boolean
+
+    def applyDepositMonthlySavingJar(): Unit
+
+    */
 
 object BankAccount extends LoggerDependency with BankAccountComponent:
     override val logger: Logger = LoggerImpl()
@@ -138,7 +151,7 @@ trait BankAccountComponent:
         override def savingsJar: Option[SavingsJar] = _savingsJar
 
         override def createSavingJar(annualInterest: Double, monthlyDeposit: Money): Unit = _savingsJar =
-            Some(SavingsJar(annualInterest, monthlyDeposit, currency))
+            Some(SavingsJar(annualInterest, monthlyDeposit, currency, this))
         
         override def movements: SeqView[Movement] = _movements.view
 
@@ -155,6 +168,14 @@ trait BankAccountComponent:
         
         override def withdraw(amount: Money): Boolean =
             val withdraw = Withdraw(this, amount, bankAccountType.feePerOperation)
+            val result = withdraw.doOperation()
+            if result then
+                _movements = _movements :+ withdraw
+                loggerDependency.logger.log(logger.getPrefixFormatter().getPrefixForWithdraw + withdraw.toString)
+            result
+
+        override def withdrawNoFee(amount: Money): Boolean =
+            val withdraw = Withdraw(this, amount, 0.toMoney)
             val result = withdraw.doOperation()
             if result then
                 _movements = _movements :+ withdraw
