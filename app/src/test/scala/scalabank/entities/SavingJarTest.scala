@@ -30,24 +30,24 @@ class SavingJarImpl extends AnyFunSuite {
     savingJar.monthlyDeposit shouldBe 200.toMoney
 
 
-  /*test("Deposit should increase balance of savingJar and decrease balance of bankAccount correctly"):
+  test("Deposit should increase balance of savingJar and decrease balance of bankAccount correctly"):
     val savingJar = SavingsJar(0.05, 100.toMoney, Currency("EUR", "€"), customer.bankAccounts.head)
     bankAccount.deposit(150.toMoney)
     bankAccount.balance shouldBe 150.toMoney
 
-    savingJar.deposit(50.toMoney)
+    savingJar.deposit(50.toMoney) //fee di 2
     savingJar.balance shouldBe 50.toMoney
-    bankAccount.balance shouldBe 100.toMoney*/
+    bankAccount.balance shouldBe 98.toMoney
 
 
-  /*test("Withdraw should decrease balance of savingJar and increase balance of bankAccount correctly"):
+  test("Withdraw should decrease balance of savingJar and increase balance of bankAccount correctly"):
     val savingJar = SavingsJar(0.05, 100.toMoney, Currency("EUR", "€"), customer.bankAccounts.head)
+    bankAccount.deposit(2.toMoney)
     bankAccount.balance shouldBe 100.toMoney
-    savingJar.deposit(100.toMoney)
-    savingJar.withdraw(50.toMoney) shouldBe true
-
-    savingJar.balance shouldBe 50.toMoney
-    bankAccount.balance shouldBe 50.toMoney*/
+    savingJar.deposit(50.toMoney) //fee di 2
+    savingJar.withdraw(30.toMoney) shouldBe true
+    savingJar.balance shouldBe 20.toMoney
+    bankAccount.balance shouldBe 78.toMoney
 
 
   test("Withdraw should fail if balance is insufficient"):
@@ -60,6 +60,12 @@ class SavingJarImpl extends AnyFunSuite {
     val savingJar = SavingsJar(0.05, 100.toMoney, Currency("EUR", "€"), customer.bankAccounts.head)
     savingJar.deposit(200.toMoney) shouldBe false
     savingJar.balance shouldBe 0.toMoney
+
+    bankAccount.deposit(22.toMoney)
+    bankAccount.balance shouldBe 100.toMoney
+    savingJar.deposit(100.toMoney) shouldBe false
+    savingJar.balance shouldBe 0.toMoney
+
 
   test("ApplyYearInterest should calculate interest correctly"):
     val savingJar = SavingsJar(0.05, 100.toMoney, Currency("EUR", "€"), customer.bankAccounts.head)
