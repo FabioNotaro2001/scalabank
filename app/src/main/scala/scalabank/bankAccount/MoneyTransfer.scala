@@ -19,7 +19,7 @@ case class MoneyTransfer(override val senderBankAccount: BankAccount, override v
    *
    * @return a string describing the money transfer.
    */
-  override def toString: String = s"Money transfer of $value at ${date.format(super.dateFormatter)} between bank account ${senderBankAccount.id} and ${receiverBankAccount.id}"
+  override def toString: String = s"[${date.format(super.dateFormatter)}] Money transfer of $value between bank account ${senderBankAccount.id} and ${receiverBankAccount.id}"
 
   /**
    * Executes the money transfer operation.

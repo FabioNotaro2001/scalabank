@@ -10,4 +10,4 @@ case class Deposit(override val receiverBankAccount: BankAccount, override val v
     receiverBankAccount.setBalance(receiverBankAccount.balance + value)
     true
 
-  override def toString: String = s"Deposit of $value at ${date.format(super.dateFormatter)} on bank account ${receiverBankAccount.id}"
+  override def toString: String = s"[${date.format(super.dateFormatter)}] Deposit of $value on bank account ${receiverBankAccount.id}"
