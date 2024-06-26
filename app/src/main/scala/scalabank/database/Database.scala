@@ -6,8 +6,10 @@ import scalabank.database.customer.CustomerTable
 import scalabank.database.employee.EmployeeTable
 import scalabank.database.person.PersonTable
 import scalabank.database.interest.*
+
 import java.sql.{Connection, DriverManager}
 import scalabank.database.interest
+import scalabank.database.movement.MovementTable
 
 /**
  * Trait defining the structure of a database with multiple tables.
@@ -56,6 +58,13 @@ trait Database:
    */
   def interestTable: InterestTable
 
+  /**
+   * Accessor for the movement table.
+   *
+   * @return An instance of the MovementTable.
+   */
+  def movementTable: MovementTable
+
 object Database:
   def apply(url: String): Database = TablesImpl(url)
 
@@ -67,6 +76,7 @@ object Database:
     private val appointmentTab: AppointmentTable = AppointmentTable(connection, this)
     private val bankAccountTab: BankAccountTable = BankAccountTable(connection, this)
     private val interestTab: InterestTable = InterestTable(connection, this)
+    private val movementTab: MovementTable = MovementTable(connection, this)
 
     personTab.initialize()
     employeeTab.initialize()
@@ -75,6 +85,7 @@ object Database:
     appointmentTab.initialize()
     bankAccountTab.initialize()
     interestTab.initialize()
+    movementTab.initialize()
 
     override def personTable: PersonTable = personTab
     override def employeeTable: EmployeeTable = employeeTab
@@ -82,7 +93,7 @@ object Database:
     override def appointmentTable: AppointmentTable = appointmentTab
     override def bankAccountTable: BankAccountTable = bankAccountTab
     override def interestTable : InterestTable = interestTab
-
+    override def movementTable: MovementTable = movementTab
 
 
 
