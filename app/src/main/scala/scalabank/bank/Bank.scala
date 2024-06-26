@@ -16,7 +16,8 @@ import scala.annotation.targetName
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 import scala.collection.mutable.{HashMap as MutableHashMap, Map as MutableMap}
-import scala.util.Random
+import scala.util.boundary.break
+import scala.util.{Random, boundary}
 
 extension [A](opt: Option[A])
   @targetName("getOrElse")
@@ -100,6 +101,13 @@ trait Bank:
   def getBankAccountTypes: Iterable[BankAccountType]
 
   /**
+   * Attempts to find a bank account given its id
+   * @param bankAccountId the id of the bank account
+   * @return an optional containing the bank account if found
+   */
+  def findBankAccount(bankAccountId: Int): Option[BankAccount]
+
+  /**
    * Fetches objects from the database to create the bank
    * @param source the source database
    */
@@ -109,7 +117,11 @@ trait Bank:
 abstract class AbstractBankImpl[T <: BankInformation](override val bankInformation: T) extends Bank:
   protected val employees: ListBuffer[Employee] = ListBuffer()
   protected val customers: ListBuffer[Customer] = ListBuffer()
-  protected val bankAccountTypes: ListBuffer[BankAccountType] = ListBuffer() 
+  protected val bankAccountTypes: ListBuffer[BankAccountType] = ListBuffer(
+    BankAccountType("Checking", 0.01.toMoney, 0.5), // TODO: tabella per i tipi di bank account
+    BankAccountType("Savings", 0.02.toMoney, 0.4),
+    BankAccountType("Business", 0.015.toMoney, 0.8)
+  )
 
   override def customerLogin(cf: String): Option[Customer] =
     customers.find(_.cf == cf)
@@ -131,6 +143,15 @@ abstract class AbstractBankImpl[T <: BankInformation](override val bankInformati
     bankAccountTypes.addOne(bankAccountType)
 
   override def getBankAccountTypes: Iterable[BankAccountType] = bankAccountTypes.view
+
+  override def findBankAccount(bankAccountId: Int): Option[BankAccount] =
+    (
+      for
+        c <- customers
+        a <- c.bankAccounts
+      yield a
+    )
+      .find(_.id == bankAccountId)
 
   override def populate(source: Database): Unit =
     customers addAll source.customerTable.findAll()

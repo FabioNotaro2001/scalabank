@@ -60,6 +60,8 @@ class BankAccountTable(override val connection: Connection, override val databas
         val customer = customerTable.findById(resultSet.getString("cfOwner")).get
         val acc = BankAccount(id, customer, balance.toMoney, currency, state, accountType)
         fetchedBankAccounts.put(acc.id, acc)
+        movementTable.findByBankAccount(id)
+          .foreach(acc.addMovement)
         acc
 
 
@@ -113,7 +115,7 @@ class BankAccountTable(override val connection: Connection, override val databas
 
   private def populateDB(): Unit =
     val customers = customerTable.findAll()
-    val bankAccountTypes = Seq(
+    val bankAccountTypes = Seq( // TODO: tabella per i tipi di bank account
       BankAccountType("Checking", 0.01.toMoney, 0.5.toDouble),
       BankAccountType("Savings", 0.02.toMoney, 0.4.toDouble),
       BankAccountType("Business", 0.015.toMoney, 0.8.toDouble)

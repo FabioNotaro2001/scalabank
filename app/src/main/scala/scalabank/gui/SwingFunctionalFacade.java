@@ -151,6 +151,8 @@ class SwingFunctionalFacade {
          */
         Frame updateList(String name, Vector<String> contents);
 
+        Frame addSpacer(int width, int height, String panel, Object constraints);
+
         /**
          * Displays the window
          * @return the frame itself
@@ -398,6 +400,14 @@ class SwingFunctionalFacade {
             this.panels.put(name, jp);
             this.panels.get(panel).add(jp, constraints);
             jp.setVisible(true);
+            return this;
+        }
+
+        @Override
+        public Frame addSpacer(int width, int height, String panel, Object constraints) {
+            verifyPanelExists(panel);
+
+            this.panels.get(panel).add(Box.createRigidArea(new Dimension(width, height)), constraints);
             return this;
         }
 

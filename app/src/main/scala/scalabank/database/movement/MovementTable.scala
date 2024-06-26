@@ -86,15 +86,15 @@ class MovementTable(override val connection: Connection, override val database: 
   /**
    * Finds movements associated with a bank account identified by the given ID.
    *
-   * @param id The ID of the bank account to search movements for.
+   * @param bankAccId The ID of the bank account to search movements for.
    * @return A sequence of Movement objects corresponding to the movements found.
    */
-  def findByBankAccount(id: Int): Seq[Movement] =
+  def findByBankAccount(bankAccId: Int): Seq[Movement] =
     val query = "SELECT * FROM movements WHERE receiverBankAccountId = ? OR senderBankAccountId = ?"
     val stmt = connection.prepareStatement(query)
-    stmt.setInt(1, id)
-    stmt.setInt(2, id)
-    val resultSet = stmt.executeQuery(query)
+    stmt.setInt(1, bankAccId)
+    stmt.setInt(2, bankAccId)
+    val resultSet = stmt.executeQuery
     toIterator(resultSet)
 
   private def toIterator(resultSet: ResultSet): Seq[Movement] =

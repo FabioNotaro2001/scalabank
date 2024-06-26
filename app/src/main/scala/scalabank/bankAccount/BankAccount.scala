@@ -91,13 +91,25 @@ trait BankAccount:
     def filterMovements[T <: Movement : ClassTag]: SeqView[T]
     
     /**
-     * Make a money transfer between the specified bank accounts.
+     * Makes a money transfer to a specified bank account.
      *
-     * @param senderBankAccount is the bank account of the sender.
      * @param receiverBankAccount is the bank account of the receiver.
      * @return the result of the operation.
      */
-    def makeMoneyTransfer(senderBankAccount: BankAccount, receiverBankAccount: BankAccount, amount: Money): Boolean
+    def makeMoneyTransfer(receiverBankAccount: BankAccount, amount: Money): Boolean
+
+    /**
+     * Registers a money transfer to this account.
+     *
+     * @param senderBankAccount is the bank account of the sender.
+     */
+    def receiveMoneyTransfer(senderBankAccount: BankAccount, amount: Money): Unit
+
+    /**
+     * Adds a movement to the list of movements for the account
+     * @param movement the movement to be added
+     */
+    def addMovement(movement: Movement): Unit
 
     def savingsJar: Option[SavingsJar]
 
@@ -129,7 +141,7 @@ trait BankAccountComponent:
                                 var balance: Money,
                                 var currency: Currency,
                                 var state: StateBankAccount,
-                                override val bankAccountType: BankAccountType,
+                                override val bankAccountType: BankAccountType
                               ) extends BankAccount:
         loggerDependency.logger.log(loggerDependency.logger.getPrefixFormatter().getPrefixForBankAccountOpening + this)
 
@@ -172,10 +184,19 @@ trait BankAccountComponent:
                 loggerDependency.logger.log(logger.getPrefixFormatter().getPrefixForWithdraw + withdraw.toString)
             result
 
-        override def makeMoneyTransfer(senderBankAccount: BankAccount, receiverBankAccount: BankAccount, amount: Money): Boolean =
-            val moneyTransferInstance = MoneyTransfer(senderBankAccount, receiverBankAccount, amount)
+        override def makeMoneyTransfer(receiverBankAccount: BankAccount, amount: Money): Boolean =
+            val moneyTransferInstance = MoneyTransfer(this, receiverBankAccount, amount)
             val result = moneyTransferInstance.doOperation()
             if result then
-                _movements = _movements :+ moneyTransferInstance
-                loggerDependency.logger.log(logger.getPrefixFormatter().getPrefixForMoneyTransfer + moneyTransferInstance.toString) 
+                addMovement(moneyTransferInstance)
+                receiverBankAccount.receiveMoneyTransfer(this, amount)
+                loggerDependency.logger.log(logger.getPrefixFormatter().getPrefixForMoneyTransfer + moneyTransferInstance.toString)
             result
+
+        override def receiveMoneyTransfer(senderBankAccount: BankAccount, amount: Money): Unit =
+            val moneyTransferInstance = MoneyTransfer(senderBankAccount, this, amount)
+            addMovement(moneyTransferInstance)
+            loggerDependency.logger.log(logger.getPrefixFormatter().getPrefixForMoneyTransfer + moneyTransferInstance.toString)
+
+        override def addMovement(movement: Movement): Unit =
+            _movements = _movements :+ movement

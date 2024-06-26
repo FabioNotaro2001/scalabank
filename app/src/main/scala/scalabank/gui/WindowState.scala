@@ -216,6 +216,8 @@ object WindowStateImpl extends WindowState:
     State(w => (w.updateList(name, JavaVector(JavaList.of(contents*))), {}))
   def show(): State[Window, Unit] =
     State(w => (w.show, {}))
+  def addSpacer(width: Int, height: Int, panel: String, constraints: Any): State[Window, Unit] =
+    State(w => (w.addSpacer(width, height, panel, constraints), {}))
   def exec[T](cmd: =>T): State[Window, T] =
     State(w => (w, cmd))
   def dialog(text: String): State[Window, Unit] =
@@ -250,14 +252,24 @@ object GUI:
       _ <- addView("User-Home", BorderLayout(0, 10))
       _ <- addPanel("User-Title-Panel", FlowLayout(), "User-Home", BorderLayout.NORTH)
       _ <- addLabel("User-Title", "Welcome <USER>", "User-Title-Panel", FlowLayout.CENTER)
-
-      _ <- addPanel("User-Home-Panel", GridLayout(3, 2, 20, 20), "User-Home", BorderLayout.CENTER)
-      _ <- addComboBox("User-Accounts", Array(), "User-Home-Panel", null)
-      _ <- addButton("User-Home-Account", "See bank account", "User-Home-Panel", null)
-      _ <- addButton("User-Home-Appointments", "Manage appointments", "User-Home-Panel", null)
-      _ <- addButton("User-Home-New-Account", "Open bank account", "User-Home-Panel", null)
-      _ <- addButton("User-Home-Sim-Loan", "Loan simulator", "User-Home-Panel", null)
-      _ <- addButton("User-Home-Logout", "Logout", "User-Home-Panel", null)
+      _ <- addPanel("User-Home-Panel", BoxLayout(null, BoxLayout.Y_AXIS), "User-Home", BorderLayout.CENTER)
+      _ <- addPanel("User-Home-Panel-Row1", GridLayout(1, 2, 20, 20), "User-Home-Panel", null)
+      _ <- addComboBox("User-Accounts", Array(), "User-Home-Panel-Row1", null)
+      _ <- addButton("User-Home-Account", "See bank account", "User-Home-Panel-Row1", null)
+      _ <- addSpacer(0, 20, "User-Home-Panel", null)
+      _ <- addPanel("User-Home-Panel-Row2", GridLayout(1, 2, 20, 20), "User-Home-Panel", null)
+      _ <- addPanel("User-Home-Panel-Row2-Inner", BoxLayout(null, BoxLayout.Y_AXIS), "User-Home-Panel-Row2", null)
+      _ <- addComboBox("User-Bank-Account-Types", Array(), "User-Home-Panel-Row2-Inner", null)
+      _ <- addSpacer(0, 10, "User-Home-Panel-Row2-Inner", null)
+      _ <- addComboBox("User-Bank-Account-Currencies", Array(), "User-Home-Panel-Row2-Inner", null)
+      _ <- addButton("User-Home-New-Account", "Open bank account", "User-Home-Panel-Row2", null)
+      _ <- addSpacer(0, 20, "User-Home-Panel", null)
+      _ <- addPanel("User-Home-Panel-Row3", GridLayout(1, 2, 20, 20), "User-Home-Panel", null)
+      _ <- addButton("User-Home-Appointments", "Manage appointments", "User-Home-Panel-Row3", null)
+      _ <- addButton("User-Home-Sim-Loan", "Loan simulator", "User-Home-Panel-Row3", null)
+      _ <- addSpacer(0, 20, "User-Home-Panel", null)
+      _ <- addPanel("User-Home-Panel-Row4", FlowLayout(), "User-Home-Panel", null)
+      _ <- addButton("User-Home-Logout", "Logout", "User-Home-Panel-Row4", FlowLayout.CENTER)
     yield ()
     val userAccountView = for
       _ <- addView("User-Account", BorderLayout(0, 10))
@@ -358,6 +370,11 @@ object GUI:
 
     var account: Option[BankAccount] = None
 
+    def addLastMovementToDb(account: BankAccount): Unit =
+      val op = account.movements.last
+      database.movementTable.insert(op)
+      database.bankAccountTable.update(account)
+
     val windowEventsHandling = for
       _ <- loginView
       _ <- userHomeView
@@ -380,6 +397,7 @@ object GUI:
                     for
                       _ <- changeLabel("User-Title", s"Welcome ${c.name} ${c.surname}")
                       _ <- updateComboBox("User-Accounts", c.bankAccounts.map(_.id.toString).toArray)
+                      _ <- updateComboBox("User-Bank-Account-Types", bank.getBankAccountTypes.map(_.nameType).toArray)
                       _ <- showView("User-Home")
                     yield ()
                   case None =>
@@ -410,6 +428,8 @@ object GUI:
                         if account.get.withdraw(m)
                         then
                           for
+                            _ <- exec:
+                              addLastMovementToDb(account.get)
                             _ <- changeLabel("Account-Amount", s"Balance: ${account.get.balance.toString} ${account.get.currency.symbol}")
                             _ <- updateList(
                               "Op-List",
@@ -434,6 +454,8 @@ object GUI:
                   case Success(m) =>
                     for
                       _ <- exec(account.get.deposit(m))
+                      _ <- exec:
+                        addLastMovementToDb(account.get)
                       _ <- changeLabel("Account-Amount", s"Balance: ${account.get.balance.toString} ${account.get.currency.symbol}")
                       _ <- updateList(
                         "Op-List",
@@ -447,11 +469,63 @@ object GUI:
                     yield ()
             yield ()
           case "Account-Transfer" =>
-            exec[Unit](())
+            for
+              amount <- getInputText("Op-Amount")
+              destIdStr <- getInputText("Op-Target")
+              optDest <- exec:
+                destIdStr.toIntOption
+              money = Try(amount.toMoney)
+              _ <-
+                (optDest, money) match
+                  case (Some(destId), Success(m)) =>
+                    for
+                      dest <- exec:
+                        bank.findBankAccount(destId)
+                      _ <-
+                        dest match
+                          case Some(d) =>
+                            if account.get.makeMoneyTransfer(d, m)
+                            then
+                              for
+                                _ <- exec:
+                                  addLastMovementToDb(account.get)
+                                _ <- changeLabel("Account-Amount", s"Balance: ${account.get.balance.toString} ${account.get.currency.symbol}")
+                                _ <- updateList(
+                                  "Op-List",
+                                  account.get.movements.map(_.toString).toArray
+                                )
+                                _ <- setInputText("Op-Amount", "")
+                                _ <- setInputText("Op-Target", "")
+                              yield ()
+                            else
+                              dialog("Bonifico fallito.")
+                          case None =>
+                            dialog("Conto destinazione non trovato.")
+                    yield ()
+                  case _ =>
+                    for
+                      _ <- dialog("Valore del bonifico e/o del conto destinazione invalido.")
+                    yield ()
+            yield ()
+          case "User-Home-New-Account" =>
+            for
+              accTypeName <- getComboBoxSelection("User-Bank-Account-Types")
+              accType <- exec:
+                bank.getBankAccountTypes.find(_.nameType == accTypeName).get
+              acc <- exec:
+                bank.createBankAccount(customer.get, accType, ???)  // TODO: currencies
+              _ <- changeLabel("User-Account-Title", s"Bank account ${acc.id}")
+              _ <- exec:
+                account = Option(acc)
+              _ <- changeLabel("Account-Amount", s"Balance: ${account.get.balance.toString} ${account.get.currency.symbol}")
+              _ <- updateList(
+                "Op-List",
+                account.get.movements.map(_.toString).toArray
+              )
+              _ <- showView("User-Account")
+            yield ()
           case "Empl-Login-Button" => showView("Empl-Home")
           case "User-Home-Logout" => showView("Login")
-          case "User-Home-Account" => showView("User-Account")
-          case "User-Home-New-Account" => showView("User-Account")
           case "User-Home-Appointments" => showView("User-Appointments")
           case "User-Home-Sim-Loan" => showView("Loan-Simulator")
           case "Empl-Home-Appointments" => showView("Empl-Appointments")

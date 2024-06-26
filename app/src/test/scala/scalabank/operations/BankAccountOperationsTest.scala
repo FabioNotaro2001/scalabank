@@ -66,33 +66,33 @@ class BankAccountOperationsTest extends AnyFlatSpec with Matchers:
     val sender = BankAccount(5, customer, initialBalance, currency, StateBankAccount.Active, bankAccountType)
     val receiver = BankAccount(6, Customer("CUS67890A12B345C", "Jane", "Smith", 1990), 500.toMoney, currency, StateBankAccount.Active, bankAccountType)
     val amount = 200.toMoney
-    val result = sender.makeMoneyTransfer(sender, receiver, amount)
+    val result = sender.makeMoneyTransfer(receiver, amount)
     result shouldBe true
     sender.balance shouldEqual (initialBalance - FeeManager.calculateAmountWithFee(amount, bankAccountType.feePerOperation))
     receiver.balance shouldEqual (500.toMoney + amount)
     sender.movements.size shouldBe 1
     sender.movements.head shouldBe a[MoneyTransfer]
     sender.movements.head.value shouldEqual amount
-    receiver.movements.size shouldBe 0 // Assuming receiver movements are not tracked in this implementation
+    receiver.movements.size shouldBe 1
 
   "A MoneyTransfer between bank accounts with different currencies" should "update the balances of both accounts correctly" in:
     val sender = BankAccount(7, customer, initialBalance, currency, StateBankAccount.Active, bankAccountType)
     val receiver = BankAccount(8, Customer("CUS67890A12B345C", "Jane", "Smith", 1990), 500.toMoney, differentCurrency, StateBankAccount.Active, bankAccountType)
     val amount = 200.toMoney
-    val result = sender.makeMoneyTransfer(sender, receiver, amount)
+    val result = sender.makeMoneyTransfer(receiver, amount)
     result shouldBe true
     sender.balance shouldEqual (initialBalance - FeeManager.calculateAmountWithFee(amount, bankAccountType.feePerOperation))
     receiver.balance shouldBe (500.toMoney + amount)
     sender.movements.size shouldBe 1
     sender.movements.head shouldBe a[MoneyTransfer]
     sender.movements.head.value shouldEqual amount
-    receiver.movements.size shouldBe 0 // Assuming receiver movements are not tracked in this implementation
+    receiver.movements.size shouldBe 1
 
   "A MoneyTransfer" should "return false when trying to transfer more than the sender's balance including the fee" in:
     val sender = BankAccount(9, customer, initialBalance, currency, StateBankAccount.Active, bankAccountType)
     val receiver = BankAccount(10, Customer("CUS67890A12B345C", "Jane", "Smith", 1990), 500.toMoney, currency, StateBankAccount.Active, bankAccountType)
     val largeTransferAmount = 2000.toMoney
-    val result = sender.makeMoneyTransfer(sender, receiver, largeTransferAmount)
+    val result = sender.makeMoneyTransfer(receiver, largeTransferAmount)
     result shouldBe false
     sender.balance shouldEqual initialBalance
     receiver.balance shouldEqual 500.toMoney
