@@ -16,7 +16,7 @@ import scala.collection.mutable.Map as MutableMap
  * @param connection    The database connection to use.
  * @param database      The database reference.
  */
-class BankAccountTable(val connection: Connection, override val database: Database) extends DatabaseOperations[BankAccount, Int] :
+class BankAccountTable(override val connection: Connection, override val database: Database) extends DatabaseOperations[BankAccount, Int] :
   import database.*
 
   private val fetchedBankAccounts = MutableMap[Int, BankAccount]()

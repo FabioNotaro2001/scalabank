@@ -167,7 +167,7 @@ trait BankAccountComponent:
         //FIXME: AGGIORNARE CONTO SUL DB DOPO OPERAZIONI
         
         override def withdraw(amount: Money): Boolean =
-            val withdraw = Withdraw(this, amount, bankAccountType.feePerOperation)
+            val withdraw = Withdraw(this, amount)
             val result = withdraw.doOperation()
             if result then
                 _movements = _movements :+ withdraw

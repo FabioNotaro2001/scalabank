@@ -16,7 +16,7 @@ import scala.collection.mutable.Map as MutableMap
  * @param connection    The database connection to use.
  * @param database The database reference.
  */
-class AppointmentTable(val connection: Connection, override val database: Database) extends DatabaseOperations[Appointment, (String, String, LocalDateTime)]:
+class AppointmentTable(override val connection: Connection, override val database: Database) extends DatabaseOperations[Appointment, (String, String, LocalDateTime)]:
   import database.*
 
   private val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
