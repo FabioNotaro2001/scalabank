@@ -11,7 +11,7 @@ import java.sql.{Connection, ResultSet}
  * @param connection The database connection to use.
  * @param database The database reference.
  */
-class InterestTable(val connection: Connection, override val database: Database) extends DatabaseOperations[(String, InterestRate), String]:
+class InterestTable(override val connection: Connection, override val database: Database) extends DatabaseOperations[(String, InterestRate), String]:
 
   private val tableCreated = 
     if !tableExists("interestRate", connection) then

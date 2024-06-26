@@ -13,7 +13,7 @@ import scala.collection.mutable.Map as MutableMap
  * @param connection The database connection to use.
  * @param database The database reference.
  */
-class EmployeeTable(val connection: Connection, override val database: Database) extends DatabaseOperations[Employee, String]:
+class EmployeeTable(override val connection: Connection, override val database: Database) extends DatabaseOperations[Employee, String]:
   import database.*
 
   private val fetchedEmployees = MutableMap[String, Employee]()

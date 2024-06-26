@@ -10,9 +10,14 @@ import java.sql.{Connection, ResultSet}
  */
 trait DatabaseOperations[T, Q]:
   /**
-   * @return the database containing the table
+   *  The database containing the table
    */
   def database: Database
+
+  /**
+   *  The connection to the DB.
+   */
+  def connection: Connection
 
   /**
    * Initializes the object
@@ -69,13 +74,6 @@ trait DatabaseOperations[T, Q]:
       resultSet.next()
     finally
       resultSet.close()
-    /*val statement = connection.createStatement
-    try
-      val query = s"SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '$tableName'"
-      val resultSet: ResultSet = statement.executeQuery(query)  // FIXME: errato
-      resultSet.next
-    finally
-      statement.close()*/
 
 
 

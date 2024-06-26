@@ -72,7 +72,7 @@ class BankAccountOperationsTest extends AnyFlatSpec with Matchers:
     sender.movements.size shouldBe 1
     sender.movements.head shouldBe a[MoneyTransfer]
     sender.movements.head.value shouldEqual amount
-    receiver.movements.size shouldBe 0 // Assuming receiver movements are not tracked in this implementation*/
+    receiver.movements.size shouldBe 0 // Assuming receiver movements are not tracked in this implementation
 
   "A MoneyTransfer" should "return false when trying to transfer more than the sender's balance including the fee" in:
     val sender = BankAccount(7, customer, initialBalance, currency, StateBankAccount.Active, bankAccountType)
