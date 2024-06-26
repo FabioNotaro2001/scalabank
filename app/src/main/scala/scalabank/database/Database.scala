@@ -1,7 +1,7 @@
 package scalabank.database
 
 import scalabank.database.appointment.AppointmentTable
-import scalabank.database.bank.BankAccountTable
+import scalabank.database.bank.{BankAccountTable, BankAccountTypeTable}
 import scalabank.database.customer.CustomerTable
 import scalabank.database.employee.EmployeeTable
 import scalabank.database.person.PersonTable
@@ -65,6 +65,13 @@ trait Database:
    */
   def movementTable: MovementTable
 
+  /**
+   * Accessor for the bankAccount Type Table table.
+   *
+   * @return An instance of the BankAccountTypeTable.
+   */
+  def bankAccountTypeTable: BankAccountTypeTable
+
 object Database:
   def apply(url: String): Database = TablesImpl(url)
 
@@ -77,6 +84,7 @@ object Database:
     private val bankAccountTab: BankAccountTable = BankAccountTable(connection, this)
     private val interestTab: InterestTable = InterestTable(connection, this)
     private val movementTab: MovementTable = MovementTable(connection, this)
+    private val bankAccountTypeTab: BankAccountTypeTable = BankAccountTypeTable(connection, this)
 
     personTab.initialize()
     employeeTab.initialize()
@@ -86,6 +94,7 @@ object Database:
     bankAccountTab.initialize()
     interestTab.initialize()
     movementTab.initialize()
+    bankAccountTypeTab.initialize()
 
     override def personTable: PersonTable = personTab
     override def employeeTable: EmployeeTable = employeeTab
@@ -94,6 +103,7 @@ object Database:
     override def bankAccountTable: BankAccountTable = bankAccountTab
     override def interestTable : InterestTable = interestTab
     override def movementTable: MovementTable = movementTab
+    override def bankAccountTypeTable: BankAccountTypeTable = bankAccountTypeTab
 
 
 
