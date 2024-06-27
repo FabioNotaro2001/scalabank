@@ -1,5 +1,5 @@
 package scalabank.entities
-/*
+
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers.*
 import org.junit.runner.RunWith
@@ -11,14 +11,23 @@ import scalabank.currency.{Currency, MoneyADT}
 import scalabank.currency.MoneyADT.toMoney
 
 @RunWith(classOf[JUnitRunner])
-class SavingJarTest extends AnyFunSuite {
+class SavingJarTest extends AnyFunSuite:
 
   val customer: Customer = Customer("JHNDOE22B705Y", "John", "Doe", 2000)
   val bank: Bank.PhysicalBank = PhysicalBank(PhysicalBankInformation("Cesena Bank", "via Roma 3", "12345678"))
-  bank.addBankAccountType("Base BankAccount", 2.toMoney, 0.5)
+  bank.addBankAccountType("Base BankAccount", 2.toMoney, 0.toMoney, 2.toMoney, 0.5)
   customer.registerBank(bank)
   customer.addBankAccount(bank.getBankAccountTypes.head, Currency(code = "EUR", symbol = "€"))
   val bankAccount: BankAccount = customer.bankAccounts.head
+
+  test("Deposit should fail if balance of bankAccount is insufficient"):
+    val savingJar = SavingsJar(0.05, 100.toMoney, Currency("EUR", "€"), customer.bankAccounts.head)
+    savingJar.deposit(200.toMoney) shouldBe false
+    savingJar.balance shouldBe 0.toMoney
+    bankAccount.deposit(22.toMoney)
+    bankAccount.balance shouldBe 22.toMoney
+    savingJar.deposit(100.toMoney) shouldBe false
+    savingJar.balance shouldBe 0.toMoney
 
   test("SavingJarImpl should initialize with correct initial values"):
     val savingJar = SavingsJar(0.05, 100.toMoney, Currency("EUR", "€"), bankAccount)
@@ -33,38 +42,26 @@ class SavingJarTest extends AnyFunSuite {
   test("Deposit should increase balance of savingJar and decrease balance of bankAccount correctly"):
     val savingJar = SavingsJar(0.05, 100.toMoney, Currency("EUR", "€"), customer.bankAccounts.head)
     bankAccount.deposit(150.toMoney)
-    bankAccount.balance shouldBe 150.toMoney
-    savingJar.deposit(50.toMoney) //fee di 2
+    bankAccount.balance shouldBe 172.toMoney
+    savingJar.deposit(50.toMoney)
     savingJar.balance shouldBe 50.toMoney
-    bankAccount.balance shouldBe 98.toMoney
+    bankAccount.balance shouldBe 122.toMoney
 
 
   test("Withdraw should decrease balance of savingJar and increase balance of bankAccount correctly"):
     val savingJar = SavingsJar(0.05, 100.toMoney, Currency("EUR", "€"), customer.bankAccounts.head)
     bankAccount.deposit(2.toMoney)
-    bankAccount.balance shouldBe 100.toMoney
-    savingJar.deposit(50.toMoney) //fee di 2
+    bankAccount.balance shouldBe 124.toMoney
+    savingJar.deposit(50.toMoney)
     savingJar.withdraw(30.toMoney) shouldBe true
     savingJar.balance shouldBe 20.toMoney
-    bankAccount.balance shouldBe 78.toMoney
+    bankAccount.balance shouldBe 104.toMoney
 
 
   test("Withdraw should fail if balance is insufficient"):
     val savingJar = SavingsJar(0.05, 100.toMoney, Currency("EUR", "€"), customer.bankAccounts.head)
     savingJar.withdraw(200.toMoney) shouldBe false
     savingJar.balance shouldBe 0.toMoney
-
-
-  test("Deposit should fail if balance of bankAccount is insufficient"):
-    val savingJar = SavingsJar(0.05, 100.toMoney, Currency("EUR", "€"), customer.bankAccounts.head)
-    savingJar.deposit(200.toMoney) shouldBe false
-    savingJar.balance shouldBe 0.toMoney
-
-    bankAccount.deposit(22.toMoney)
-    bankAccount.balance shouldBe 100.toMoney
-    savingJar.deposit(100.toMoney) shouldBe false
-    savingJar.balance shouldBe 0.toMoney
-
 
   test("ApplyYearInterest should calculate interest correctly"):
     val savingJar = SavingsJar(0.05, 100.toMoney, Currency("EUR", "€"), customer.bankAccounts.head)
@@ -83,11 +80,10 @@ class SavingJarTest extends AnyFunSuite {
 */
   test("ChangeCurrency should convert balance correctly with conversion fee"):
     val savingJar = SavingsJar(0.5, 100.toMoney, Currency("EUR", "€"), customer.bankAccounts.head)
-    bankAccount.deposit(100.toMoney)
+    bankAccount.deposit(100.toMoney, 0.toMoney)
     savingJar.deposit(100.toMoney)
     val newCurrency = Currency("USD", "$")
     savingJar.changeCurrency(newCurrency, 5)
     savingJar.currency shouldBe newCurrency
     savingJar.balance shouldBe 95.toMoney
-}
-*/
+

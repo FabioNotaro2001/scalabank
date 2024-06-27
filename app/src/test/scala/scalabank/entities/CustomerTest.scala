@@ -93,7 +93,7 @@ class CustomerTest extends AnyFunSuite:
   test("Customer should be able to add bank accounts"):
     val customer = Customer("JHNDOE22B705Y", "John", "Doe", 1980)
     val bank = PhysicalBank(PhysicalBankInformation("Cesena Bank", "via Roma 3", "12345678"))
-    bank.addBankAccountType("Base BankAccount", 2.toMoney, 0.5)
+    bank.addBankAccountType("Base BankAccount", 2.toMoney, 0.toMoney, 2.toMoney, 0.5)
     customer.registerBank(bank)
     customer.addBankAccount(bank.getBankAccountTypes.head, Currency(code = "EUR", symbol = "€"))
     println(customer.bankAccounts)

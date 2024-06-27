@@ -96,7 +96,7 @@ trait Bank:
    */
   def createBankAccount(customer: Customer, bankAccountType: BankAccountType, currency: Currency): BankAccount
 
-  def addBankAccountType(nameType: String, feePerOperation: Money, interestSavingJar: Double): Unit
+  def addBankAccountType(nameType: String, feeWithdraw: Money, feeDeposit: Money, feeMoneyTransfert: Money, interestSavingJar: Double): Unit
   
   def getBankAccountTypes: Iterable[BankAccountType]
 
@@ -118,9 +118,9 @@ abstract class AbstractBankImpl[T <: BankInformation](override val bankInformati
   protected val employees: ListBuffer[Employee] = ListBuffer()
   protected val customers: ListBuffer[Customer] = ListBuffer()
   protected val bankAccountTypes: ListBuffer[BankAccountType] = ListBuffer(
-    BankAccountType("Checking", 0.01.toMoney, 0.5), // TODO: tabella per i tipi di bank account
-    BankAccountType("Savings", 0.02.toMoney, 0.4),
-    BankAccountType("Business", 0.015.toMoney, 0.8)
+    BankAccountType("Checking", 0.01.toMoney, 0.toMoney, 0.01.toMoney, 0.5),
+    BankAccountType("Savings", 0.02.toMoney, 0.toMoney, 0.02.toMoney, 0.4),
+    BankAccountType("Business", 0.015.toMoney, 0.toMoney, 0.015.toMoney, 0.8)
   )
 
   override def customerLogin(cf: String): Option[Customer] =
@@ -138,8 +138,8 @@ abstract class AbstractBankImpl[T <: BankInformation](override val bankInformati
   override def createBankAccount(customer: Customer, bankAccountType: BankAccountType, currency: Currency): BankAccount =
     BankAccount(LocalDateTime.now.getNano, customer, 0.toMoney, currency, Active, bankAccountType)
 
-  override def addBankAccountType(nameType: String, feePerOperation: Money, interestSavingJar: Double): Unit = 
-    val bankAccountType = BankAccountType(nameType, feePerOperation, interestSavingJar: Double)
+  override def addBankAccountType(nameType: String, feeWithdraw: Money, feeDeposit: Money, feeMoneyTransfert: Money, interestSavingJar: Double): Unit = 
+    val bankAccountType = BankAccountType(nameType, feeWithdraw, feeDeposit, feeMoneyTransfert, interestSavingJar: Double)
     bankAccountTypes.addOne(bankAccountType)
 
   override def getBankAccountTypes: Iterable[BankAccountType] = bankAccountTypes.view

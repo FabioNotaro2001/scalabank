@@ -95,6 +95,7 @@ object Database:
     private val bankAccountTypeTab: BankAccountTypeTable = BankAccountTypeTable(connection, this)
     private val currencyTab: CurrencyTable = CurrencyTable(connection, this)
 
+    bankAccountTypeTab.initialize()
     personTab.initialize()
     employeeTab.initialize()
     employeeTab.initialize()
@@ -103,8 +104,7 @@ object Database:
     bankAccountTab.initialize()
     interestTab.initialize()
     movementTab.initialize()
-    bankAccountTypeTab.initialize()
-    currencyTable.initialize()
+    currencyTab.initialize()
 
     override def personTable: PersonTable = personTab
     override def employeeTable: EmployeeTable = employeeTab

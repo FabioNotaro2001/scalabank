@@ -72,7 +72,7 @@ trait BankAccount:
      *
      * @param amount the amount of money to deposit
      */
-    def deposit(amount: Money): Unit
+    def deposit(amount: Money, fee: Money = bankAccountType.feeDeposit): Unit
 
     /**
      * Withdraws a specified amount of money from the bank account if there is enough money.
@@ -80,7 +80,7 @@ trait BankAccount:
      * @param amount the amount of money to withdraw
      * @return the result of the operation
      */
-    def withdraw(amount: Money): Boolean
+    def withdraw(amount: Money, fee: Money = bankAccountType.feeDeposit): Boolean
     
     /**
      * Filter account transactions based on the specified type.
@@ -168,16 +168,17 @@ trait BankAccountComponent:
         override def filterMovements[T <: Movement : ClassTag]: SeqView[T] =
             _movements.collect { case m: T => m }.view
 
-        override def deposit(amount: Money): Unit =
-            val depositInstance = Deposit(this, amount)
+        import bankAccountType.*
+        override def deposit(amount: Money, fee: Money = feeDeposit): Unit =
+            val depositInstance = Deposit(this, amount, fee)
             depositInstance.doOperation()
             _movements = _movements :+ depositInstance
             loggerDependency.logger.log(logger.getPrefixFormatter().getPrefixForDeposit + depositInstance.toString)
 
         //FIXME: AGGIORNARE CONTO SUL DB DOPO OPERAZIONI
         
-        override def withdraw(amount: Money): Boolean =
-            val withdraw = Withdraw(this, amount)
+        override def withdraw(amount: Money, fee: Money = feeWithdraw): Boolean =
+            val withdraw = Withdraw(this, amount, fee)
             val result = withdraw.doOperation()
             if result then
                 _movements = _movements :+ withdraw
@@ -185,7 +186,7 @@ trait BankAccountComponent:
             result
 
         override def makeMoneyTransfer(receiverBankAccount: BankAccount, amount: Money): Boolean =
-            val moneyTransferInstance = MoneyTransfer(this, receiverBankAccount, amount)
+            val moneyTransferInstance = MoneyTransfer(this, receiverBankAccount, amount, bankAccountType.feeMoneyTransfert)
             val result = moneyTransferInstance.doOperation()
             if result then
                 addMovement(moneyTransferInstance)
@@ -194,7 +195,7 @@ trait BankAccountComponent:
             result
 
         override def receiveMoneyTransfer(senderBankAccount: BankAccount, amount: Money): Unit =
-            val moneyTransferInstance = MoneyTransfer(senderBankAccount, this, amount)
+            val moneyTransferInstance = MoneyTransfer(senderBankAccount, this, amount, bankAccountType.feeMoneyTransfert)
             addMovement(moneyTransferInstance)
             loggerDependency.logger.log(logger.getPrefixFormatter().getPrefixForMoneyTransfer + moneyTransferInstance.toString)
 

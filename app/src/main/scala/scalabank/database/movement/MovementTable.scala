@@ -65,13 +65,16 @@ class MovementTable(override val connection: Connection, override val database: 
         val receiverBankAccount = bankAccountTable.findById(receiverBankAccountId).get
         val movement = movementType match
           case "Deposit" =>
-            Deposit(receiverBankAccount, value, date)
+            val fee = receiverBankAccount.bankAccountType.feeDeposit
+            Deposit(receiverBankAccount, value, fee, date)
           case "Withdraw" =>
-            Withdraw(receiverBankAccount, value, date)
+            val fee = receiverBankAccount.bankAccountType.feeWithdraw
+            Withdraw(receiverBankAccount, value, fee, date)
           case "MoneyTransfer" =>
             val senderBankAccountId = resultSet.getInt("senderBankAccountId")
             val senderBankAccount = bankAccountTable.findById(senderBankAccountId).get
-            MoneyTransfer(senderBankAccount, receiverBankAccount, value, date)
+            val fee = senderBankAccount.bankAccountType.feeMoneyTransfert
+            MoneyTransfer(senderBankAccount, receiverBankAccount, value, fee, date)
         fetchedMovements.put((receiverBankAccountId, date), movement)
         movement
 
@@ -134,11 +137,11 @@ class MovementTable(override val connection: Connection, override val database: 
       receiverBankAccount <- bankAccounts
       i <- 1 to 3
       movement <- Seq(
-        Deposit(receiverBankAccount, 100.toMoney, LocalDateTime.now.plusDays(i).plusSeconds(i)),
-        Withdraw(receiverBankAccount, 50.toMoney, LocalDateTime.now.plusDays(i + 1).plusSeconds(i)),
+        Deposit(receiverBankAccount, 100.toMoney, receiverBankAccount.bankAccountType.feeDeposit, LocalDateTime.now.plusDays(i).plusSeconds(i)),
+        Withdraw(receiverBankAccount, 50.toMoney, receiverBankAccount.bankAccountType.feeWithdraw, LocalDateTime.now.plusDays(i + 1).plusSeconds(i)),
         if bankAccounts.length > 1 then
           val senderBankAccount = bankAccounts((bankAccounts.indexOf(receiverBankAccount) + 1) % bankAccounts.length)
-          MoneyTransfer(senderBankAccount, receiverBankAccount, 75.toMoney, LocalDateTime.now.plusDays(i + 2).plusSeconds(i))
+          MoneyTransfer(senderBankAccount, receiverBankAccount, 75.toMoney, senderBankAccount.bankAccountType.feeMoneyTransfert, LocalDateTime.now.plusDays(i + 2).plusSeconds(i))
         else null
       ) if movement != null
     yield movement

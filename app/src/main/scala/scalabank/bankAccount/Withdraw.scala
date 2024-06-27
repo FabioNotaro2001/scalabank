@@ -5,9 +5,7 @@ import scalabank.currency.MoneyADT.Money
 
 import java.time.LocalDateTime
 
-case class Withdraw(override val receiverBankAccount: BankAccount, override val value: Money, override val date: LocalDateTime = LocalDateTime.now(), override val senderBankAccount: BankAccount = null) extends Movement:
-
-  private val fee: Money = receiverBankAccount.bankAccountType.feePerOperation
+case class Withdraw(override val receiverBankAccount: BankAccount, override val value: Money, override val fee: Money, override val date: LocalDateTime = LocalDateTime.now(), override val senderBankAccount: BankAccount = null) extends Movement:
 
   override def doOperation(): Boolean =
     val amountWithFee = FeeManager.calculateAmountWithFee(value, fee)

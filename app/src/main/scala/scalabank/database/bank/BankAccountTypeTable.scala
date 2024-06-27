@@ -18,7 +18,9 @@ class BankAccountTypeTable(override val connection: Connection, override val dat
     if !tableExists("bankAccountType", connection) then
       val query = "CREATE TABLE IF NOT EXISTS bankAccountType (" +
         "nameType VARCHAR(30) PRIMARY KEY, " +
-        "feePerOperation VARCHAR(30), " +
+        "feeWithdraw VARCHAR(30), " +
+        "feeDeposit VARCHAR(30), " +
+        "feeMoney VARCHAR(30), " +
         "interestSavingJar DOUBLE)"
       connection.createStatement().execute(query)
       true
@@ -29,17 +31,21 @@ class BankAccountTypeTable(override val connection: Connection, override val dat
       populateDB()
 
   def insert(bankAccountType: BankAccountType): Unit =
-    val query = "INSERT INTO bankAccountType (nameType, feePerOperation, interestSavingJar) VALUES (?, ?, ?)"
+    val query = "INSERT INTO bankAccountType (nameType, feeWithdraw, feeDeposit, feeMoney, interestSavingJar) VALUES (?, ?, ?, ?, ?)"
     val stmt = connection.prepareStatement(query)
     stmt.setString(1, bankAccountType.nameType)
-    stmt.setString(2, bankAccountType.feePerOperation.toString())
-    stmt.setDouble(3, bankAccountType.interestSavingJar)
+    stmt.setString(2, bankAccountType.feeWithdraw.toString())
+    stmt.setString(3, bankAccountType.feeDeposit.toString())
+    stmt.setString(4, bankAccountType.feeMoneyTransfert.toString())
+    stmt.setDouble(5, bankAccountType.interestSavingJar)
     stmt.executeUpdate
 
   private def createBankAccountType(resultSet: ResultSet): BankAccountType =
     BankAccountType(
       resultSet.getString("nameType"),
-      resultSet.getBigDecimal("feePerOperation").toMoney,
+      resultSet.getBigDecimal("feeWithdraw").toMoney,
+      resultSet.getBigDecimal("feeDeposit").toMoney,
+      resultSet.getBigDecimal("feeMoney").toMoney,
       resultSet.getDouble("interestSavingJar")
     )
 
@@ -58,11 +64,13 @@ class BankAccountTypeTable(override val connection: Connection, override val dat
     .toSeq
 
   def update(bankAccountType: BankAccountType): Unit =
-    val query = "UPDATE bankAccountType SET feePerOperation = ?, interestSavingJar = ? WHERE nameType = ?"
+    val query = "UPDATE bankAccountType SET feeWithdraw = ?, feeDeposit = ?, feeMoney = ?, interestSavingJar = ? WHERE nameType = ?"
     val stmt = connection.prepareStatement(query)
-    stmt.setString(1, bankAccountType.feePerOperation.toString())
-    stmt.setDouble(2, bankAccountType.interestSavingJar)
-    stmt.setString(3, bankAccountType.nameType)
+    stmt.setString(1, bankAccountType.feeWithdraw.toString())
+    stmt.setString(2, bankAccountType.feeDeposit.toString())
+    stmt.setString(3, bankAccountType.feeMoneyTransfert.toString())
+    stmt.setDouble(4, bankAccountType.interestSavingJar)
+    stmt.setString(5, bankAccountType.nameType)
     stmt.executeUpdate
 
   def delete(nameType: String): Unit =
@@ -73,7 +81,7 @@ class BankAccountTypeTable(override val connection: Connection, override val dat
 
   private def populateDB(): Unit =
     List(
-      BankAccountType("default", 1.00.toMoney, 0.04),
-      BankAccountType("young", 0.50.toMoney, 0.03),
-      BankAccountType("old", 0.75.toMoney, 0.05)
+      BankAccountType("Checking", 1.toMoney, 0.toMoney, 1.toMoney, 0.04),
+      BankAccountType("Savings", 0.50.toMoney, 0.toMoney, 0.50.toMoney, 0.03),
+      BankAccountType("Business", 0.75.toMoney, 0.toMoney, 0.75.toMoney, 0.05)
     ).foreach(insert)
