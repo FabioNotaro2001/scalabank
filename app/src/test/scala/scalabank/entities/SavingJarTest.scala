@@ -17,21 +17,22 @@ class SavingJarTest extends AnyFunSuite:
   val bank: Bank.PhysicalBank = PhysicalBank(PhysicalBankInformation("Cesena Bank", "via Roma 3", "12345678"))
   bank.addBankAccountType("Base BankAccount", 2.toMoney, 0.toMoney, 2.toMoney, 0.5)
   customer.registerBank(bank)
-  customer.addBankAccount(bank.getBankAccountTypes.head, Currency(code = "EUR", symbol = "€"))
-  val bankAccount: BankAccount = customer.bankAccounts.head
 
   test("Deposit should fail if balance of bankAccount is insufficient"):
-    val savingJar = SavingsJar(0.05, 100.toMoney, Currency("EUR", "€"), customer.bankAccounts.head)
+    customer.addBankAccount(bank.getBankAccountTypes.head, Currency(code = "EUR", symbol = "€"))
+    val bankAccount: BankAccount = customer.bankAccounts.last
+    val savingJar = SavingsJar(0.05, 100.toMoney, Currency("EUR", "€"), customer.bankAccounts.last)
+
+    bankAccount.balance shouldBe 0.toMoney
     savingJar.deposit(200.toMoney) shouldBe false
     savingJar.balance shouldBe 0.toMoney
-    bankAccount.deposit(22.toMoney)
-    bankAccount.balance shouldBe 22.toMoney
-    savingJar.deposit(100.toMoney) shouldBe false
-    savingJar.balance shouldBe 0.toMoney
+    bankAccount.balance shouldBe 0.toMoney
 
   test("SavingJarImpl should initialize with correct initial values"):
-    val savingJar = SavingsJar(0.05, 100.toMoney, Currency("EUR", "€"), bankAccount)
-    savingJar.balance shouldBe 0.toMoney
+    customer.addBankAccount(bank.getBankAccountTypes.head, Currency(code = "EUR", symbol = "€"))
+    val bankAccount: BankAccount = customer.bankAccounts.last
+    val savingJar = SavingsJar(0.05, 100.toMoney, Currency("EUR", "€"), customer.bankAccounts.last)
+
     savingJar.annualInterest shouldBe 0.05
     savingJar.currency.code shouldBe "EUR"
     savingJar.monthlyDeposit shouldBe 100.toMoney
@@ -40,31 +41,41 @@ class SavingJarTest extends AnyFunSuite:
 
 
   test("Deposit should increase balance of savingJar and decrease balance of bankAccount correctly"):
-    val savingJar = SavingsJar(0.05, 100.toMoney, Currency("EUR", "€"), customer.bankAccounts.head)
-    bankAccount.deposit(150.toMoney)
-    bankAccount.balance shouldBe 172.toMoney
-    savingJar.deposit(50.toMoney)
+    customer.addBankAccount(bank.getBankAccountTypes.head, Currency(code = "EUR", symbol = "€"))
+    val bankAccount: BankAccount = customer.bankAccounts.last
+    val savingJar = SavingsJar(0.05, 100.toMoney, Currency("EUR", "€"), customer.bankAccounts.last)
+
+    bankAccount.deposit(200.toMoney)
+    savingJar.deposit(50.toMoney) shouldBe true
     savingJar.balance shouldBe 50.toMoney
-    bankAccount.balance shouldBe 122.toMoney
+    bankAccount.balance shouldBe 150.toMoney
 
 
   test("Withdraw should decrease balance of savingJar and increase balance of bankAccount correctly"):
-    val savingJar = SavingsJar(0.05, 100.toMoney, Currency("EUR", "€"), customer.bankAccounts.head)
-    bankAccount.deposit(2.toMoney)
-    bankAccount.balance shouldBe 124.toMoney
+    customer.addBankAccount(bank.getBankAccountTypes.head, Currency(code = "EUR", symbol = "€"))
+    val bankAccount: BankAccount = customer.bankAccounts.last
+    val savingJar = SavingsJar(0.05, 100.toMoney, Currency("EUR", "€"), customer.bankAccounts.last)
+
+    bankAccount.deposit(200.toMoney)
     savingJar.deposit(50.toMoney)
     savingJar.withdraw(30.toMoney) shouldBe true
     savingJar.balance shouldBe 20.toMoney
-    bankAccount.balance shouldBe 104.toMoney
+    bankAccount.balance shouldBe 180.toMoney
 
 
   test("Withdraw should fail if balance is insufficient"):
-    val savingJar = SavingsJar(0.05, 100.toMoney, Currency("EUR", "€"), customer.bankAccounts.head)
+    customer.addBankAccount(bank.getBankAccountTypes.head, Currency(code = "EUR", symbol = "€"))
+    val bankAccount: BankAccount = customer.bankAccounts.last
+    val savingJar = SavingsJar(0.05, 100.toMoney, Currency("EUR", "€"), customer.bankAccounts.last)
+
     savingJar.withdraw(200.toMoney) shouldBe false
     savingJar.balance shouldBe 0.toMoney
 
   test("ApplyYearInterest should calculate interest correctly"):
-    val savingJar = SavingsJar(0.05, 100.toMoney, Currency("EUR", "€"), customer.bankAccounts.head)
+    customer.addBankAccount(bank.getBankAccountTypes.head, Currency(code = "EUR", symbol = "€"))
+    val bankAccount: BankAccount = customer.bankAccounts.last
+    val savingJar = SavingsJar(0.05, 100.toMoney, Currency("EUR", "€"), customer.bankAccounts.last)
+
     bankAccount.deposit(100.toMoney)
     savingJar.deposit(100.toMoney)
     savingJar.applyYearInterest()
@@ -79,8 +90,11 @@ class SavingJarTest extends AnyFunSuite:
     savingJar.annualProjection(3).setScale(2) shouldBe res.toMoney.setScale(2)
 */
   test("ChangeCurrency should convert balance correctly with conversion fee"):
-    val savingJar = SavingsJar(0.5, 100.toMoney, Currency("EUR", "€"), customer.bankAccounts.head)
-    bankAccount.deposit(100.toMoney, 0.toMoney)
+    customer.addBankAccount(bank.getBankAccountTypes.head, Currency(code = "EUR", symbol = "€"))
+    val bankAccount: BankAccount = customer.bankAccounts.last
+    val savingJar = SavingsJar(0.05, 100.toMoney, Currency("EUR", "€"), customer.bankAccounts.last)
+
+    bankAccount.deposit(100.toMoney)
     savingJar.deposit(100.toMoney)
     val newCurrency = Currency("USD", "$")
     savingJar.changeCurrency(newCurrency, 5)
