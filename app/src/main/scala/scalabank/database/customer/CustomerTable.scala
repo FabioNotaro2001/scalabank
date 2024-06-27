@@ -1,6 +1,6 @@
 package scalabank.database.customer
 
-import scalabank.database.{Database, DatabaseOperations, PopulateEntityTable}
+import scalabank.database.{AbstractCache, Database, DatabaseOperations, PopulateEntityTable}
 import scalabank.entities.Customer
 
 import java.sql.{Connection, ResultSet}
@@ -12,10 +12,10 @@ import scala.collection.mutable.Map as MutableMap
  * @param connection The database connection to use.
  * @param database The database reference.
  */
-class CustomerTable(override val connection: Connection, override val database: Database) extends DatabaseOperations[Customer, String]:
+class CustomerTable(override val connection: Connection, override val database: Database) extends AbstractCache[Customer, String] with DatabaseOperations[Customer, String]:
   import database.*
 
-  private val fetchedCustomers = MutableMap[String, Customer]()
+  private val fetchedCustomers = cache
 
   private val tableCreated =
     if !tableExists("customer", connection) then

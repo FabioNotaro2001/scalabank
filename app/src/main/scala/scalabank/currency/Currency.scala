@@ -21,5 +21,6 @@ object Currency:
   def apply(code: String, symbol: String): Currency = CurrencyImpl(code, symbol)
 
   private case class CurrencyImpl(override val code: String,
-                                  override val symbol: String) extends Currency
+                                  override val symbol: String) extends Currency:
+    override def toString: String = s"${code} (${symbol})"
 

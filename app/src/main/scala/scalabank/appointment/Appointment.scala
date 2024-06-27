@@ -45,3 +45,9 @@ trait AppointmentComponent:
 object Appointment extends LoggerDependency with AppointmentComponent:
   override val logger: Logger = LoggerImpl()
   def apply(customer: Customer, employee: Employee, description: String, date: LocalDateTime, duration: Int): Appointment = AppointmentImpl(customer, employee, description, date, duration)
+
+extension (appointment: Appointment)
+  def toStringFromCustomerSide: String =
+    s"Appointment with employee ${appointment.employee.cf}, at ${appointment.date}, of duration ${appointment.duration} minutes."
+  def toStringFromEmployeeSide: String =
+    s"Appointment with customer ${appointment.customer.cf}, at ${appointment.date}, of duration ${appointment.duration} minutes."

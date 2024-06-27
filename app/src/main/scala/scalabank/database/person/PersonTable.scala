@@ -1,6 +1,6 @@
 package scalabank.database.person
 
-import scalabank.database.{Database, DatabaseOperations, PopulateEntityTable}
+import scalabank.database.{AbstractCache, Database, DatabaseOperations, PopulateEntityTable}
 import scalabank.entities.Person
 
 import java.sql.{Connection, ResultSet}
@@ -12,9 +12,9 @@ import scala.collection.mutable.Map as MutableMap
  * @param connection The database connection to use.
  * @param database The database reference.
  */
-class PersonTable(override val connection: Connection, override val database: Database) extends DatabaseOperations[Person, String]:
+class PersonTable(override val connection: Connection, override val database: Database) extends AbstractCache[Person, String] with DatabaseOperations[Person, String]:
 
-  private val fetchedPeople = MutableMap[String, Person]()
+  private val fetchedPeople = cache
 
   private val tableCreated =
     if !tableExists("person", connection) then

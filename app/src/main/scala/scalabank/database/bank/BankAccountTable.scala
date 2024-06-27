@@ -2,13 +2,12 @@ package scalabank.database.bank
 
 import scalabank.bank.BankAccountType
 import scalabank.currency.Currency
-import scalabank.database.{Database, DatabaseOperations}
+import scalabank.database.{AbstractCache, Database, DatabaseOperations}
 import scalabank.currency.MoneyADT.*
 import scalabank.bankAccount.{BankAccount, StateBankAccount}
 
 import java.sql.{Connection, ResultSet}
 import scala.util.Random
-import scala.collection.mutable.Map as MutableMap
 
 /**
  * Class representing the bank account table in the database.
@@ -16,12 +15,12 @@ import scala.collection.mutable.Map as MutableMap
  * @param connection    The database connection to use.
  * @param database      The database reference.
  */
-class BankAccountTable(override val connection: Connection, override val database: Database) extends DatabaseOperations[BankAccount, Int] :
+class BankAccountTable(override val connection: Connection, override val database: Database) extends AbstractCache[BankAccount, Int] with DatabaseOperations[BankAccount, Int]:
   import database.*
 
-  private val fetchedBankAccounts = MutableMap[Int, BankAccount]()
+  private val fetchedBankAccounts = cache
 
-  private val tableCreated = 
+  private val tableCreatedNow =
     if !tableExists("bankAccount", connection) then
       val query = "CREATE TABLE IF NOT EXISTS bankAccount (id INT PRIMARY KEY," +
         " balance VARCHAR(30), currencyCode VARCHAR(3), currencySymbol VARCHAR(3)," +
@@ -31,7 +30,7 @@ class BankAccountTable(override val connection: Connection, override val databas
     else false
 
   override def initialize(): Unit =
-    if tableCreated then 
+    if tableCreatedNow then
       populateDB()
 
   def insert(entity: BankAccount): Unit =
@@ -107,14 +106,11 @@ class BankAccountTable(override val connection: Connection, override val databas
     stmt.setInt(1, id)
     stmt.executeUpdate
     fetchedBankAccounts.remove(id)
-
+  
   private def populateDB(): Unit =
     val customers = customerTable.findAll()
-    val bankAccountTypes = Seq(
-      BankAccountType("Checking", 0.01.toMoney, 0.toMoney, 0.01.toMoney, 0.5.toDouble),
-      BankAccountType("Savings", 0.02.toMoney, 0.toMoney, 0.02.toMoney, 0.4.toDouble),
-      BankAccountType("Business", 0.015.toMoney, 0.toMoney, 0.015.toMoney, 0.8.toDouble)
-    )
+    val bankAccountTypes = bankAccountTypeTable.findAll()
+    val currency = currencyTable.findById("USD").getOrElse(currencyTable.findAll().head)
     var idCounter = 1
     val bankAccounts = for
       customer <- customers
@@ -124,7 +120,6 @@ class BankAccountTable(override val connection: Connection, override val databas
       idCounter += 1
       println(idCounter)
       val balance = Random.nextInt(10000).toMoney
-      val currency = Currency("USD", "$")
       val state = StateBankAccount.Active
       BankAccount(id, customer, balance, currency, state, accountType)
     bankAccounts.foreach(insert)

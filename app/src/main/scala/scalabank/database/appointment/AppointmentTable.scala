@@ -1,9 +1,7 @@
 package scalabank.database.appointment
 
-import scalabank.database.{Database, DatabaseOperations}
+import scalabank.database.{AbstractCache, Database, DatabaseOperations}
 import scalabank.appointment.Appointment
-import scalabank.database.customer.CustomerTable
-import scalabank.database.employee.EmployeeTable
 
 import java.sql.{Connection, PreparedStatement, ResultSet}
 import java.time.LocalDateTime
@@ -16,11 +14,11 @@ import scala.collection.mutable.Map as MutableMap
  * @param connection    The database connection to use.
  * @param database The database reference.
  */
-class AppointmentTable(override val connection: Connection, override val database: Database) extends DatabaseOperations[Appointment, (String, String, LocalDateTime)]:
+class AppointmentTable(override val connection: Connection, override val database: Database) extends AbstractCache[Appointment, (String, String, String)] with DatabaseOperations[Appointment, (String, String, LocalDateTime)]:
   import database.*
 
   private val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-  private val fetchedAppointments = MutableMap[(String, String, String), Appointment]()
+  private val fetchedAppointments = cache
 
   private val tableCreated =
     if !tableExists("appointment", connection) then

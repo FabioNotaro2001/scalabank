@@ -2,7 +2,7 @@ package scalabank.database.movement
 
 import scalabank.bankAccount.{BankAccount, Deposit, MoneyTransfer, Movement, Withdraw}
 import scalabank.currency.MoneyADT.*
-import scalabank.database.{Database, DatabaseOperations}
+import scalabank.database.{AbstractCache, Database, DatabaseOperations}
 
 import java.sql.{Connection, PreparedStatement, ResultSet, Timestamp}
 import scala.collection.mutable.Map as MutableMap
@@ -15,11 +15,11 @@ import java.time.format.DateTimeFormatter
  * @param connection The database connection to use.
  * @param database The database reference.
  */
-class MovementTable(override val connection: Connection, override val database: Database) extends DatabaseOperations[Movement, (Int, LocalDateTime)]:
+class MovementTable(override val connection: Connection, override val database: Database) extends AbstractCache[Movement, (Int, String)] with DatabaseOperations[Movement, (Int, LocalDateTime)]:
   import database.*
 
   private val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-  private val fetchedMovements = MutableMap[(Int, LocalDateTime), Movement]()
+  private val fetchedMovements = cache
 
   private val tableCreated =
     if !tableExists("movements", connection) then
@@ -57,7 +57,7 @@ class MovementTable(override val connection: Connection, override val database: 
   private def createMovement(resultSet: ResultSet): Movement =
     val receiverBankAccountId = resultSet.getInt("receiverBankAccountId")
     val date = resultSet.getTimestamp("date").toLocalDateTime
-    fetchedMovements.get((receiverBankAccountId, date)) match
+    fetchedMovements.get((receiverBankAccountId, date.toString)) match
       case Some(m) => m
       case None =>
         val movementType = resultSet.getString("type")
@@ -75,7 +75,7 @@ class MovementTable(override val connection: Connection, override val database: 
             val senderBankAccount = bankAccountTable.findById(senderBankAccountId).get
             val fee = senderBankAccount.bankAccountType.feeMoneyTransfert
             MoneyTransfer(senderBankAccount, receiverBankAccount, value, fee, date)
-        fetchedMovements.put((receiverBankAccountId, date), movement)
+        fetchedMovements.put((receiverBankAccountId, date.toString), movement)
         movement
 
   def findById(id: (Int, LocalDateTime)): Option[Movement] =
@@ -121,7 +121,7 @@ class MovementTable(override val connection: Connection, override val database: 
     stmt.setInt(4, entity.receiverBankAccount.id)
     stmt.setTimestamp(5, Timestamp.valueOf(entity.date))
     stmt.executeUpdate()
-    fetchedMovements.remove((entity.receiverBankAccount.id, entity.date))
+    fetchedMovements.remove((entity.receiverBankAccount.id, entity.date.toString))
 
   def delete(id: (Int, LocalDateTime)): Unit =
     val query = "DELETE FROM movements WHERE receiverBankAccountId = ? AND date = ?"
@@ -129,7 +129,7 @@ class MovementTable(override val connection: Connection, override val database: 
     stmt.setInt(1, id._1)
     stmt.setTimestamp(2, Timestamp.valueOf(id._2))
     stmt.executeUpdate()
-    fetchedMovements.remove(id)
+    fetchedMovements.remove((id._1, id._2.toString))
 
   private def populateDB(): Unit =
     val bankAccounts = database.bankAccountTable.findAll()

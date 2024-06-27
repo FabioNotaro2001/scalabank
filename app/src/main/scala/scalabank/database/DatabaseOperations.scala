@@ -6,9 +6,9 @@ import java.sql.{Connection, ResultSet}
  * Trait defining standard database operations for a generic entity type.
  *
  * @tparam T The type of the entity.
- * @tparam Q The type of the entity's identifier.
+ * @tparam I The type of the entity's identifier.
  */
-trait DatabaseOperations[T, Q]:
+trait DatabaseOperations[T, I]:
   /**
    *  The database containing the table
    */
@@ -37,7 +37,7 @@ trait DatabaseOperations[T, Q]:
    * @param id The identifier of the entity.
    * @return An option containing the found entity or None if not found.
    */
-  def findById(id: Q): Option[T]
+  def findById(id: I): Option[T]
 
   /**
    * Retrieves all entities from the database.
@@ -58,7 +58,7 @@ trait DatabaseOperations[T, Q]:
    *
    * @param id The identifier of the entity to delete.
    */
-  def delete(id: Q): Unit
+  def delete(id: I): Unit
 
   /**
    * Checks if a table exists in the database.

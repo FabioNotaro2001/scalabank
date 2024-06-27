@@ -117,11 +117,7 @@ trait Bank:
 abstract class AbstractBankImpl[T <: BankInformation](override val bankInformation: T) extends Bank:
   protected val employees: ListBuffer[Employee] = ListBuffer()
   protected val customers: ListBuffer[Customer] = ListBuffer()
-  protected val bankAccountTypes: ListBuffer[BankAccountType] = ListBuffer(
-    BankAccountType("Checking", 0.01.toMoney, 0.toMoney, 0.01.toMoney, 0.5),
-    BankAccountType("Savings", 0.02.toMoney, 0.toMoney, 0.02.toMoney, 0.4),
-    BankAccountType("Business", 0.015.toMoney, 0.toMoney, 0.015.toMoney, 0.8)
-  )
+  protected val bankAccountTypes: ListBuffer[BankAccountType] = ListBuffer()
 
   override def customerLogin(cf: String): Option[Customer] =
     customers.find(_.cf == cf)
@@ -136,7 +132,9 @@ abstract class AbstractBankImpl[T <: BankInformation](override val bankInformati
     customers.addOne(customer)
 
   override def createBankAccount(customer: Customer, bankAccountType: BankAccountType, currency: Currency): BankAccount =
-    BankAccount(LocalDateTime.now.getNano, customer, 0.toMoney, currency, Active, bankAccountType)
+    val acc = BankAccount(LocalDateTime.now.getNano, customer, 0.toMoney, currency, Active, bankAccountType)
+    customer.addBankAccount(acc)
+    acc
 
   override def addBankAccountType(nameType: String, feeWithdraw: Money, feeDeposit: Money, feeMoneyTransfert: Money, interestSavingJar: Double): Unit = 
     val bankAccountType = BankAccountType(nameType, feeWithdraw, feeDeposit, feeMoneyTransfert, interestSavingJar: Double)
@@ -156,6 +154,7 @@ abstract class AbstractBankImpl[T <: BankInformation](override val bankInformati
   override def populate(source: Database): Unit =
     customers addAll source.customerTable.findAll()
     employees addAll source.employeeTable.findAll()
+    bankAccountTypes addAll source.bankAccountTypeTable.findAll()
 
 trait BankComponent:
   loggerDependency: LoggerDependency =>

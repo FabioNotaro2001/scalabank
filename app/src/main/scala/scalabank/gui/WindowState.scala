@@ -9,10 +9,13 @@ import scalabank.database.Database
 import scalabank.entities.{Customer, Employee}
 import scalabank.gui.SwingFunctionalFacade.Frame
 import scalabank.currency.MoneyADT.toMoney
+import scalabank.loan.LoanCalculator
+import scalabank.appointment.{toStringFromCustomerSide, toStringFromEmployeeSide}
 
 import java.util.Vector as JavaVector
 import java.util.List as JavaList
 import java.awt.{BorderLayout, FlowLayout, GridLayout, LayoutManager}
+import java.math.MathContext
 import java.util
 import java.util.function.Supplier
 import javax.swing.{BoxLayout, JFrame, JOptionPane}
@@ -243,6 +246,7 @@ object GUI:
       - <- addPanel("CF-Label-Panel", FlowLayout(), "Login-Inputs-Panel", null)
       _ <- addLabel("CF-Label", "CF:", "CF-Label-Panel", FlowLayout.CENTER)
       _ <- addInput("CF-Input", 20, "Login-Inputs-Panel", null)
+      _ <- setInputText("CF-Input", "BDE")
 
       _ <- addPanel("Login-Button-Panel", FlowLayout(), "Login", BorderLayout.SOUTH)
       _ <- addButton("Client-Login-Button", "Login as customer", "Login-Button-Panel", FlowLayout.LEFT)
@@ -332,9 +336,10 @@ object GUI:
       _ <- addButton("Loan-Calc", "Calculate", "Loan-Simulator", BorderLayout.CENTER)
 
       _ <- addPanel("Loan-Results-Outer", FlowLayout(), "Loan-Simulator", BorderLayout.SOUTH)
-      _ <- addPanel("Loan-Results", GridLayout(2, 1), "Loan-Results-Outer", FlowLayout.CENTER)
-      _ <- addLabel("Loan-Calc-Rate", "Monthly amount: ---", "Loan-Results", null)
-      _ <- addLabel("Loan-Calc-Interest", "Total interests: ---", "Loan-Results", null)
+      _ <- addPanel("Loan-Results", GridLayout(3, 1), "Loan-Results-Outer", FlowLayout.CENTER)
+      _ <- addLabel("Loan-Calc-Rate", "Monthly payment: ---", "Loan-Results", null)
+      _ <- addLabel("Loan-Calc-Total", "Total payment: ---", "Loan-Results", null)
+      _ <- addLabel("Loan-Calc-Interest", "Interest rate: ---", "Loan-Results", null)
     yield ()
     val emplHomeView = for
       _ <- addView("Empl-Home", BorderLayout(0, 10))
@@ -344,17 +349,20 @@ object GUI:
 
       _ <- addPanel("Empl-Panel-Outer", FlowLayout(), "Empl-Home", BorderLayout.SOUTH)
       _ <- addPanel("Empl-Panel", GridLayout(2, 1, 0, 10), "Empl-Panel-Outer", FlowLayout.CENTER)
-      _ <- addButton("Empl-Home-Appointments", "Manage appointemts", "Empl-Panel", null)
+      _ <- addButton("Empl-Home-Appointments", "Manage appointments", "Empl-Panel", null)
       _ <- addButton("Empl-Home-Logout", "Logout", "Empl-Panel", null)
     yield ()
     val emplAppointmentsView = for
       _ <- addView("Empl-Appointments", BorderLayout(0, 10))
-      _ <- addButton("Empl-Appts-Back", "<", "Empl-Appointments", BorderLayout.WEST)
+      _ <- addPanel("Empl-Appts-Back-Panel", GridLayout(2, 1), "Empl-Appointments", BorderLayout.WEST)
+      _ <- addSpacer(0, 50, "Empl-Appts-Back-Panel", null)
+      _ <- addButton("Empl-Appts-Back", "<", "Empl-Appts-Back-Panel", null)
 
-      _ <- addPanel("Empl-Appts-Panel-Outer", FlowLayout(), "Empl-Appointments", BorderLayout.CENTER)
-      _ <- addPanel("Empl-Appts-Panel", GridLayout(2, 1), "Empl-Appts-Panel-Outer", FlowLayout.CENTER)
-      _ <- addLabel("Empl-Appts-List-Label", "Appointments list", "Empl-Appts-Panel", FlowLayout.CENTER)
-      _ <- addList("Empl-Appts-List", Array("one", "two"), "Empl-Appts-Panel", null)
+      _ <- addPanel("Empl-Appts-Panel", BoxLayout(null, BoxLayout.Y_AXIS), "Empl-Appointments", BorderLayout.CENTER)
+      _ <- addSpacer(350, 50, "Empl-Appts-Panel", null)
+      _ <- addPanel("Empl-Appts-Label-Panel", FlowLayout(), "Empl-Appts-Panel", null)
+      _ <- addLabel("Empl-Appts-Label", "List of appointments", "Empl-Appts-Label-Panel", FlowLayout.CENTER)
+      _ <- addList("Empl-Appts-List", Array(), "Empl-Appts-Panel", null)
     yield ()
     val displayView = for
       _ <- showView("Login")
@@ -367,6 +375,7 @@ object GUI:
     val database = Database("jdbc:h2:./database/test")
     val bank = Bank.physicalBank("ScalaBank", "Via dell'università 1", "000-0000000")
     bank.populate(database)
+    val currencies = database.currencyTable.findAll()
 
     var account: Option[BankAccount] = None
 
@@ -398,6 +407,7 @@ object GUI:
                       _ <- changeLabel("User-Title", s"Welcome ${c.name} ${c.surname}")
                       _ <- updateComboBox("User-Accounts", c.bankAccounts.map(_.id.toString).toArray)
                       _ <- updateComboBox("User-Bank-Account-Types", bank.getBankAccountTypes.map(_.nameType).toArray)
+                      _ <- updateComboBox("User-Bank-Account-Currencies", currencies.map(_.toString).toArray)
                       _ <- showView("User-Home")
                     yield ()
                   case None =>
@@ -406,7 +416,7 @@ object GUI:
           case "User-Home-Account" =>
             for
               accId <- getComboBoxSelection("User-Accounts")
-              _ <- changeLabel("User-Account-Title", s"Bank account ${accId}")
+              _ <- changeLabel("User-Account-Title", s"Bank account $accId")
               _ <- exec:
                 account = customer.get.bankAccounts.find(_.id.toString == accId)
               _ <- changeLabel("Account-Amount", s"Balance: ${account.get.balance.toString} ${account.get.currency.symbol}")
@@ -510,10 +520,17 @@ object GUI:
           case "User-Home-New-Account" =>
             for
               accTypeName <- getComboBoxSelection("User-Bank-Account-Types")
+              currencyStr <- getComboBoxSelection("User-Bank-Account-Currencies")
+              currency <- exec:
+                currencies.find(_.toString == currencyStr).get
               accType <- exec:
                 bank.getBankAccountTypes.find(_.nameType == accTypeName).get
               acc <- exec:
-                bank.createBankAccount(customer.get, accType, ???)  // TODO: currencies
+                bank.createBankAccount(customer.get, accType, currency)
+              _ <- exec:
+                database.bankAccountTable.insert(acc)
+                database.customerTable.update(customer.get)
+              _ <- updateComboBox("User-Accounts", customer.get.bankAccounts.map(_.id.toString).toArray)
               _ <- changeLabel("User-Account-Title", s"Bank account ${acc.id}")
               _ <- exec:
                 account = Option(acc)
@@ -524,19 +541,66 @@ object GUI:
               )
               _ <- showView("User-Account")
             yield ()
-          case "Empl-Login-Button" => showView("Empl-Home")
-          case "User-Home-Logout" => showView("Login")
-          case "User-Home-Appointments" => showView("User-Appointments")
           case "User-Home-Sim-Loan" => showView("Loan-Simulator")
-          case "Empl-Home-Appointments" => showView("Empl-Appointments")
+          case "Loan-Calc" =>
+            for
+              loanCalculator <- exec:
+                LoanCalculator()
+              amount <- getInputText("Loan-Amount")
+              months <- getInputText("Loan-Months")
+              _ <-
+                (Try(amount.toMoney), Try(months.toInt)) match
+                  case (Success(a), Success(m)) if m > 0 =>
+                    for
+                      res <- exec:
+                        loanCalculator.calculateLoan(customer.get, a, m)
+                      _ <- changeLabel("Loan-Calc-Rate", s"Monthly payment: ${res.amountOfSinglePayment.toBigDecimal.setScale(2, BigDecimal.RoundingMode.HALF_EVEN)}")
+                      _ <- changeLabel("Loan-Calc-Total", s"Total payment: ${res.totalAmount.toBigDecimal.setScale(2, BigDecimal.RoundingMode.HALF_EVEN)}")
+                      _ <- changeLabel("Loan-Calc-Interest", s"Interest rate: ${res.interestRate.toString}")
+                    yield ()
+                  case _ =>
+                    dialog("Invalid amount or number of months")
+            yield ()
+          case "Empl-Login-Button" =>
+            for
+              cf <- getInputText("CF-Input")
+              _ <-
+                employee = bank.employeeLogin(cf)
+                employee match
+                  case Some(e) =>
+                    for
+                      _ <- changeLabel("Empl-Title", s"Welcome ${e.name} ${e.surname}")
+                      _ <- showView("Empl-Home")
+                    yield ()
+                  case None =>
+                    dialog("Unknown employee.")
+            yield ()
+          case "Empl-Home-Appointments" =>
+            for
+              _ <- updateList("Empl-Appts-List", employee.get.getAppointments.map(_.toStringFromEmployeeSide).toArray)
+              _ <- showView("Empl-Appointments")
+            yield ()
+//          case "User-Home-Appointments" => showView("User-Appointments")
+          case "User-Home-Logout" => showView("Login")
           case "Empl-Home-Logout" => showView("Login")
           case "User-Account-Back" => showView("User-Home")
           case "User-Appts-Back" => showView("User-Home")
           case "Loan-Sim-Back" => showView("User-Home")
           case "Empl-Appts-Back" => showView("Empl-Home")
-//          case "Appt-Create" => updateList("Appt-List", Array("test1", "test2", "test3"))
           case Frame.CLOSED => exec(sys.exit())
-          case v => exec(println(s"No action: ${v}"))
+          case v => exec(println(s"No action: $v"))
     yield ()
 
-    windowEventsHandling.run(initialWindow)
+    try
+      windowEventsHandling.run(initialWindow)
+    catch {
+      case e: Throwable =>
+        val error = for
+          _ <- exec:
+            e.printStackTrace()
+          _ <- dialog(e.toString)
+          _ <- exec:
+            System.exit(1)
+        yield ()
+        error.run(initialWindow)
+    }

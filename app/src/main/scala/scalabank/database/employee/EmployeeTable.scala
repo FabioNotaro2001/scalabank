@@ -1,6 +1,6 @@
 package scalabank.database.employee
 
-import scalabank.database.{Database, DatabaseOperations, PopulateEntityTable}
+import scalabank.database.{AbstractCache, Database, DatabaseOperations, PopulateEntityTable}
 import scalabank.entities.Employee
 import scalabank.entities.Employee.EmployeePosition
 
@@ -13,10 +13,10 @@ import scala.collection.mutable.Map as MutableMap
  * @param connection The database connection to use.
  * @param database The database reference.
  */
-class EmployeeTable(override val connection: Connection, override val database: Database) extends DatabaseOperations[Employee, String]:
+class EmployeeTable(override val connection: Connection, override val database: Database) extends AbstractCache[Employee, String] with DatabaseOperations[Employee, String]:
   import database.*
 
-  private val fetchedEmployees = MutableMap[String, Employee]()
+  private val fetchedEmployees = cache
 
   private val tableCreated =
     if !tableExists("employee", connection) then
