@@ -174,3 +174,19 @@ Per assicurarmi del corretto funzionamento delle implementazioni ho realizzato d
 si realizzano prima dei test che non passano e poi si modifica il codice per farsi che i test abbiano successo. In questo modo
 ho testato la creazione, rimozione e modifica degli appuntamenti.
 
+## Parte 3: ultimi ritocchi all'interfaccia grafica per completare l'applicazione
+
+In questo sprint, ho combinato tutte le funzionalità create dagli altri partecipanti, inserendole nell'interfaccia grafica
+per renderla funzionante, implementando i comportamenti dovuti alla pressione di bottoni dell'interfaccia.
+
+### Implementazione
+
+La gestione degli eventi lanciati dall'interfaccia è fatta mediante monadi, come si può vedere dal seguente esempio:
+
+```scala 3
+case "User-Home-Appointments" =>
+    for
+      _ <- updateList("Appt-List", customer.get.getAppointments.map(_.toStringFromCustomerSide).toArray)
+      _ <- showView("User-Appointments")
+    yield ()
+```
