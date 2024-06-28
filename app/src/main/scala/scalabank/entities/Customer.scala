@@ -14,7 +14,6 @@ trait Customer extends Person with AppointmentBehaviour:
   def registerBank(bank: Bank): Unit
   def deregisterBank(bank: Bank): Unit
   def addBankAccount(bankAccount: BankAccount): Unit
-  def addBankAccount(bankAccountType: BankAccountType, currency: Currency): Unit
   def bankAccounts: Iterable[BankAccount]
 
 abstract class AbstractCustomer(_cf: String,
@@ -41,11 +40,6 @@ abstract class AbstractCustomer(_cf: String,
 
   override def addBankAccount(bankAccount: BankAccount): Unit =
     _bankAccounts = _bankAccounts :+ bankAccount
-  
-  override def addBankAccount(bankAccountType: BankAccountType, currency: Currency): Unit = _bank match
-    case Some(bank) =>
-      val newBankAccount = bank.createBankAccount(this, bankAccountType, currency)
-    case None =>
 
   override def bankAccounts: Iterable[BankAccount] = _bankAccounts
 
@@ -54,9 +48,11 @@ trait BaseFeeCalculator:
   def calculateBaseFee(fidelity: Fidelity, isYoung: Boolean): Double
 
 given defaultBaseFeeCalculator: BaseFeeCalculator with
-  def calculateBaseFee(fidelity: Fidelity, isYoung: Boolean): Double = isYoung match
-    case true => 0
-    case false => fidelity.currentLevel match
+  def calculateBaseFee(fidelity: Fidelity, isYoung: Boolean): Double = 
+  if isYoung then
+    0
+  else
+    fidelity.currentLevel match
       case level if level == FidelityLevel.Bronze => 1
       case level if level == FidelityLevel.Silver => 0.8
       case level if level == FidelityLevel.Gold => 0.6

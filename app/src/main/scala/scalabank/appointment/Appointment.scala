@@ -4,6 +4,7 @@ import scalabank.entities.{Customer, Employee}
 import scalabank.logger.{Logger, LoggerDependency, LoggerImpl}
 
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 /**
  * Represents an appointment a customer can schedule
@@ -46,8 +47,10 @@ object Appointment extends LoggerDependency with AppointmentComponent:
   override val logger: Logger = LoggerImpl()
   def apply(customer: Customer, employee: Employee, description: String, date: LocalDateTime, duration: Int): Appointment = AppointmentImpl(customer, employee, description, date, duration)
 
+private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+
 extension (appointment: Appointment)
   def toStringFromCustomerSide: String =
-    s"Appointment with employee ${appointment.employee.cf}, at ${appointment.date}, of duration ${appointment.duration} minutes."
+    s"Appointment with employee ${appointment.employee.cf}, at ${appointment.date.format(dateFormatter)}, of duration ${appointment.duration} minutes. Reason: '${appointment.description}'"
   def toStringFromEmployeeSide: String =
-    s"Appointment with customer ${appointment.customer.cf}, at ${appointment.date}, of duration ${appointment.duration} minutes."
+    s"Appointment with customer ${appointment.customer.cf}, at ${appointment.date.format(dateFormatter)}, of duration ${appointment.duration} minutes. Reason: '${appointment.description}'"

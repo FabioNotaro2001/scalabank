@@ -9,6 +9,11 @@ import org.scalatestplus.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
 class TestInterestManager extends AnyFlatSpec:
+  InterestProvider.setInterestValues(Map(
+    "default" -> InterestRate(0.04),
+    "young" -> InterestRate(0.03),
+    "old" -> InterestRate(0.05)
+  ))
   val interestManager: InterestManager = InterestManager()
   val interestProvider: InterestProvider = InterestProvider()
 

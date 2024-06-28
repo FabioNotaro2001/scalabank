@@ -9,13 +9,14 @@ import scalabank.database.Database
 import scalabank.entities.{Customer, Employee}
 import scalabank.gui.SwingFunctionalFacade.Frame
 import scalabank.currency.MoneyADT.toMoney
-import scalabank.loan.LoanCalculator
+import scalabank.loan.{InterestProvider, LoanCalculator}
 import scalabank.appointment.{toStringFromCustomerSide, toStringFromEmployeeSide}
 
 import java.util.Vector as JavaVector
 import java.util.List as JavaList
 import java.awt.{BorderLayout, FlowLayout, GridLayout, LayoutManager}
 import java.math.MathContext
+import java.time.{LocalDate, LocalDateTime, LocalTime}
 import java.util
 import java.util.function.Supplier
 import javax.swing.{BoxLayout, JFrame, JOptionPane}
@@ -255,11 +256,11 @@ object GUI:
     val userHomeView = for
       _ <- addView("User-Home", BorderLayout(0, 10))
       _ <- addPanel("User-Title-Panel", FlowLayout(), "User-Home", BorderLayout.NORTH)
-      _ <- addLabel("User-Title", "Welcome <USER>", "User-Title-Panel", FlowLayout.CENTER)
+      _ <- addLabel("User-Title", "Welcome ---", "User-Title-Panel", FlowLayout.CENTER)
       _ <- addPanel("User-Home-Panel", BoxLayout(null, BoxLayout.Y_AXIS), "User-Home", BorderLayout.CENTER)
       _ <- addPanel("User-Home-Panel-Row1", GridLayout(1, 2, 20, 20), "User-Home-Panel", null)
       _ <- addComboBox("User-Accounts", Array(), "User-Home-Panel-Row1", null)
-      _ <- addButton("User-Home-Account", "See bank account", "User-Home-Panel-Row1", null)
+      _ <- addButton("User-Home-View-Account", "See bank account", "User-Home-Panel-Row1", null)
       _ <- addSpacer(0, 20, "User-Home-Panel", null)
       _ <- addPanel("User-Home-Panel-Row2", GridLayout(1, 2, 20, 20), "User-Home-Panel", null)
       _ <- addPanel("User-Home-Panel-Row2-Inner", BoxLayout(null, BoxLayout.Y_AXIS), "User-Home-Panel-Row2", null)
@@ -301,28 +302,34 @@ object GUI:
       _ <- addLabel("Op-List-Label", "Movements list", "Op-List-Label-Panel", FlowLayout.CENTER)
       _ <- addList("Op-List", Array(), "Op-List-Panel", null)
     yield ()
-    val userAppointmentsView = for // TODO: input per descrizione appuntamento
+    val userAppointmentsView = for
       _ <- addView("User-Appointments", BorderLayout(0, 10))
       _ <- addButton("User-Appts-Back", "<", "User-Appointments", BorderLayout.WEST)
 
       _ <- addPanel("User-Appt-Panel-Outer", FlowLayout(), "User-Appointments", BorderLayout.CENTER)
-      _ <- addPanel("User-Appt-Panel", GridLayout(3, 1), "User-Appt-Panel-Outer", FlowLayout.CENTER)
-      _ <- addPanel("Appt-Args-Panel", FlowLayout(), "User-Appt-Panel", null)
-      _ <- addLabel("Appt-Args-Label", "Topic:", "Appt-Args-Panel", FlowLayout.LEFT)
-      _ <- addComboBox("Appt-Arguments", Array(), "Appt-Args-Panel", FlowLayout.RIGHT
-      )
+      _ <- addPanel("User-Appt-Panel", GridLayout(4, 1), "User-Appt-Panel-Outer", FlowLayout.CENTER)
       _ <- addPanel("Appt-Date-Panel", FlowLayout(), "User-Appt-Panel", null)
-      _ <- addLabel("Appt-Date-Label", "Date (gg-mm-aa):", "Appt-Date-Panel", FlowLayout.LEFT)
+      _ <- addLabel("Appt-Date-Label", "Date (dd-mm-yyyy):", "Appt-Date-Panel", FlowLayout.LEFT)
       _ <- addPanel("Appt-Date-Input-Panel", FlowLayout(), "Appt-Date-Panel", FlowLayout.RIGHT)
-      _ <- addInput("Appt-Date-Day", 3, "Appt-Date-Input-Panel", FlowLayout.LEFT)
-      _ <- addInput("Appt-Date-Month", 3, "Appt-Date-Input-Panel", FlowLayout.TRAILING)
-      _ <- addInput("Appt-Date-Year", 3, "Appt-Date-Input-Panel", FlowLayout.TRAILING)
+      _ <- addInput("Appt-Date-Day", 2, "Appt-Date-Input-Panel", FlowLayout.LEFT)
+      _ <- addInput("Appt-Date-Month", 2, "Appt-Date-Input-Panel", FlowLayout.TRAILING)
+      _ <- addInput("Appt-Date-Year", 4, "Appt-Date-Input-Panel", FlowLayout.TRAILING)
+      _ <- addPanel("Appt-Time-Panel", FlowLayout(), "User-Appt-Panel", null)
+      _ <- addLabel("Appt-Time-Label", "Time (hh:mm):", "Appt-Time-Panel", FlowLayout.LEFT)
+      _ <- addPanel("Appt-Time-Input-Panel", FlowLayout(), "Appt-Time-Panel", FlowLayout.RIGHT)
+      _ <- addInput("Appt-Time-Hours", 2, "Appt-Time-Input-Panel", FlowLayout.LEFT)
+      _ <- addInput("Appt-Time-Minutes", 2, "Appt-Time-Input-Panel", FlowLayout.TRAILING)
+      _ <- addLabel("Appt-Duration-Label", "Duration (minutes):", "Appt-Time-Panel", FlowLayout.LEFT)
+      _ <- addInput("Appt-Duration",3, "Appt-Time-Panel", FlowLayout.RIGHT)
+      _ <- addPanel("Appt-Desc-Panel", FlowLayout(), "User-Appt-Panel", null)
+      _ <- addLabel("Appt-Desc-Label", "Description:", "Appt-Desc-Panel", FlowLayout.LEFT)
+      _ <- addInput("Appt-Description", 20, "Appt-Desc-Panel", FlowLayout.RIGHT)
       _ <- addButton("Appt-Create", "New appointment", "User-Appt-Panel", null)
 
       _ <- addPanel("Appt-List-Panel", BoxLayout(null, BoxLayout.Y_AXIS), "User-Appointments", BorderLayout.SOUTH)
       _ <- addPanel("Appt-List-Label-Panel", FlowLayout(), "Appt-List-Panel", null)
       _ <- addLabel("Appt-List-Label", "Apppointments list", "Appt-List-Label-Panel", FlowLayout.CENTER)
-      _ <- addList("Appt-List", Array("one", "two"), "Appt-List-Panel", null)
+      _ <- addList("Appt-List", Array(), "Appt-List-Panel", null)
     yield ()
     val userLoansView = for
       _ <- addView("Loan-Simulator", BorderLayout(0, 10))
@@ -345,7 +352,7 @@ object GUI:
       _ <- addView("Empl-Home", BorderLayout(0, 10))
 
       _ <- addPanel("Empl-Title-Panel", FlowLayout(), "Empl-Home", BorderLayout.NORTH)
-      _ <- addLabel("Empl-Title", "Welcome <DIPENDENTE>", "Empl-Title-Panel", FlowLayout.CENTER)
+      _ <- addLabel("Empl-Title", "Welcome ---", "Empl-Title-Panel", FlowLayout.CENTER)
 
       _ <- addPanel("Empl-Panel-Outer", FlowLayout(), "Empl-Home", BorderLayout.SOUTH)
       _ <- addPanel("Empl-Panel", GridLayout(2, 1, 0, 10), "Empl-Panel-Outer", FlowLayout.CENTER)
@@ -376,6 +383,7 @@ object GUI:
     val bank = Bank.physicalBank("ScalaBank", "Via dell'università 1", "000-0000000")
     bank.populate(database)
     val currencies = database.currencyTable.findAll()
+    InterestProvider.setInterestValues(database.interestTable.findAll().toMap)
 
     var account: Option[BankAccount] = None
 
@@ -411,14 +419,21 @@ object GUI:
                       _ <- showView("User-Home")
                     yield ()
                   case None =>
-                    dialog("Utente sconosciuto.")
+                    dialog("Unknown user.")
             yield ()
-          case "User-Home-Account" =>
+          case "User-Home-View-Account" =>
             for
               accId <- getComboBoxSelection("User-Accounts")
               _ <- changeLabel("User-Account-Title", s"Bank account $accId")
-              _ <- exec:
-                account = customer.get.bankAccounts.find(_.id.toString == accId)
+              opt <- exec:
+                customer.get.bankAccounts.find(_.id.toString == accId)
+              _ <-
+                opt match
+                  case Some(_) =>
+                    exec:
+                      account = opt
+                  case _ =>
+                    dialog("No bank account available.")
               _ <- changeLabel("Account-Amount", s"Balance: ${account.get.balance.toString} ${account.get.currency.symbol}")
               _ <- updateList(
                 "Op-List",
@@ -448,11 +463,11 @@ object GUI:
                             _ <- setInputText("Op-Amount", "")
                           yield ()
                         else
-                          dialog("Prelievo fallito.")
+                          dialog("Withdraw failed.")
                     yield ()
                   case Failure(_) =>
                     for
-                      _ <- dialog("Errore nel valore del prelievo.")
+                      _ <- dialog("Invalid withdraw amount.")
                     yield ()
             yield ()
           case "Account-Deposit" =>
@@ -463,7 +478,8 @@ object GUI:
                 money match
                   case Success(m) =>
                     for
-                      _ <- exec(account.get.deposit(m))
+                      _ <- exec:
+                        account.get.deposit(m)
                       _ <- exec:
                         addLastMovementToDb(account.get)
                       _ <- changeLabel("Account-Amount", s"Balance: ${account.get.balance.toString} ${account.get.currency.symbol}")
@@ -475,7 +491,7 @@ object GUI:
                     yield ()
                   case Failure(_) =>
                     for
-                      _ <- dialog("Errore nel valore del deposito.")
+                      _ <- dialog("Invalid deposit amount.")
                     yield ()
             yield ()
           case "Account-Transfer" =>
@@ -508,13 +524,13 @@ object GUI:
                                 _ <- setInputText("Op-Target", "")
                               yield ()
                             else
-                              dialog("Bonifico fallito.")
+                              dialog("Money transfer failed.")
                           case None =>
-                            dialog("Conto destinazione non trovato.")
+                            dialog("Destination bank account not found.")
                     yield ()
                   case _ =>
                     for
-                      _ <- dialog("Valore del bonifico e/o del conto destinazione invalido.")
+                      _ <- dialog("Invalid transfer amount and/or destination bank account.")
                     yield ()
             yield ()
           case "User-Home-New-Account" =>
@@ -541,7 +557,15 @@ object GUI:
               )
               _ <- showView("User-Account")
             yield ()
-          case "User-Home-Sim-Loan" => showView("Loan-Simulator")
+          case "User-Home-Sim-Loan" =>
+            for
+              _ <- setInputText("Loan-Amount", "")
+              _ <- setInputText("Loan-Months", "")
+              _ <- changeLabel("Loan-Calc-Rate", "Monthly payment: ---")
+              _ <- changeLabel("Loan-Calc-Total", "Total payment: ---")
+              _ <- changeLabel("Loan-Calc-Interest", "Interest rate: ---")
+              _ <-showView("Loan-Simulator")
+            yield ()
           case "Loan-Calc" =>
             for
               loanCalculator <- exec:
@@ -559,7 +583,7 @@ object GUI:
                       _ <- changeLabel("Loan-Calc-Interest", s"Interest rate: ${res.interestRate.toString}")
                     yield ()
                   case _ =>
-                    dialog("Invalid amount or number of months")
+                    dialog("Invalid loan amount or number of months.")
             yield ()
           case "Empl-Login-Button" =>
             for
@@ -580,7 +604,47 @@ object GUI:
               _ <- updateList("Empl-Appts-List", employee.get.getAppointments.map(_.toStringFromEmployeeSide).toArray)
               _ <- showView("Empl-Appointments")
             yield ()
-//          case "User-Home-Appointments" => showView("User-Appointments")
+          case "User-Home-Appointments" =>
+            for
+              _ <- updateList("Appt-List", customer.get.getAppointments.map(_.toStringFromCustomerSide).toArray)
+              _ <- showView("User-Appointments")
+            yield ()
+          case "Appt-Create" =>
+            for
+              dayStr <- getInputText("Appt-Date-Day")
+              monthStr <- getInputText("Appt-Date-Month")
+              yearStr <- getInputText("Appt-Date-Year")
+              hoursStr <- getInputText("Appt-Time-Hours")
+              minutesStr <- getInputText("Appt-Time-Minutes")
+              durationStr <- getInputText("Appt-Duration")
+              description <- getInputText("Appt-Description")
+              _ <-
+                (Try(dayStr.toInt), Try(monthStr.toInt), Try(yearStr.toInt), Try(hoursStr.toInt), Try(minutesStr.toInt), Try(durationStr.toInt)) match
+                  case (Success(day), Success(month), Success(year), Success(hours), Success(mins), Success(duration)) if duration > 0 =>
+                    Try(LocalDateTime.of(LocalDate.of(year, month, day), LocalTime.of(hours, mins))) match
+                      case Success(date) if date.isAfter(LocalDateTime.now) =>
+                        for
+                          appt <- exec:
+                            bank.createAppointment(customer.get, description, date, duration)
+                          _ <- exec:
+                            database.appointmentTable.insert(appt)
+                            database.customerTable.update(appt.customer)
+                            database.employeeTable.update(appt.employee)
+                          _ <- setInputText("Appt-Date-Day", "")
+                          _ <- setInputText("Appt-Date-Month", "")
+                          _ <- setInputText("Appt-Date-Year", "")
+                          _ <- setInputText("Appt-Time-Hours", "")
+                          _ <- setInputText("Appt-Time-Minutes", "")
+                          _ <- setInputText("Appt-Duration", "")
+                          _ <- setInputText("Appt-Description", "")
+                          _ <- updateList("Appt-List", customer.get.getAppointments.map(_.toStringFromCustomerSide).toArray)
+                          _ <- dialog("Appointment created successfully.")
+                        yield ()
+                      case _ =>
+                        dialog("The chosen date for the appointment is invalid.")
+                  case _ =>
+                    dialog("One or more parameters are invalid.")
+            yield ()
           case "User-Home-Logout" => showView("Login")
           case "Empl-Home-Logout" => showView("Login")
           case "User-Account-Back" => showView("User-Home")
