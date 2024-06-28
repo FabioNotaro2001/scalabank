@@ -2,12 +2,12 @@ package scalabank.entities
 
 import scalabank.entities.Person
 import scalabank.logger.{Logger, LoggerDependency, LoggerImpl}
-import scalabank.appointment.Appointment
+import scalabank.appointment.{Appointment, AppointmentBehaviour}
 import scalabank.currency.Currency
 import scalabank.bankAccount.BankAccount
 import scalabank.bank.{Bank, BankAccountType}
 
-trait Customer extends Person:
+trait Customer extends Person with AppointmentBehaviour:
   def fidelity: Fidelity
   def baseFee(using BaseFeeCalculator): Double
   def bank: Option[Bank]

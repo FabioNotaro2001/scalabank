@@ -1,5 +1,7 @@
 package scalabank.entities
 
+import scalabank.appointment.Appointment
+
 /**
  * Represents a person with basic information: name, surname, birth year, and age.
  */
