@@ -53,15 +53,17 @@ case class SavingJarImpl(var _annualInterest: Double,
         _balance = _balance + amount
         true
       else
-        false
-    case _ => false
+        throw IllegalArgumentException()
+    case _ => throw IllegalArgumentException()
+
 
   override def withdraw(amount: Money): Boolean = amount match
     case am if am <= _balance =>
       _balance = _balance - amount
       bankAccount.deposit(amount, 0.toMoney)
       true
-    case _ => false
+    case _ => throw IllegalArgumentException()
+
 
   override def applyYearInterest(): Unit =
     _balance = _balance * (1 + annualInterest / 100)

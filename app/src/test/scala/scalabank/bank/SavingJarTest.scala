@@ -25,7 +25,8 @@ class SavingJarTest extends AnyFunSuite:
     val savingJar = SavingsJar(0.05, 100.toMoney, Currency("EUR", "€"), customer.bankAccounts.last)
 
     bankAccount.balance shouldBe 0.toMoney
-    savingJar.deposit(200.toMoney) shouldBe false
+    assertThrows[IllegalArgumentException]:
+      savingJar.deposit(200.toMoney)
     savingJar.balance shouldBe 0.toMoney
     bankAccount.balance shouldBe 0.toMoney
 
@@ -69,7 +70,8 @@ class SavingJarTest extends AnyFunSuite:
     val bankAccount: BankAccount = customer.bankAccounts.last
     val savingJar = SavingsJar(0.05, 100.toMoney, Currency("EUR", "€"), customer.bankAccounts.last)
 
-    savingJar.withdraw(200.toMoney) shouldBe false
+    assertThrows[IllegalArgumentException]:
+      savingJar.withdraw(200.toMoney) shouldBe false
     savingJar.balance shouldBe 0.toMoney
 
   test("ApplyYearInterest should calculate interest correctly"):
