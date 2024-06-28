@@ -16,7 +16,7 @@ import java.time.format.DateTimeFormatter
 @RunWith(classOf[JUnitRunner])
 class AppointmentTest extends AnyFlatSpec with Matchers:
   private val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
-  private val database = Database("jdbc:h2:mem:test2;DB_CLOSE_DELAY=-1")
+  private val database = Database("jdbc:h2:mem:Appointment;DB_CLOSE_DELAY=-1")
   import database.*
   private def convertDateInFuture(days: Int): LocalDateTime =
     val date = LocalDateTime.now.plusDays(days)

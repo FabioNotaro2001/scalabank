@@ -28,6 +28,9 @@ class EmployeeTable(override val connection: Connection, override val database: 
   override def initialize(): Unit =
     if tableCreated then
       populateDB(2)
+      findById("NTR") match
+        case None => insert(Employee("NTR", "Fabio", "Notaro", 2001, EmployeePosition.Cashier, 2020))
+        case _ =>
 
   def insert(entity: Employee): Unit =
     val query = "INSERT INTO employee (cf, name, surname, birthYear, position, hiringYear) VALUES (?, ?, ?, ?, ?, ?)"
