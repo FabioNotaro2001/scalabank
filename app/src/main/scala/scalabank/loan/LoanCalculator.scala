@@ -40,7 +40,7 @@ trait LoanCalculatorComponent:
      * @return a `Loan` representing the calculated loan details.
      * @throws AssertionError if `numberOfPayments` is not greater than 0.
      */
-    override def calculateLoan(customer: Customer, requiredAmount: Money, numberOfPayments: Int) =
+    override def calculateLoan(customer: Customer, requiredAmount: Money, numberOfPayments: Int): Loan =
       assert(numberOfPayments > 0)
       val loanComputed = Loan(customer, requiredAmount, numberOfPayments, interestManager.findAppropriateInterestForCustomer(customer))
       loggerDependency.logger.log(logger.getPrefixFormatter().getLoanSimulationPrefix + loanComputed)

@@ -9,13 +9,15 @@ import scalabank.bankAccount.StateBankAccount.Active
 import scalabank.entities.{Customer, Employee}
 import scalabank.logger.{Logger, LoggerDependency, LoggerImpl}
 import scalabank.currency.MoneyADT.toMoney
+import scalabank.database.Database
 
 import java.time.LocalDateTime
 import scala.annotation.targetName
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 import scala.collection.mutable.{HashMap as MutableHashMap, Map as MutableMap}
-import scala.util.Random
+import scala.util.boundary.break
+import scala.util.{Random, boundary}
 
 extension [A](opt: Option[A])
   @targetName("getOrElse")
@@ -94,14 +96,28 @@ trait Bank:
    */
   def createBankAccount(customer: Customer, bankAccountType: BankAccountType, currency: Currency): BankAccount
 
-  def addBankAccountType(nameType: String, feePerOperation: Money): Unit
-  def getBankAccountTypes: ListBuffer[BankAccountType]
+  def addBankAccountType(nameType: String, feeWithdraw: Money, feeDeposit: Money, feeMoneyTransfert: Money, interestSavingJar: Double): Unit
+  
+  def getBankAccountTypes: Iterable[BankAccountType]
+
+  /**
+   * Attempts to find a bank account given its id
+   * @param bankAccountId the id of the bank account
+   * @return an optional containing the bank account if found
+   */
+  def findBankAccount(bankAccountId: Int): Option[BankAccount]
+
+  /**
+   * Fetches objects from the database to create the bank
+   * @param source the source database
+   */
+  def populate(source: Database): Unit
 
 
 abstract class AbstractBankImpl[T <: BankInformation](override val bankInformation: T) extends Bank:
   protected val employees: ListBuffer[Employee] = ListBuffer()
   protected val customers: ListBuffer[Customer] = ListBuffer()
-  protected val bankAccountTypes: ListBuffer[BankAccountType] = ListBuffer() 
+  protected val bankAccountTypes: ListBuffer[BankAccountType] = ListBuffer()
 
   override def customerLogin(cf: String): Option[Customer] =
     customers.find(_.cf == cf)
@@ -116,14 +132,29 @@ abstract class AbstractBankImpl[T <: BankInformation](override val bankInformati
     customers.addOne(customer)
 
   override def createBankAccount(customer: Customer, bankAccountType: BankAccountType, currency: Currency): BankAccount =
-    BankAccount(LocalDateTime.now.getNano, customer, 0.toMoney, currency, Active, bankAccountType)
+    val acc = BankAccount(LocalDateTime.now.getNano, customer, 0.toMoney, currency, Active, bankAccountType)
+    customer.addBankAccount(acc)
+    acc
 
-  override def addBankAccountType(nameType: String, feePerOperation: Money): Unit = 
-    val bankAccountType = BankAccountType(nameType, feePerOperation)
+  override def addBankAccountType(nameType: String, feeWithdraw: Money, feeDeposit: Money, feeMoneyTransfert: Money, interestSavingJar: Double): Unit = 
+    val bankAccountType = BankAccountType(nameType, feeWithdraw, feeDeposit, feeMoneyTransfert, interestSavingJar: Double)
     bankAccountTypes.addOne(bankAccountType)
 
-  override def getBankAccountTypes: ListBuffer[BankAccountType] = bankAccountTypes
+  override def getBankAccountTypes: Iterable[BankAccountType] = bankAccountTypes.view
 
+  override def findBankAccount(bankAccountId: Int): Option[BankAccount] =
+    (
+      for
+        c <- customers
+        a <- c.bankAccounts
+      yield a
+    )
+      .find(_.id == bankAccountId)
+
+  override def populate(source: Database): Unit =
+    customers addAll source.customerTable.findAll()
+    employees addAll source.employeeTable.findAll()
+    bankAccountTypes addAll source.bankAccountTypeTable.findAll()
 
 trait BankComponent:
   loggerDependency: LoggerDependency =>
@@ -180,6 +211,18 @@ trait BankComponent:
           appointment.employee.removeAppointment(appointment)
         case None =>
           throw AssertionError("Customer has no appointments registered")
+
+    override def populate(source: Database): Unit =
+      super.populate(source)
+      source.appointmentTable
+        .findAll()
+        .groupBy(apt => apt.customer)
+        .foreach:
+          (c, apts) =>
+            appointments.get(c) match
+              case Some(list) => list.addAll(apts)
+              case None => appointments.put(c, ListBuffer.from(apts))
+
 
   case class VirtualBankInformation(name: String, phoneNumber: String) extends BankInformation
   case class VirtualBank(bankInfo: VirtualBankInformation) extends AbstractBankImpl[VirtualBankInformation](bankInfo):

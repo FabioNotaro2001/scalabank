@@ -10,8 +10,8 @@ import java.sql.{Connection, DriverManager}
 
 @RunWith(classOf[JUnitRunner])
 class InterestRateDatabaseTest extends AnyFlatSpec:
-  val connection: Connection = DriverManager.getConnection("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1")
-  val interestTable = InterestTable(connection)
+  private val database = Database("jdbc:h2:mem:interestRate;DB_CLOSE_DELAY=-1")
+  import database.interestTable
 
   "The InterestTable" should "give the possibility to insert and find an interest rate" in:
     val interestRate = ("testId", InterestRate(0.05))

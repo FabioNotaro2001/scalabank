@@ -40,7 +40,6 @@ class CurrencyTest extends AnyFlatSpec:
     val result: Money = converter.convert(amount, fromCurrency, toCurrency)
     result should be > 0.toMoney
 
-
   "CurrencyConverterWithFee" should "convert an amount from one currency to another with default fee" in:
     val converter = CurrencyConverter()
     val fromCurrency = Currency("USD", "$")

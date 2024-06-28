@@ -4,11 +4,8 @@
 package scalabank
 
 import scalabank.entities.Person
+import scalabank.gui.GUI
 
-object App {
-  def main(args: Array[String]): Unit = {
-
-  }
-
-  def greeting(): String = "Hello, world!"
-}
+object App:
+  def main(args: Array[String]): Unit =
+    GUI.run()

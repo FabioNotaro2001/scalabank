@@ -11,6 +11,8 @@ import scala.annotation.targetName
 case class InterestRate(interestValue: Double):
   assert(interestValue > 0)
 
+  override def toString: String = s"${interestValue * 100}%"
+
 /**
  * Provides extension methods for Double to perform arithmetic operations with InterestRate.
  */

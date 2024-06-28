@@ -1,13 +1,16 @@
 package scalabank.database
 
 import scalabank.database.appointment.AppointmentTable
-import scalabank.database.bank.BankAccountTable
+import scalabank.database.bank.{BankAccountTable, BankAccountTypeTable}
+import scalabank.database.currency.CurrencyTable
 import scalabank.database.customer.CustomerTable
 import scalabank.database.employee.EmployeeTable
 import scalabank.database.person.PersonTable
 import scalabank.database.interest.*
+
 import java.sql.{Connection, DriverManager}
 import scalabank.database.interest
+import scalabank.database.movement.MovementTable
 
 /**
  * Trait defining the structure of a database with multiple tables.
@@ -56,17 +59,60 @@ trait Database:
    */
   def interestTable: InterestTable
 
+  /**
+   * Accessor for the movement table.
+   *
+   * @return An instance of the MovementTable.
+   */
+  def movementTable: MovementTable
+
+  /**
+   * Accessor for the bankAccount Type table.
+   *
+   * @return An instance of the BankAccountTypeTable.
+   */
+  def bankAccountTypeTable: BankAccountTypeTable
+
+  /**
+   * Accessor for the currency table.
+   *
+   * @return An instance of the currencyTable.
+   */
+  def currencyTable: CurrencyTable
+
 object Database:
   def apply(url: String): Database = TablesImpl(url)
 
   private case class TablesImpl(url: String) extends Database:
     private val connection: Connection = DriverManager.getConnection(url)
-    private val personTab: PersonTable = PersonTable(connection)
-    private val employeeTab: EmployeeTable = EmployeeTable(connection)
-    private val customerTab: CustomerTable = CustomerTable(connection)
-    private val appointmentTab: AppointmentTable = AppointmentTable(connection, customerTab, employeeTab)
-    private val bankAccountTab: BankAccountTable = BankAccountTable(connection, customerTab)
-    private val interestTab: InterestTable = InterestTable(connection)
+    private val personTab: PersonTable = PersonTable(connection, this)
+    private val employeeTab: EmployeeTable = EmployeeTable(connection, this)
+    private val customerTab: CustomerTable = CustomerTable(connection, this)
+    private val appointmentTab: AppointmentTable = AppointmentTable(connection, this)
+    private val bankAccountTab: BankAccountTable = BankAccountTable(connection, this)
+    private val interestTab: InterestTable = InterestTable(connection, this)
+    private val movementTab: MovementTable = MovementTable(connection, this)
+    private val bankAccountTypeTab: BankAccountTypeTable = BankAccountTypeTable(connection, this)
+    private val currencyTab: CurrencyTable = CurrencyTable(connection, this)
+
+    bankAccountTypeTab.initialize()
+    currencyTab.initialize()
+    personTab.initialize()
+    employeeTab.initialize()
+    employeeTab.initialize()
+    customerTab.initialize()
+    appointmentTab.initialize()
+    bankAccountTab.initialize()
+    interestTab.initialize()
+    movementTab.initialize()
+
+    personTab.clearCache()
+    employeeTab.clearCache()
+    employeeTab.clearCache()
+    customerTab.clearCache()
+    appointmentTab.clearCache()
+    bankAccountTab.clearCache()
+    movementTab.clearCache()
 
     override def personTable: PersonTable = personTab
     override def employeeTable: EmployeeTable = employeeTab
@@ -74,8 +120,9 @@ object Database:
     override def appointmentTable: AppointmentTable = appointmentTab
     override def bankAccountTable: BankAccountTable = bankAccountTab
     override def interestTable : InterestTable = interestTab
-
-
+    override def movementTable: MovementTable = movementTab
+    override def bankAccountTypeTable: BankAccountTypeTable = bankAccountTypeTab
+    override def currencyTable: CurrencyTable = currencyTab
 
 
 
