@@ -10,23 +10,18 @@ import scalabank.bank.{Bank, BankAccountType}
 trait Customer extends Person:
   def fidelity: Fidelity
   def baseFee(using BaseFeeCalculator): Double
-  def getAppointments: Iterable[Appointment]
-  def addAppointment(appointment: Appointment): Unit
-  def removeAppointment(appointment: Appointment): Unit
-  def updateAppointment(appointment: Appointment)(newAppointment: Appointment): Unit
-  def bank: Option[Bank]  // FIXME: togliere
-  def registerBank(bank: Bank): Unit  // FIXME: togliere
-  def deregisterBank(bank: Bank): Unit // FIXME: togliere
+  def bank: Option[Bank]
+  def registerBank(bank: Bank): Unit
+  def deregisterBank(bank: Bank): Unit
   def addBankAccount(bankAccount: BankAccount): Unit
   def addBankAccount(bankAccountType: BankAccountType, currency: Currency): Unit
   def bankAccounts: Iterable[BankAccount]
 
-trait AbstractCustomer(_cf: String,
+abstract class AbstractCustomer(_cf: String,
                        _name: String,
                        _surname: String,
                        _birthYear: Int) extends Customer:
 
-  private var appointments: List[Appointment] = List()
   private var _bank: Option[Bank] = None
   private var _bankAccounts: List[BankAccount] = List()
 
@@ -35,17 +30,6 @@ trait AbstractCustomer(_cf: String,
   export person.*
 
   override def fidelity: Fidelity = Fidelity(0)
-
-  override def getAppointments: Iterable[Appointment] = appointments
-
-  override def addAppointment(appointment: Appointment): Unit = appointments = appointments :+ appointment
-
-  override def removeAppointment(appointment: Appointment): Unit = appointments = appointments.filterNot(_ == appointment)
-
-  override def updateAppointment(appointment: Appointment)(newAppointment: Appointment): Unit =
-    appointments = appointments.map:
-      case app if app == appointment => newAppointment
-      case app => app
 
   override def bank: Option[Bank] = _bank
 
@@ -65,6 +49,7 @@ trait AbstractCustomer(_cf: String,
     case None =>
 
   override def bankAccounts: Iterable[BankAccount] = _bankAccounts
+
 
 trait BaseFeeCalculator:
   def calculateBaseFee(fidelity: Fidelity, isYoung: Boolean): Double
