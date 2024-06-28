@@ -220,4 +220,5 @@ case class MoneyTransfer(override val senderBankAccount: BankAccount, override v
 ```
 
 ## Integrazione con il database
-Una volta inserito il database...come sono cambiati mutui e bonifici?
+Una volta inserito il database, a cavallo tra il secondo e terzo sprint, alcuni miei componenti lo avrebbero potuto usare per risultare maggiormente generali, flessibili e riusabili.
+
