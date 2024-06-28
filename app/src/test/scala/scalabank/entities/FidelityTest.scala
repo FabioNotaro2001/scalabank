@@ -29,18 +29,3 @@ class FidelityTest extends AnyFunSuite:
     fidelity.redeemPoints(700) shouldBe false
     fidelity.points shouldBe 500
     fidelity.pointsUsed shouldBe 0
-
-  test("currentLevel should correctly determine the fidelity level based on pointsUsed") :
-    val fidelity = Fidelity(1200)
-    import FidelityLevel._
-
-    fidelity.currentLevel shouldBe FidelityLevel.Bronze
-
-    require(fidelity.redeemPoints(300))
-    fidelity.currentLevel shouldBe FidelityLevel.Silver
-
-    require(fidelity.redeemPoints(300))
-    fidelity.currentLevel shouldBe FidelityLevel.Gold
-
-    require(fidelity.redeemPoints(500))
-    fidelity.currentLevel shouldBe FidelityLevel.Platinum

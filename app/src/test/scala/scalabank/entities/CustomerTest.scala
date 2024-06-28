@@ -7,13 +7,12 @@ import org.scalatest.matchers.should.Matchers.*
 import scalabank.appointment.Appointment
 import scalabank.bank.Bank.{PhysicalBank, PhysicalBankInformation}
 import scalabank.currency.Currency
-import scalabank.entities.defaultBaseFeeCalculator
+import scalabank.entities.defaultFidelityCalculator
 import scalabank.entities.*
 import scalabank.bankAccount.BankAccount
 
 import java.time.LocalDateTime
 import scalabank.currency.MoneyADT.toMoney
-import scalabank.entities.Customer.OldCustomerImpl
 
 @RunWith(classOf[JUnitRunner])
 class CustomerTest extends AnyFunSuite:
@@ -43,17 +42,9 @@ class CustomerTest extends AnyFunSuite:
     //customer shouldBe a[BaseCustomerImpl]
     customer shouldBe a[Customer]
 
-  test("Customer should be has a fidelity"):
-    val customer = Customer("JHNDOE22B705Y", "John", "Doe", 1980)
-    customer.fidelity shouldBe a[Fidelity]
-
-  test("Young Customer should be has a initial baseFee of 0"):
+  test("Young Customer should be has a initial Fidelity of Bronze"):
     val customer = Customer("JHNDOE22B705Y", "John", "Doe", 2000)
-    customer.baseFee shouldBe 0
-
-  test("Customer should be has a initial baseFee of 1"):
-    val customer = Customer("JHNDOE22B705Y", "John", "Doe", 1980)
-    customer.baseFee shouldBe 1
+    customer.fidelity shouldBe FidelityLevel.Bronze
 
   test("Customer should be able to add appointments"):
     val customer = Customer("JHNDOE22B705Y", "John", "Doe", 1980)
@@ -96,6 +87,24 @@ class CustomerTest extends AnyFunSuite:
     bank.addBankAccountType("Base BankAccount", 2.toMoney, 0.toMoney, 2.toMoney, 0.5)
     customer.registerBank(bank)
     customer.addBankAccount(bank.getBankAccountTypes.head, Currency(code = "EUR", symbol = "€"))
-    println(customer.bankAccounts)
     customer.bankAccounts.size should be(1)
     customer.bankAccounts.head shouldBe a [BankAccount]
+
+  test("Customer fidelity should work correctly"):
+    val customer = Customer("JHNDOE22B705Y", "John", "Doe", 2000)
+    val bank = PhysicalBank(PhysicalBankInformation("Cesena Bank", "via Roma 3", "12345678"))
+    bank.addBankAccountType("Base BankAccount", 2.toMoney, 0.toMoney, 2.toMoney, 0.5)
+    customer.registerBank(bank)
+    customer.addBankAccount(bank.getBankAccountTypes.head, Currency(code = "EUR", symbol = "€"))
+    customer.addBankAccount(bank.getBankAccountTypes.head, Currency(code = "EUR", symbol = "€"))
+    customer.fidelity shouldBe FidelityLevel.Bronze
+    customer.bankAccounts.head.deposit(1000.toMoney, 0.toMoney)
+    customer.bankAccounts.last.deposit(1000.toMoney, 0.toMoney)
+    customer.bankAccounts.head.deposit(1000.toMoney, 0.toMoney)
+    customer.fidelity shouldBe FidelityLevel.Silver
+    customer.bankAccounts.last.deposit(1000.toMoney, 0.toMoney)
+    customer.bankAccounts.last.deposit(1000.toMoney, 0.toMoney)
+    customer.bankAccounts.last.deposit(1000.toMoney, 0.toMoney)
+    customer.bankAccounts.head.fidelity.points shouldBe 200
+    customer.bankAccounts.last.fidelity.points shouldBe 400
+    customer.fidelity shouldBe FidelityLevel.Gold

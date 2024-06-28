@@ -115,6 +115,7 @@ trait BankAccount:
 
     def createSavingJar(monthlyDeposit: Money, annualInterest: Double = bankAccountType.interestSavingJar): Unit
 
+    def fidelity: Fidelity
     /*
     def depositSavingJar(amount: Money): Unit
 
@@ -147,7 +148,8 @@ trait BankAccountComponent:
 
         private var _movements: List[Movement] = List()
         private var _savingsJar: Option[SavingsJar] = Option.empty
-        
+        private var _fidelity: Fidelity = Fidelity(0)
+
         override def setBalance(newBalance: Money): Unit = balance = newBalance
 
         override def changeCurrency(newCurrency: Currency, conversionFee: BigDecimal): Unit =
@@ -170,6 +172,7 @@ trait BankAccountComponent:
 
         import bankAccountType.*
         override def deposit(amount: Money, fee: Money = feeDeposit): Unit =
+            _fidelity.addPoints(100)
             val depositInstance = Deposit(this, amount, fee)
             depositInstance.doOperation()
             _movements = _movements :+ depositInstance
@@ -201,3 +204,5 @@ trait BankAccountComponent:
 
         override def addMovement(movement: Movement): Unit =
             _movements = _movements :+ movement
+
+        override def fidelity: Fidelity = _fidelity
