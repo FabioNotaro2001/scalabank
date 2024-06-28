@@ -51,7 +51,7 @@ L'elenco seguente riporta dunque quali requisiti funzionali per l'utente sono em
 - 3.8 infine l'utente può sfruttare e consultare un logger, strumento fondamentale per la verifica di correttezza delle sue applicazioni in quanto tiene traccia e riporta in ordine esatto i principali eventi accaduti (inserimento di una persona, operazione su conto corrente, inserimento di un appuntamento...).
 
 Per meglio comprendere i requisiti funzionali evidenziati, si faccia riferimento al/ai diagrammi dei casi d'uso sotto riportati:
-INSERIRE DIAGRAMMA/DIAGRAMMI DEI CASI D'USO
+![diagramma casi](img/UseCaseDiagram.png)
 
 ## Requisiti non funzionali
 I requisiti non funzionali coprono invece le qualità che è possibile attribuire al sistema. Per quanto riguarda la nostra libreria, i requisiti non funzionali individuati sono:
