@@ -15,6 +15,18 @@ I componenti che compongono il package entities sono dunque:
 - esiste poi anche il trait Promotable, per esprimere che è possibile che un Employee venga promosso ad una nuova posizione
 - esiste infine anche il trait+implementazione Project che esprime in quali progetti è impegnato ciascun membro dello staff &rarr; si noti che ogni progetto ha un manager come supervisore e una lista di impiegati coinvolti.
 
+## Design di dettaglio delle operaizoni bancarie
+Per soddisfare i requisiti emersi nella fase di analisi riguardanti le operazioni bancarie è stato progettato il seguente diagramma delle classi:
+![uml operations](img/UMLOperazioni.png)
+Dallo schema si nota che abbiamo ritenuto ragionevole inserire anche un trait comune Movement che racchiudesse tutti gli aspetti condivisi tra tali operazioni bancarie.
+
+Da un bank account possono pertanto essere fatti principalmente tre tipi di movimenti:
+- deposito
+- prelievo
+- bonifico/trasferimento di denaro tra conti.
+
+Si noti infine che il conto corrente tiene traccia di tutti i suoi movimenti, grazie ad un campo collezione movements, in modo da poter offire al cliente anche un estratto conto delle sue operazioni.
+
 ## Design di dettaglio della simulazione di mutui
 Un ulteriore requisito emerso durante la fase di requirements/engineering analysis è stata la possibilità di simulare mutui/prestiti: un cliente può dunque simulare la richiesta di un prestito di un quantitativo di denaro di cui necessita per sapere informazioni utili quali il tasso d'interesse applicato, il numero di pagamenti previsti, l'ammontare del singolo pagamento e quanto dovrà sborsare per ripagare il debito (somma tra cifra richiesta ed interessi applicati).
 
