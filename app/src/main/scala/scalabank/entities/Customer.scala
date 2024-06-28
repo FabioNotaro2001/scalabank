@@ -45,7 +45,6 @@ abstract class AbstractCustomer(_cf: String,
   override def addBankAccount(bankAccountType: BankAccountType, currency: Currency): Unit = _bank match
     case Some(bank) =>
       val newBankAccount = bank.createBankAccount(this, bankAccountType, currency)
-      _bankAccounts = _bankAccounts :+ newBankAccount
     case None =>
 
   override def bankAccounts: Iterable[BankAccount] = _bankAccounts
