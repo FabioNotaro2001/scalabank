@@ -1,7 +1,5 @@
 package scalabank.gui
 
-import scalabank.gui.States.State
-
 object Monads:
 
   trait Monad[M[_]]:
@@ -11,10 +9,10 @@ object Monads:
       def map[B](f: A => B): M[B] = m.flatMap(a => unit(f(a)))
 
   object Monad:
-    def map2[M[_] : Monad, A, B, C](m: M[A], m2: => M[B])(f: (A, B) => C): M[C] =
+    private def map2[M[_] : Monad, A, B, C](m: M[A], m2: => M[B])(f: (A, B) => C): M[C] =
       m.flatMap(a => m2.map(b => f(a, b)))
 
-    def seq[M[_] : Monad, A, B](m: M[A], m2: => M[B]): M[B] =
+    private def seq[M[_] : Monad, A, B](m: M[A], m2: => M[B]): M[B] =
       map2(m, m2)((a, b) => b)
 
     def seqN[M[_] : Monad, A](stream: LazyList[M[A]]): M[A] =

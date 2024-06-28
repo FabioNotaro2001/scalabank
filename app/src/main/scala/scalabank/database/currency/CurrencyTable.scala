@@ -23,7 +23,7 @@ class CurrencyTable(override val connection: Connection, override val database: 
     if tableCreated then
       populateDB()
 
-  def insert(currency: Currency): Unit =
+  override def insert(currency: Currency): Unit =
     val query = "INSERT INTO currency (code, symbol) VALUES (?, ?)"
     val stmt = connection.prepareStatement(query)
     stmt.setString(1, currency.code)
@@ -33,13 +33,13 @@ class CurrencyTable(override val connection: Connection, override val database: 
   private def createCurrency(resultSet: ResultSet): Currency =
     Currency(resultSet.getString("code"), resultSet.getString("symbol"))
 
-  def findById(code: String): Option[Currency] =
+  override def findById(code: String): Option[Currency] =
     val stmt = connection.prepareStatement("SELECT * FROM currency WHERE code = ?")
     stmt.setString(1, code)
     val result = stmt.executeQuery
     if result.next then Some(createCurrency(result)) else None
 
-  def findAll(): Seq[Currency] =
+  override def findAll(): Seq[Currency] =
     val stmt = connection.createStatement
     val resultSet = stmt.executeQuery("SELECT * FROM currency")
     new Iterator[Currency]:
@@ -47,14 +47,14 @@ class CurrencyTable(override val connection: Connection, override val database: 
       def next(): Currency = createCurrency(resultSet)
     .toSeq
 
-  def update(currency: Currency): Unit =
+  override def update(currency: Currency): Unit =
     val query = "UPDATE currency SET symbol = ? WHERE code = ?"
     val stmt = connection.prepareStatement(query)
     stmt.setString(1, currency.symbol)
     stmt.setString(2, currency.code)
     stmt.executeUpdate
 
-  def delete(code: String): Unit =
+  override def delete(code: String): Unit =
     val query = "DELETE FROM currency WHERE code = ?"
     val stmt = connection.prepareStatement(query)
     stmt.setString(1, code)

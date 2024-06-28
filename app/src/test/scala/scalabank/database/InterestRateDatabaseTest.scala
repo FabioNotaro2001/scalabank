@@ -5,8 +5,6 @@ import org.junit.runner.RunWith
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatestplus.junit.JUnitRunner
 import scalabank.loan.InterestRate
-import scalabank.database.interest.*
-import java.sql.{Connection, DriverManager}
 
 @RunWith(classOf[JUnitRunner])
 class InterestRateDatabaseTest extends AnyFlatSpec:

@@ -41,7 +41,7 @@ trait AppointmentComponent:
     require(customer != null, "The customer must be defined")
     require(employee != null, "The employee must be defined")
     require(duration > 0, "Duration of the appointment must be positive")
-    loggerDependency.logger.log(loggerDependency.logger.getPrefixFormatter().getCreationPrefix + this)
+    loggerDependency.logger.log(loggerDependency.logger.getPrefixFormatter.getCreationPrefix + this)
 
 object Appointment extends LoggerDependency with AppointmentComponent:
   override val logger: Logger = LoggerImpl()

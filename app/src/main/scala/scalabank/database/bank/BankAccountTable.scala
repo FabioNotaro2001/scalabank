@@ -1,6 +1,5 @@
 package scalabank.database.bank
 
-import scalabank.bank.BankAccountType
 import scalabank.currency.Currency
 import scalabank.database.{AbstractCache, Database, DatabaseOperations}
 import scalabank.currency.MoneyADT.*
@@ -33,7 +32,7 @@ class BankAccountTable(override val connection: Connection, override val databas
     if tableCreatedNow then
       populateDB()
 
-  def insert(entity: BankAccount): Unit =
+  override def insert(entity: BankAccount): Unit =
     val query = "INSERT INTO bankAccount (id, balance, currencyCode, currencySymbol, state, accountType, cfOwner) VALUES (?, ?, ?, ?, ?, ?, ?)"
     val stmt = connection.prepareStatement(query)
     stmt.setInt(1, entity.id)
@@ -62,7 +61,7 @@ class BankAccountTable(override val connection: Connection, override val databas
           .foreach(acc.addMovement)
         acc
 
-  def findById(id: Int): Option[BankAccount] =
+  override def findById(id: Int): Option[BankAccount] =
     val query = "SELECT * FROM bankAccount WHERE id = ?"
     val stmt = connection.prepareStatement(query)
     stmt.setInt(1, id)
@@ -81,13 +80,13 @@ class BankAccountTable(override val connection: Connection, override val databas
     val resultSet = stmt.executeQuery
     toIterator(resultSet)
 
-  def findAll(): Seq[BankAccount] =
+  override def findAll(): Seq[BankAccount] =
     val stmt = connection.createStatement
     val query = "SELECT * FROM bankAccount"
     val resultSet = stmt.executeQuery(query)
     toIterator(resultSet)
 
-  def update(entity: BankAccount): Unit =
+  override def update(entity: BankAccount): Unit =
     val query = "UPDATE bankAccount SET balance = ?, currencyCode = ?, " +
       "currencySymbol = ?, state = ?, accountType = ? WHERE id = ?"
     val stmt = connection.prepareStatement(query)
@@ -100,7 +99,7 @@ class BankAccountTable(override val connection: Connection, override val databas
     stmt.executeUpdate
     fetchedBankAccounts.remove(entity.id)
 
-  def delete(id: Int): Unit =
+  override def delete(id: Int): Unit =
     val query = "DELETE FROM bankAccount WHERE id = ?"
     val stmt = connection.prepareStatement(query)
     stmt.setInt(1, id)

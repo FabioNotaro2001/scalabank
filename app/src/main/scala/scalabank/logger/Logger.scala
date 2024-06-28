@@ -47,7 +47,7 @@ trait Logger:
      *
      * @return the current PrefixFormatter instance.
      */
-    def getPrefixFormatter(): PrefixFormatter
+    def getPrefixFormatter: PrefixFormatter
 
 /**
  * Trait for classes that depend on a Logger (cake pattern).
@@ -108,4 +108,4 @@ class LoggerImpl extends Logger:
      *
      * @return the current PrefixFormatter instance.
      */
-    def getPrefixFormatter(): PrefixFormatter = prefixFormatter
+    def getPrefixFormatter: PrefixFormatter = prefixFormatter

@@ -4,7 +4,6 @@ import org.scalatest.funsuite.AnyFunSuite
 import org.junit.runner.RunWith
 import org.scalatestplus.junit.JUnitRunner
 import org.scalatest.matchers.should.Matchers.*
-import scalabank.logger.Logger
 
 import java.time.Year
 
@@ -55,7 +54,7 @@ class ManagerTest extends AnyFunSuite:
     val employee = Employee("JHNLCAE22B705Y", "Alice", "Johnson", 1992, Employee.EmployeePosition.Cashier, 2000)
     val project = Project("Project A", 50000.0, List(employee))
     project.removeTeamMember(employee)
-    project.team should not contain (employee)
+    project.team should not contain employee
 
   test("Project should handle team member updates correctly"):
     val employee1 = Employee("JHNLCAE22B705Y", "Alice", "Johnson", 1992, Employee.EmployeePosition.Cashier, 2000)
@@ -65,7 +64,7 @@ class ManagerTest extends AnyFunSuite:
     project.team should contain (employee1)
     project.team should contain (employee2)
     project.removeTeamMember(employee1)
-    project.team should not contain (employee1)
+    project.team should not contain employee1
     project.team should contain (employee2)
 
   test("Manager should calculate years of service correctly"):

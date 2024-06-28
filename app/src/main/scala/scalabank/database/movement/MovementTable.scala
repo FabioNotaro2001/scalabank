@@ -1,11 +1,10 @@
 package scalabank.database.movement
 
-import scalabank.bankAccount.{BankAccount, Deposit, MoneyTransfer, Movement, Withdraw}
+import scalabank.bankAccount.{Deposit, MoneyTransfer, Movement, Withdraw}
 import scalabank.currency.MoneyADT.*
 import scalabank.database.{AbstractCache, Database, DatabaseOperations}
 
 import java.sql.{Connection, PreparedStatement, ResultSet, Timestamp}
-import scala.collection.mutable.Map as MutableMap
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -44,7 +43,7 @@ class MovementTable(override val connection: Connection, override val database: 
       case _ =>
         stmt.setInt(enumeration, 0)
 
-  def insert(entity: Movement): Unit =
+  override def insert(entity: Movement): Unit =
     val query = "INSERT INTO movements (receiverBankAccountId, date, type, amount, senderBankAccountId) VALUES (?, ?, ?, ?, ?)"
     val stmt = connection.prepareStatement(query)
     stmt.setInt(1, entity.receiverBankAccount.id)
@@ -78,7 +77,7 @@ class MovementTable(override val connection: Connection, override val database: 
         fetchedMovements.put((receiverBankAccountId, date.toString), movement)
         movement
 
-  def findById(id: (Int, LocalDateTime)): Option[Movement] =
+  override def findById(id: (Int, LocalDateTime)): Option[Movement] =
     val query = "SELECT * FROM movements WHERE receiverBankAccountId = ? AND date = ?"
     val stmt = connection.prepareStatement(query)
     stmt.setInt(1, id._1)
@@ -106,13 +105,13 @@ class MovementTable(override val connection: Connection, override val database: 
       def next(): Movement = createMovement(resultSet)
     .toSeq
 
-  def findAll(): Seq[Movement] =
+  override def findAll(): Seq[Movement] =
     val stmt = connection.createStatement
     val query = "SELECT * FROM movements"
     val resultSet = stmt.executeQuery(query)
     toIterator(resultSet)
 
-  def update(entity: Movement): Unit =
+  override def update(entity: Movement): Unit =
     val query = "UPDATE movements SET type = ?, amount = ?, senderBankAccountId = ? WHERE receiverBankAccountId = ? AND date = ?"
     val stmt = connection.prepareStatement(query)
     stmt.setString(1, entity.getClass.getSimpleName)
@@ -123,7 +122,7 @@ class MovementTable(override val connection: Connection, override val database: 
     stmt.executeUpdate()
     fetchedMovements.remove((entity.receiverBankAccount.id, entity.date.toString))
 
-  def delete(id: (Int, LocalDateTime)): Unit =
+  override def delete(id: (Int, LocalDateTime)): Unit =
     val query = "DELETE FROM movements WHERE receiverBankAccountId = ? AND date = ?"
     val stmt = connection.prepareStatement(query)
     stmt.setInt(1, id._1)

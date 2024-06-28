@@ -2,7 +2,7 @@ package scalabank.entities
 
 import scalabank.entities.Person
 import scalabank.logger.{Logger, LoggerDependency, LoggerImpl}
-import scalabank.appointment.{Appointment, AppointmentBehaviour}
+import scalabank.appointment.AppointmentBehaviour
 import scalabank.currency.Currency
 import scalabank.bankAccount.BankAccount
 import scalabank.bank.{Bank, BankAccountType}
@@ -72,7 +72,7 @@ trait CustomerComponent:
     
     override def fidelity(using calc: FidelityCalculator): FidelityLevel = calc.calculateFidelityLevel(bankAccounts.map(ba => ba.fidelity.points).sum, true)
     
-    loggerDependency.logger.log(logger.getPrefixFormatter().getCreationPrefix + this)
+    loggerDependency.logger.log(logger.getPrefixFormatter.getCreationPrefix + this)
 
 
   case class OldCustomerImpl(_cf: String,
@@ -82,7 +82,7 @@ trait CustomerComponent:
     
     override def fidelity(using calc: FidelityCalculator): FidelityLevel = calc.calculateFidelityLevel(bankAccounts.map( ba => ba.fidelity.points).sum, true)
     
-    loggerDependency.logger.log(logger.getPrefixFormatter().getCreationPrefix + this)
+    loggerDependency.logger.log(logger.getPrefixFormatter.getCreationPrefix + this)
 
 
   case class BaseCustomerImpl(_cf: String,
@@ -92,7 +92,7 @@ trait CustomerComponent:
     
     override def fidelity(using calc: FidelityCalculator): FidelityLevel = calc.calculateFidelityLevel(bankAccounts.map( ba => ba.fidelity.points).sum, false)
     
-    loggerDependency.logger.log(logger.getPrefixFormatter().getCreationPrefix + this)
+    loggerDependency.logger.log(logger.getPrefixFormatter.getCreationPrefix + this)
 
 
 object Customer extends LoggerDependency with CustomerComponent:

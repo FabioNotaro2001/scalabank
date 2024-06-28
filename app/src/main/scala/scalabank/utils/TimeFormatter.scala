@@ -12,7 +12,7 @@ trait TimeFormatter:
    *
    * @return a string representing the current time formatted as "HH:mm:ss".
    */
-  def getTimeFormatted(): String
+  def getTimeFormatted: String
 
 /**
  * Companion object for the TimeFormatter trait.
@@ -28,10 +28,10 @@ object TimeFormatter:
   /**
    * Private class implementing the TimeFormatter trait.
    */
-  private class TimeFormatterImpl() extends TimeFormatter:
+  private class TimeFormatterImpl extends TimeFormatter:
     /**
      * Gets the current time formatted as a string.
      *
      * @return a string representing the current time formatted as "HH:mm:ss".
      */
-    override def getTimeFormatted(): String = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"))
+    override def getTimeFormatted: String = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"))

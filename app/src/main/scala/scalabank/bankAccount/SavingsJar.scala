@@ -1,6 +1,5 @@
-package scalabank.entities
+package scalabank.bankAccount
 
-import scalabank.bankAccount.BankAccount
 import scalabank.currency.{Currency, CurrencyConverter}
 import scalabank.currency.MoneyADT.Money
 import scalabank.currency.MoneyADT.toMoney
@@ -21,14 +20,12 @@ trait SavingsJar:
   def applyYearInterest(): Unit
   def annualProjection(year: Int): Money
 
-//def transition: List[Transition]
-
 case class SavingJarImpl(var _annualInterest: Double,
                          var _monthlyDeposit: Money,
                          var _currency: Currency,
                          val bankAccount: BankAccount) extends SavingsJar:
 
-  var _balance: Money = 0.toMoney
+  private var _balance: Money = 0.toMoney
 
   override def balance: Money = _balance
 

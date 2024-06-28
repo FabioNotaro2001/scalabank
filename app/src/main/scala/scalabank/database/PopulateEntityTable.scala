@@ -1,8 +1,5 @@
 package scalabank.database
 
-import scalabank.database.FiscalCode
-import scalabank.entities.Person
-
 import scala.collection.mutable.ListBuffer
 import scala.util.Random
 

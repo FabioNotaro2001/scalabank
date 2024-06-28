@@ -1,6 +1,5 @@
 package scalabank.gui
 
-import Monads.*
 import States.*
 import State.*
 import scalabank.bank.Bank
@@ -15,7 +14,6 @@ import scalabank.appointment.{toStringFromCustomerSide, toStringFromEmployeeSide
 import java.util.Vector as JavaVector
 import java.util.List as JavaList
 import java.awt.{BorderLayout, FlowLayout, GridLayout, LayoutManager}
-import java.math.MathContext
 import java.time.{LocalDate, LocalDateTime, LocalTime}
 import java.util
 import java.util.function.Supplier

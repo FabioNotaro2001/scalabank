@@ -4,7 +4,6 @@ import scalabank.database.{AbstractCache, Database, DatabaseOperations, Populate
 import scalabank.entities.Customer
 
 import java.sql.{Connection, ResultSet}
-import scala.collection.mutable.Map as MutableMap
 
 /**
  * Class representing the customer table in the database.
@@ -28,7 +27,7 @@ class CustomerTable(override val connection: Connection, override val database: 
     if tableCreated then
       populateDB(2)
 
-  def insert(entity: Customer): Unit =
+  override def insert(entity: Customer): Unit =
     val query = "INSERT INTO customer (cf, name, surname, birthYear) VALUES (?, ?, ?, ?)"
     val stmt = connection.prepareStatement(query)
     stmt.setString(1, entity.cf)
@@ -50,7 +49,7 @@ class CustomerTable(override val connection: Connection, override val database: 
           acc => customer.addBankAccount(acc)
         customer
 
-  def findById(cf: String): Option[Customer] =
+  override def findById(cf: String): Option[Customer] =
     val query = "SELECT * FROM customer WHERE cf = ?"
     val stmt = connection.prepareStatement(query)
     stmt.setString(1, cf)
@@ -59,7 +58,7 @@ class CustomerTable(override val connection: Connection, override val database: 
       _ <- Option(result) if result.next
     yield createCustomer(result)
 
-  def findAll(): Seq[Customer] =
+  override def findAll(): Seq[Customer] =
     val stmt = connection.createStatement
     val query = "SELECT * FROM customer"
     val resultSet = stmt.executeQuery(query)
@@ -68,7 +67,7 @@ class CustomerTable(override val connection: Connection, override val database: 
       def next(): Customer = createCustomer(resultSet)
     .toSeq
 
-  def update(entity: Customer): Unit =
+  override def update(entity: Customer): Unit =
     val query = "UPDATE customer SET name = ?, surname = ?, birthYear = ? WHERE cf = ?"
     val stmt = connection.prepareStatement(query)
     stmt.setString(1, entity.name)
@@ -78,7 +77,7 @@ class CustomerTable(override val connection: Connection, override val database: 
     stmt.executeUpdate
     fetchedCustomers.remove(entity.cf)
 
-  def delete(cf: String): Unit =
+  override def delete(cf: String): Unit =
     val query = "DELETE FROM customer WHERE cf = ?"
     val stmt = connection.prepareStatement(query)
     stmt.setString(1, cf)

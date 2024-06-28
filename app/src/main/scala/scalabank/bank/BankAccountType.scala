@@ -6,10 +6,34 @@ import scalabank.currency.MoneyADT.Money
  * Represents a bank account type with a name and description.
  */
 trait BankAccountType:
+  /**
+   * The name of the bank account type.
+   * @return the name of the bank account type
+   */
   def nameType: String
+
+  /**
+   * The fee for withdrawals.
+   * @return the fee for withdrawals
+   */
   def feeWithdraw: Money
+
+  /**
+   * The fee for deposits.
+   * @return the fee for deposits
+   */
   def feeDeposit: Money
+
+  /**
+   * The fee for money transfers.
+   * @return the fee for money transfers
+   */
   def feeMoneyTransfert: Money
+
+  /**
+   * The interest rate for the saving jar.
+   * @return the interest rate for the saving jar
+   */
   def interestSavingJar: Double
 
 

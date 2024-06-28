@@ -7,7 +7,6 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.matchers.should.Matchers.shouldEqual
 import org.scalatestplus.junit.JUnitRunner
 import scalabank.currency.MoneyADT.*
-import scalabank.currency.FeeManager
 
 @RunWith(classOf[JUnitRunner])
 class FeeTest extends AnyFlatSpec with BeforeAndAfterEach:

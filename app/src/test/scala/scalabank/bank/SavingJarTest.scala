@@ -4,12 +4,11 @@ import org.junit.runner.RunWith
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers.*
 import org.scalatestplus.junit.JUnitRunner
-import scalabank.bank.Bank
 import scalabank.bank.Bank.{PhysicalBank, PhysicalBankInformation}
-import scalabank.bankAccount.BankAccount
 import scalabank.currency.MoneyADT.toMoney
 import scalabank.currency.{Currency, MoneyADT}
-import scalabank.entities.{Customer, SavingsJar}
+import scalabank.entities.Customer
+import scalabank.bankAccount.SavingsJar
 
 @RunWith(classOf[JUnitRunner])
 class SavingJarTest extends AnyFunSuite:

@@ -28,7 +28,7 @@ class PersonTable(override val connection: Connection, override val database: Da
       populateDB(1)
 
 
-  def insert(entity: Person): Unit =
+  override def insert(entity: Person): Unit =
     val query = "INSERT INTO person (cf, name, surname, birthYear) VALUES (?, ?, ?, ?)"
     val stmt = connection.prepareStatement(query)
     stmt.setString(1, entity.cf)
@@ -46,7 +46,7 @@ class PersonTable(override val connection: Connection, override val database: Da
         fetchedPeople.put(cf, person)
         person
 
-  def findById(cf: String): Option[Person] =
+  override def findById(cf: String): Option[Person] =
     val stmt = connection.prepareStatement("SELECT * FROM person WHERE cf = ?")
     stmt.setString(1, cf)
     val result = stmt.executeQuery
@@ -54,7 +54,7 @@ class PersonTable(override val connection: Connection, override val database: Da
       _ <- Option(result) if result.next
     yield createPerson(result)
 
-  def findAll(): Seq[Person] =
+  override def findAll(): Seq[Person] =
     val stmt = connection.createStatement
     val resultSet = stmt.executeQuery("SELECT * FROM person")
     new Iterator[Person]:
@@ -62,7 +62,7 @@ class PersonTable(override val connection: Connection, override val database: Da
       def next(): Person = createPerson(resultSet)
     .toSeq
 
-  def update(entity: Person): Unit =
+  override def update(entity: Person): Unit =
     val query = "UPDATE person SET name = ?, surname = ?, birthYear = ? WHERE cf = ?"
     val stmt = connection.prepareStatement(query)
     stmt.setString(1, entity.name)
@@ -72,7 +72,7 @@ class PersonTable(override val connection: Connection, override val database: Da
     stmt.executeUpdate
     fetchedPeople.remove(entity.cf)
 
-  def delete(cf: String): Unit =
+  override def delete(cf: String): Unit =
     val query = "DELETE FROM person WHERE cf = ?"
     val stmt = connection.prepareStatement(query)
     stmt.setString(1, cf)

@@ -43,7 +43,7 @@ trait LoanCalculatorComponent:
     override def calculateLoan(customer: Customer, requiredAmount: Money, numberOfPayments: Int): Loan =
       assert(numberOfPayments > 0)
       val loanComputed = Loan(customer, requiredAmount, numberOfPayments, interestManager.findAppropriateInterestForCustomer(customer))
-      loggerDependency.logger.log(logger.getPrefixFormatter().getLoanSimulationPrefix + loanComputed)
+      loggerDependency.logger.log(logger.getPrefixFormatter.getLoanSimulationPrefix + loanComputed)
       loanComputed
 
 /**

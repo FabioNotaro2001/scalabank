@@ -19,10 +19,19 @@ object MoneyADT:
    */
   def unapply(money: Money): Option[BigDecimal] = Some(money)
 
+  /**
+   * Provides an ordering for Money instances.
+   */
   given Ordering[Money] with
     override def compare(x: Money, y: Money): Int = x.compare(y)
 
   extension (amount: Double | Int | Float | String | BigDecimal)
+    /**
+     * Converts a numeric value to Money.
+     *
+     * @return the Money representation of the amount
+     * @throws IllegalArgumentException if the amount is negative or cannot be converted to BigDecimal
+     */
     def toMoney: Money =
       amount match
         case amountAsBig: BigDecimal if amountAsBig >= BigDecimal(0) => amountAsBig

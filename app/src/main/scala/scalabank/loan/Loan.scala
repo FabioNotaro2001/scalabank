@@ -58,13 +58,13 @@ object Loan:
    * Factory method to create a new `Loan` instance.
    *
    * @param client the customer that requested the loan simulation.
-   * @param requiredAmount the principal amount of money requeste dy the customer.
+   * @param requiredAmount the principal amount of money request dy the customer.
    * @param numberOfMonthlyPayments the number of monthly payments to be made.
    * @param interestRate the interest rate for the loan.
    * @return a new Loan instance.
    */
   def apply(client: Customer, requiredAmount: Money, numberOfMonthlyPayments: Int, interestRate: InterestRate): Loan =
-    new LoanImpl(client, requiredAmount, numberOfMonthlyPayments, interestRate)
+    LoanImpl(client, requiredAmount, numberOfMonthlyPayments, interestRate)
 
   /**
    * Private implementation of the Loan trait.

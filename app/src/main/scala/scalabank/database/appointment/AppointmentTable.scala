@@ -6,7 +6,6 @@ import scalabank.appointment.Appointment
 import java.sql.{Connection, PreparedStatement, ResultSet}
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import scala.collection.mutable.Map as MutableMap
 
 /**
  * Class representing the appointment table in the database.
@@ -32,7 +31,7 @@ class AppointmentTable(override val connection: Connection, override val databas
     if tableCreated then
       populateDB()
 
-  def insert(entity: Appointment): Unit =
+  override def insert(entity: Appointment): Unit =
     val query = "INSERT INTO appointment (customerCf, employeeCf, description, date, duration) VALUES (?, ?, ?, ?, ?)"
     val stmt = connection.prepareStatement(query)
     stmt.setString(1, entity.customer.cf)
@@ -58,7 +57,7 @@ class AppointmentTable(override val connection: Connection, override val databas
         fetchedAppointments.put(key, appointment)
         appointment
 
-  def findById(id: (String, String, LocalDateTime)): Option[Appointment] =
+  override def findById(id: (String, String, LocalDateTime)): Option[Appointment] =
     val (customerCf, employeeCf, date) = id
     val query = "SELECT * FROM appointment WHERE customerCf = ? AND employeeCf = ? AND date = ?"
     val stmt = connection.prepareStatement(query)
@@ -68,7 +67,7 @@ class AppointmentTable(override val connection: Connection, override val databas
     val result = stmt.executeQuery
     if result.next then Some(createAppointment(result)) else None
 
-  def findAll(): Seq[Appointment] =
+  override def findAll(): Seq[Appointment] =
     val stmt = connection.createStatement
     val query = "SELECT * FROM appointment"
     val resultSet = stmt.executeQuery(query)
@@ -77,7 +76,7 @@ class AppointmentTable(override val connection: Connection, override val databas
       def next(): Appointment = createAppointment(resultSet)
     .toSeq
 
-  def update(appointment: Appointment): Unit =
+  override def update(appointment: Appointment): Unit =
     val query = "UPDATE appointment SET description = ?, duration = ? WHERE customerCf = ? AND employeeCf = ? AND date = ?"
     val stmt = connection.prepareStatement(query)
     stmt.setString(1, appointment.description)
@@ -89,7 +88,7 @@ class AppointmentTable(override val connection: Connection, override val databas
     fetchedAppointments.remove((appointment.customer.cf, appointment.employee.cf, appointment.date.format(dateFormat)))
 
 
-  def delete(id: (String, String, LocalDateTime)): Unit =
+  override def delete(id: (String, String, LocalDateTime)): Unit =
     val (customerCf, employeeCf, date) = id
     val query = "DELETE FROM appointment WHERE customerCf = ? AND employeeCf = ? AND date = ?"
     val stmt = connection.prepareStatement(query)

@@ -20,8 +20,6 @@ class AppointmentTest extends AnyFunSuite:
       Appointment(null, employee, "Meeting with client", LocalDateTime.now.plusDays(1), duration)
     assertThrows[IllegalArgumentException]:
       Appointment(customer, null, "Meeting with client", LocalDateTime.now.plusDays(1), duration)
-    //assertThrows[IllegalArgumentException]:
-      //Appointment(customer, employee, "Meeting with client", LocalDateTime.now.minusDays(1), duration)
     assertThrows[IllegalArgumentException]:
       Appointment(customer, employee, "Meeting with client", LocalDateTime.now.plusDays(1), -1)
   
@@ -34,7 +32,7 @@ class AppointmentTest extends AnyFunSuite:
     val appointment = Appointment(customer, employee, "Meeting with client", LocalDateTime.now.plusDays(1), duration)
     employee.addAppointment(appointment)
     employee.removeAppointment(appointment)
-    employee.getAppointments should not contain (appointment)
+    employee.getAppointments should not contain appointment
 
   test("updateAppointment should update the date of an appointment in the employee's appointments list"):
     val appointment = Appointment(customer, employee, "Meeting with client", LocalDateTime.now.plusDays(1), duration)
@@ -42,5 +40,4 @@ class AppointmentTest extends AnyFunSuite:
     val updatedAppointment = Appointment(customer, employee, "Updated meeting with client", LocalDateTime.now.plusDays(2), duration)
     employee.updateAppointment(appointment)(updatedAppointment)
     employee.getAppointments should contain(updatedAppointment)
-    employee.getAppointments should not contain (appointment)
-
+    employee.getAppointments should not contain appointment

@@ -57,7 +57,7 @@ class CustomerTest extends AnyFunSuite:
     val appointment = Appointment(customer, employee, "Meeting", LocalDateTime.now().plusDays(1), duration)
     customer.addAppointment(appointment)
     customer.removeAppointment(appointment)
-    customer.getAppointments should not contain (appointment)
+    customer.getAppointments should not contain appointment
 
   test("Customer should be able to update appointments"):
     val customer = Customer("JHNDOE22B705Y", "John", "Doe", 1980)
@@ -66,7 +66,7 @@ class CustomerTest extends AnyFunSuite:
     customer.addAppointment(oldAppointment)
     customer.updateAppointment(oldAppointment)(newAppointment)
     customer.getAppointments should contain (newAppointment)
-    customer.getAppointments should not contain (oldAppointment)
+    customer.getAppointments should not contain oldAppointment
 
   test("Customer should be able to register a bank"):
     val customer = Customer("JHNDOE22B705Y", "John", "Doe", 1980)

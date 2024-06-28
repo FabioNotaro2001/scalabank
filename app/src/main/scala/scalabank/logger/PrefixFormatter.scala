@@ -77,7 +77,7 @@ object PrefixFormatter:
      *
      * @return a string representing the prefix, including the current time.
      */
-    override def getPrefixWithCurrentTime: String = s"[${timeFormatter.getTimeFormatted()}] "
+    override def getPrefixWithCurrentTime: String = s"[${timeFormatter.getTimeFormatted}] "
 
     /**
      * Retrieves the creation prefix.

@@ -116,14 +116,6 @@ trait BankAccount:
     def createSavingJar(monthlyDeposit: Money, annualInterest: Double = bankAccountType.interestSavingJar): Unit
 
     def fidelity: Fidelity
-    /*
-    def depositSavingJar(amount: Money): Unit
-
-    def withdrawSavingJar(amount: Money): Boolean
-
-    def applyDepositMonthlySavingJar(): Unit
-
-    */
 
 object BankAccount extends LoggerDependency with BankAccountComponent:
     override val logger: Logger = LoggerImpl()
@@ -144,7 +136,7 @@ trait BankAccountComponent:
                                 var state: StateBankAccount,
                                 override val bankAccountType: BankAccountType
                               ) extends BankAccount:
-        loggerDependency.logger.log(loggerDependency.logger.getPrefixFormatter().getPrefixForBankAccountOpening + this)
+        loggerDependency.logger.log(loggerDependency.logger.getPrefixFormatter.getPrefixForBankAccountOpening + this)
 
         private var _movements: List[Movement] = List()
         private var _savingsJar: Option[SavingsJar] = Option.empty
@@ -176,16 +168,14 @@ trait BankAccountComponent:
             val depositInstance = Deposit(this, amount, fee)
             depositInstance.doOperation()
             _movements = _movements :+ depositInstance
-            loggerDependency.logger.log(logger.getPrefixFormatter().getPrefixForDeposit + depositInstance.toString)
-
-        //FIXME: AGGIORNARE CONTO SUL DB DOPO OPERAZIONI
+            loggerDependency.logger.log(logger.getPrefixFormatter.getPrefixForDeposit + depositInstance.toString)
         
         override def withdraw(amount: Money, fee: Money = feeWithdraw): Boolean =
             val withdraw = Withdraw(this, amount, fee)
             val result = withdraw.doOperation()
             if result then
                 _movements = _movements :+ withdraw
-                loggerDependency.logger.log(logger.getPrefixFormatter().getPrefixForWithdraw + withdraw.toString)
+                loggerDependency.logger.log(logger.getPrefixFormatter.getPrefixForWithdraw + withdraw.toString)
             result
 
         override def makeMoneyTransfer(receiverBankAccount: BankAccount, amount: Money): Boolean =
@@ -194,13 +184,13 @@ trait BankAccountComponent:
             if result then
                 addMovement(moneyTransferInstance)
                 receiverBankAccount.receiveMoneyTransfer(this, amount)
-                loggerDependency.logger.log(logger.getPrefixFormatter().getPrefixForMoneyTransfer + moneyTransferInstance.toString)
+                loggerDependency.logger.log(logger.getPrefixFormatter.getPrefixForMoneyTransfer + moneyTransferInstance.toString)
             result
 
         override def receiveMoneyTransfer(senderBankAccount: BankAccount, amount: Money): Unit =
             val moneyTransferInstance = MoneyTransfer(senderBankAccount, this, amount, bankAccountType.feeMoneyTransfert)
             addMovement(moneyTransferInstance)
-            loggerDependency.logger.log(logger.getPrefixFormatter().getPrefixForMoneyTransfer + moneyTransferInstance.toString)
+            loggerDependency.logger.log(logger.getPrefixFormatter.getPrefixForMoneyTransfer + moneyTransferInstance.toString)
 
         override def addMovement(movement: Movement): Unit =
             _movements = _movements :+ movement

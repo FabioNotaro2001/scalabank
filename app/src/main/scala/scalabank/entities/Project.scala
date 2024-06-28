@@ -39,12 +39,24 @@ trait Project:
    */
   def removeTeamMember(employee: Employee): Unit
 
+/**
+ * Factory object for creating Project instances.
+ */
 object Project:
+
+  /**
+   * Creates a new Project instance.
+   *
+   * @param name   the name of the project
+   * @param budget the budget allocated for the project
+   * @param team   the list of employees assigned to the project
+   * @return a new Project instance
+   */
   def apply(name: String, budget: Double, team: List[Employee]): Project = ProjectImpl(name, budget, team)
 
   private case class ProjectImpl(name: String, budget: Double, var team: List[Employee]) extends Project:
-    def addTeamMember(employee: Employee): Unit =
+    override def addTeamMember(employee: Employee): Unit =
       team = team :+ employee
 
-    def removeTeamMember(employee: Employee): Unit =
+    override def removeTeamMember(employee: Employee): Unit =
       team = team.filterNot(_ == employee)

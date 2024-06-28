@@ -30,7 +30,7 @@ class BankAccountTypeTable(override val connection: Connection, override val dat
     if tableCreated then
       populateDB()
 
-  def insert(bankAccountType: BankAccountType): Unit =
+  override def insert(bankAccountType: BankAccountType): Unit =
     val query = "INSERT INTO bankAccountType (nameType, feeWithdraw, feeDeposit, feeMoney, interestSavingJar) VALUES (?, ?, ?, ?, ?)"
     val stmt = connection.prepareStatement(query)
     stmt.setString(1, bankAccountType.nameType)
@@ -49,13 +49,13 @@ class BankAccountTypeTable(override val connection: Connection, override val dat
       resultSet.getDouble("interestSavingJar")
     )
 
-  def findById(nameType: String): Option[BankAccountType] =
+  override def findById(nameType: String): Option[BankAccountType] =
     val stmt = connection.prepareStatement("SELECT * FROM bankAccountType WHERE nameType = ?")
     stmt.setString(1, nameType)
     val result = stmt.executeQuery
     if result.next then Some(createBankAccountType(result)) else None
 
-  def findAll(): Seq[BankAccountType] =
+  override def findAll(): Seq[BankAccountType] =
     val stmt = connection.createStatement
     val resultSet = stmt.executeQuery("SELECT * FROM bankAccountType")
     new Iterator[BankAccountType]:
@@ -63,7 +63,7 @@ class BankAccountTypeTable(override val connection: Connection, override val dat
       def next(): BankAccountType = createBankAccountType(resultSet)
     .toSeq
 
-  def update(bankAccountType: BankAccountType): Unit =
+  override def update(bankAccountType: BankAccountType): Unit =
     val query = "UPDATE bankAccountType SET feeWithdraw = ?, feeDeposit = ?, feeMoney = ?, interestSavingJar = ? WHERE nameType = ?"
     val stmt = connection.prepareStatement(query)
     stmt.setString(1, bankAccountType.feeWithdraw.toString())
@@ -73,7 +73,7 @@ class BankAccountTypeTable(override val connection: Connection, override val dat
     stmt.setString(5, bankAccountType.nameType)
     stmt.executeUpdate
 
-  def delete(nameType: String): Unit =
+  override def delete(nameType: String): Unit =
     val query = "DELETE FROM bankAccountType WHERE nameType = ?"
     val stmt = connection.prepareStatement(query)
     stmt.setString(1, nameType)

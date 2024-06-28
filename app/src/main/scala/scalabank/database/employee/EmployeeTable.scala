@@ -5,7 +5,6 @@ import scalabank.entities.Employee
 import scalabank.entities.Employee.EmployeePosition
 
 import java.sql.{Connection, ResultSet}
-import scala.collection.mutable.Map as MutableMap
 
 /**
  * Class representing the employee table in the database.
@@ -32,7 +31,7 @@ class EmployeeTable(override val connection: Connection, override val database: 
         case None => insert(Employee("NTR", "Fabio", "Notaro", 2001, EmployeePosition.Cashier, 2020))
         case _ =>
 
-  def insert(entity: Employee): Unit =
+  override def insert(entity: Employee): Unit =
     val query = "INSERT INTO employee (cf, name, surname, birthYear, position, hiringYear) VALUES (?, ?, ?, ?, ?, ?)"
     val stmt = connection.prepareStatement(query)
     stmt.setString(1, entity.cf)
@@ -59,7 +58,7 @@ class EmployeeTable(override val connection: Connection, override val database: 
           a => employee.addAppointment(a)
         employee
 
-  def findById(cf: String): Option[Employee] =
+  override def findById(cf: String): Option[Employee] =
     val query = "SELECT * FROM employee WHERE cf = ?"
     val stmt = connection.prepareStatement(query)
     stmt.setString(1, cf)
@@ -68,7 +67,7 @@ class EmployeeTable(override val connection: Connection, override val database: 
       _ <- Option(result) if result.next
     yield createEmployee(result)
 
-  def findAll(): Seq[Employee] =
+  override def findAll(): Seq[Employee] =
     val stmt = connection.createStatement
     val query = "SELECT * FROM employee"
     val resultSet = stmt.executeQuery(query)
@@ -77,7 +76,7 @@ class EmployeeTable(override val connection: Connection, override val database: 
       def next(): Employee = createEmployee(resultSet)
     .toSeq
 
-  def update(entity: Employee): Unit =
+  override def update(entity: Employee): Unit =
     val query = "UPDATE employee SET name = ?, surname = ?, birthYear = ?, position = ?, hiringYear = ? WHERE cf = ?"
     val stmt = connection.prepareStatement(query)
     stmt.setString(1, entity.name)
@@ -89,7 +88,7 @@ class EmployeeTable(override val connection: Connection, override val database: 
     stmt.executeUpdate
     fetchedEmployees.remove(entity.cf)
 
-  def delete(cf: String): Unit =
+  override def delete(cf: String): Unit =
     val query = "DELETE FROM employee WHERE cf = ?"
     val stmt = connection.prepareStatement(query)
     stmt.setString(1, cf)

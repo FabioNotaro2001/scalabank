@@ -197,7 +197,6 @@ override def compare(x: Money, y: Money): Int = x.compare(y)
 - **Single Responsibility Principle:** Ogni classe è responsabile di un singolo compito, come la gestione di una specifica tabella del database.
 - **Open/Closed Principle:** Il codice è strutturato in modo che le nuove funzionalità possano essere aggiunte senza modificare il codice esistente.
 - **Liskov Substitution Principle:** Le classi derivate possono essere sostituite alle loro basi senza alterare il funzionamento del programma.
-- **Interface Segregation Principle:** Le interfacce sono specifiche per ogni tipo di entità, evitando metodi non necessari.
 
 ### Implementazione
 
@@ -210,28 +209,35 @@ trait Database:
   def customerTable: CustomerTable
   def appointmentTable: AppointmentTable
   def bankAccountTable: BankAccountTable
+  def interestTable: InterestTable
+  def movementTable: MovementTable
+  def bankAccountTypeTable: BankAccountTypeTable
+  def currencyTable: CurrencyTable
 ```
 
 #### Trait `DatabaseOperations`
 
 - Definisce le operazioni CRUD comuni a tutte le tabelle.
 - Metodo `tableExists` per verificare l'esistenza di una tabella.
+- Metodo `initialize` inizializza le tabelle con valori di default.
+- Tipo `T` è il tipo dell'entità.
+- Tipo `I` è il tipo dell'identificatore dell'entità.
 
 ```scala 3
-trait DatabaseOperations[T, Q]:
-    def insert(entity: T): Unit
-    def findById(id: Q): Option[T]
-    def findAll(): Seq[T]
-    def update(entity: T): Unit
-    def delete(id: Q): Unit
-    def tableExists(tableName: String, connection: Connection): Boolean =
-      val statement = connection.createStatement
+trait DatabaseOperations[T, I]:
+  def initialize(): Unit
+  def insert(entity: T): Unit
+  def findById(id: I): Option[T]
+  def findAll(): Seq[T]
+  def update(entity: T): Unit
+  def delete(id: I): Unit
+  def tableExists(tableName: String, connection: Connection): Boolean =
+    val metaData = connection.getMetaData
+    val resultSet = metaData.getTables(null, null, tableName.toUpperCase, null)
       try
-        val query = s"SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '$tableName'"
-        val resultSet: ResultSet = statement.executeQuery(query)
-        resultSet.next
+        resultSet.next()
       finally
-        statement.close()
+        resultSet.close()
 ```
 
 #### Classe `PersonTable`
@@ -260,6 +266,22 @@ trait DatabaseOperations[T, Q]:
 - Implementa le operazioni CRUD per la tabella `appointment`.
 - Fornisce metodi per trovare appuntamenti per codice fiscale di cliente o dipendente.
 
+#### Classe `BankAccountTypeTable`
+
+- Crea e popola la tabella `bankAccountTypeTable` se non esiste.
+- Implementa le operazioni CRUD per la tabella `bankAccountTypeTable`.
+
+#### Classe `MovementTable`
+
+- Crea e popola la tabella `movement` se non esiste.
+- Implementa le operazioni CRUD per la tabella `appointment`.
+- Fornisce metodi per trovare i movimenti di un sender o di un receiver.
+
+#### Classe `CurrencyTable`
+
+- Crea e popola la tabella `cureencyTable` se non esiste.
+- Implementa le operazioni CRUD per la tabella `currencyTable`.
+
 # Popolamento delle Tabelle
 
 - **Random Data Generation:** La classe `PopulateEntityTable` crea istanze casuali per popolare le tabelle inizialmente, migliorando il testing e la simulazione di scenari realistici.
@@ -268,7 +290,7 @@ trait DatabaseOperations[T, Q]:
 
 ### Struttura del Codice
 - **Movimenti:** Le classi `Deposit` e `Withdraw` implementano il trait `Movement`, rappresentando rispettivamente un deposito e un prelievo. Ogni movimento ha un valore, una data, un conto ricevente e un metodo per eseguire l'operazione.
-- **Depositi:** La classe `Deposit` rappresenta un deposito di denaro. Esegue l'operazione aggiungendo il valore al saldo del conto ricevente e registra il movimento.
+- **Depositi:** La classe `Deposit` rappresenta un deposito di denaro. Esegue l'operazione aggiungendo il valore al saldo del conto ricevente e registra il movimento. Possibilità di estensione con una possibile applicazione di una commissione.
 - **Prelievi:** La classe `Withdraw` rappresenta un prelievo di denaro. Esegue l'operazione sottraendo il valore (inclusa la commissione) dal saldo del conto ricevente, se il saldo è sufficiente, e registra il movimento.
 - **Conto Bancario:** La classe `BankAccountImpl` implementa le funzionalità di base di un conto bancario, come depositi, prelievi, gestione del saldo e registrazione dei movimenti.
 
@@ -288,6 +310,8 @@ trait Movement:
   def value: Money
   def date: LocalDateTime
   def receiverBankAccount: BankAccount
+  def fee: Money
+  def senderBankAccount: BankAccount
   def dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
   def doOperation(): Boolean
 ```

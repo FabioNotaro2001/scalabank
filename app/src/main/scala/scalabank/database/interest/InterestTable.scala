@@ -24,7 +24,7 @@ class InterestTable(override val connection: Connection, override val database: 
     if tableCreated then
       populateDB()
 
-  def insert(rowToInsert: (String, InterestRate)): Unit =
+  override def insert(rowToInsert: (String, InterestRate)): Unit =
     val query = "INSERT INTO interestRate (id, rate) VALUES (?, ?)"
     val stmt = connection.prepareStatement(query)
     stmt.setString(1, rowToInsert._1)
@@ -34,13 +34,13 @@ class InterestTable(override val connection: Connection, override val database: 
   private def createInterestRate(resultSet: ResultSet): (String, InterestRate) =
     (resultSet.getString("id"), InterestRate(resultSet.getDouble("rate")))
 
-  def findById(id: String): Option[(String, InterestRate)] =
+  override def findById(id: String): Option[(String, InterestRate)] =
     val stmt = connection.prepareStatement("SELECT * FROM interestRate WHERE id = ?")
     stmt.setString(1, id)
     val result = stmt.executeQuery
     if result.next then Some(createInterestRate(result)) else None
 
-  def findAll(): Seq[(String, InterestRate)] =
+  override def findAll(): Seq[(String, InterestRate)] =
     val stmt = connection.createStatement
     val resultSet = stmt.executeQuery("SELECT * FROM interestRate")
     new Iterator[(String, InterestRate)]:
@@ -48,14 +48,14 @@ class InterestTable(override val connection: Connection, override val database: 
       def next(): (String, InterestRate) = createInterestRate(resultSet)
     .toSeq
 
-  def update(rowToUpdate: (String, InterestRate)): Unit =
+  override def update(rowToUpdate: (String, InterestRate)): Unit =
     val query = "UPDATE interestRate SET rate = ? WHERE id = ?"
     val stmt = connection.prepareStatement(query)
     stmt.setDouble(1, rowToUpdate._2.interestValue)
     stmt.setString(2, rowToUpdate._1)
     stmt.executeUpdate
 
-  def delete(id: String): Unit =
+  override def delete(id: String): Unit =
     val query = "DELETE FROM interestRate WHERE id = ?"
     val stmt = connection.prepareStatement(query)
     stmt.setString(1, id)

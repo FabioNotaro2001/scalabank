@@ -16,8 +16,7 @@ import scala.annotation.targetName
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 import scala.collection.mutable.{HashMap as MutableHashMap, Map as MutableMap}
-import scala.util.boundary.break
-import scala.util.{Random, boundary}
+import scala.util.Random
 
 extension [A](opt: Option[A])
   @targetName("getOrElse")
@@ -96,8 +95,20 @@ trait Bank:
    */
   def createBankAccount(customer: Customer, bankAccountType: BankAccountType, currency: Currency): BankAccount
 
+  /**
+   * Adds a new bank account type with specified fees and interest rate.
+   * @param nameType          the name of the bank account type
+   * @param feeWithdraw       the fee for withdrawals
+   * @param feeDeposit        the fee for deposits
+   * @param feeMoneyTransfert the fee for money transfers
+   * @param interestSavingJar the interest rate for the saving jar
+   */
   def addBankAccountType(nameType: String, feeWithdraw: Money, feeDeposit: Money, feeMoneyTransfert: Money, interestSavingJar: Double): Unit
-  
+
+  /**
+   * Retrieves all available bank account types.
+   * @return an iterable collection of bank account types
+   */
   def getBankAccountTypes: Iterable[BankAccountType]
 
   /**
@@ -161,7 +172,7 @@ trait BankComponent:
   case class PhysicalBankInformation(name: String, address: String, phoneNumber: String) extends BankInformation
   case class PhysicalBank(bankInfo: PhysicalBankInformation) extends AbstractBankImpl[PhysicalBankInformation](bankInfo):
     private val appointments: MutableMap[Customer, ListBuffer[Appointment]] = MutableHashMap()
-    loggerDependency.logger.log(logger.getPrefixFormatter().getCreationPrefix + this)
+    loggerDependency.logger.log(logger.getPrefixFormatter.getCreationPrefix + this)
 
     override def createAppointment(customer: Customer, description: String, date: LocalDateTime, duration: Int): Appointment =
       require(customers.contains(customer), "Customer not registered with the bank")
@@ -226,7 +237,7 @@ trait BankComponent:
 
   case class VirtualBankInformation(name: String, phoneNumber: String) extends BankInformation
   case class VirtualBank(bankInfo: VirtualBankInformation) extends AbstractBankImpl[VirtualBankInformation](bankInfo):
-    loggerDependency.logger.log(logger.getPrefixFormatter().getCreationPrefix + this)
+    loggerDependency.logger.log(logger.getPrefixFormatter.getCreationPrefix + this)
 
     override def createAppointment(customer: Customer, description: String, date: LocalDateTime, duration: Int): Appointment =
       throw UnsupportedOperationException("Virtual banks don't support appointments")

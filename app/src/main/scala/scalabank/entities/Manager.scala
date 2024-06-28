@@ -1,8 +1,7 @@
 package scalabank.entities
 
-import scalabank.entities.Employee.logger
 import scalabank.entities.Manager.ManagerPosition
-import scalabank.logger.{Logger, LoggerDependency, LoggerImpl, PrefixFormatter}
+import scalabank.logger.{Logger, LoggerDependency, LoggerImpl}
 
 import scala.annotation.tailrec
 
@@ -76,7 +75,7 @@ object Manager extends LoggerDependency with ManagerComponent:
             hiringYear: Int,
             projects: List[Project]): Manager =
     val manager = ManagerImpl(Person(cf, name, surname, birthYear), position, hiringYear, projects)
-    logger.log(logger.getPrefixFormatter().getCreationPrefix + manager)
+    logger.log(logger.getPrefixFormatter.getCreationPrefix + manager)
     manager
 
   extension (manager: Manager)

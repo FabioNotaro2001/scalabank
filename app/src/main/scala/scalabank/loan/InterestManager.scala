@@ -31,7 +31,7 @@ object InterestManager:
    * Private implementation of the InterestManager trait.
    * Utilizes InterestProvider to determine the appropriate interest rate.
    */
-  private class InterestManagerImpl() extends InterestManager:
+  private class InterestManagerImpl extends InterestManager:
     private val interestProvider = InterestProvider()
 
     /**

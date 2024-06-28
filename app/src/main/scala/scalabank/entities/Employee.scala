@@ -16,11 +16,14 @@ trait Employee extends StaffMember[EmployeePosition] with Promotable[EmployeePos
 trait Promotable[T <: StaffPosition]:
   def promote(newPosition: T): Employee
 
+/**
+ * Component trait for managing employee-related functionality, requiring a LoggerDependency.
+ */
 trait EmployeeComponent:
   loggerDependency: LoggerDependency =>
   case class EmployeeImpl(person: Person, override val position: EmployeePosition, override val hiringYear: Int) extends Employee:
     export person.*
-    loggerDependency.logger.log(logger.getPrefixFormatter().getCreationPrefix + this)
+    loggerDependency.logger.log(logger.getPrefixFormatter.getCreationPrefix + this)
     override def promote(newPosition: EmployeePosition): Employee = copy(position = newPosition)
 
 /**

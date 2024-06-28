@@ -18,20 +18,17 @@ class CurrencyTest extends AnyFlatSpec with Matchers:
     val retrievedCurrency = currencyTable.findById(currency.code)
     retrievedCurrency shouldBe Some(currency)
 
-
   it should "update a currency correctly" in:
     val updatedCurrency = Currency("USC", "US$")
     currencyTable.update(updatedCurrency)
     val retrievedCurrency = currencyTable.findById(updatedCurrency.code)
     retrievedCurrency shouldBe Some(updatedCurrency)
 
-
   it should "delete a currency correctly" in:
     val currencyCode = "USC"
     currencyTable.delete(currencyCode)
     val retrievedCurrency = currencyTable.findById(currencyCode)
     retrievedCurrency shouldBe None
-
 
   it should "find all currencies correctly" in:
     val currency1 = Currency("USC", "$")
