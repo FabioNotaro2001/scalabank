@@ -1,14 +1,16 @@
 # Documentazione Implementativa
 
-Durante lo sviluppo dell'applicazione, mi sono occupato principalmente delle funzionalità relative ai Clienti, ai Conti Correnti e al Salvadanaio. Queste tre macro-aree sono state sviluppate in corrispondenza dei tre sprint, principalmente da me. Tuttavia, in alcune situazioni, è stata necessaria la collaborazione dei colleghi.
+Durante lo sviluppo dell'applicazione, mi sono occupato principalmente delle funzionalità relative ai Clienti, ai Conti Correnti e al Salvadanaio. Queste tre macro-aree sono state sviluppate in corrispondenza dei tre sprint. In alcune situazioni, è stata necessaria la collaborazione dei colleghi.
 
-## Parte 1
+## Clienti
 
 ### Struttura generale
 
-Inizialmente, in collaborazione con Bedei, è stato sviluppata l'interfaccia e la classe implementativa di Person (vedi paragrafo Bedei... link).
+Inizialmente, in collaborazione con Bedei, sono stati sviluppati l'interfaccia e la classe implementativa di Person (vedi paragrafo Bedei... link).
 
-Come si può notare dal seguente diagramma UML, l'interfaccia `Customer`, che estende `Person`, viene ulteriormente specializzata nelle classi `BaseCustomer` e `YoungCustomer`. Queste due classi rappresentano implementazioni concrete di `Customer`, utilizzando il pattern Factory per la loro creazione e gestione.
+l diagramma UML mostra che Customer estende Person, ereditando le proprietà e i comportamenti di quest'ultima. Customer aggiunge nuove funzionalità per la gestione degli appuntamenti, dei conti bancari e del concetto di fedeltà. Tuttavia, queste funzionalità comuni non sono implementate direttamente nelle classi concrete di Customer, ma in una classe astratta chiamata AbstractCustomer. Questo approccio rispetta il principio DRY (Don't Repeat Yourself), centralizzando l'implementazione comune e riducendo la duplicazione del codice.
+
+In questo contesto, si potrebbe considerare l'utilizzo di un trait invece di una classe astratta per implementare i metodi comuni. La differenza tra i due approcci principalmente è che il trait supporta ereditarietà multipla mentre la classe astratta no. Un'altra particolarità delle classi astratte è che possiamo passare parametri e usare campi di classe.
 
 Il concetto di `fidelity` è integrato nel design: ogni istanza di `Customer` ha associato un livello di fedeltà, gestito tramite un oggetto `Fidelity`. Questo permette di determinare dinamicamente, in base al livello di fedeltà del cliente, il calcolo delle tariffe base. Il pattern Strategy è applicato attraverso l'utilizzo dell'interfaccia `BaseFeeCalculator`, che definisce un metodo per calcolare la base fee. L'implementazione predefinita di questo calcolatore, `defaultBaseFeeCalculator`, utilizza un'algoritmo differente a seconda che il cliente sia giovane o meno e in base al suo livello di fedeltà.
 

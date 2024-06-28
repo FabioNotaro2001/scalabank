@@ -1,19 +1,28 @@
 package scalabank.database.interest
 
-import scalabank.database.DatabaseOperations
+import scalabank.database.{Database, DatabaseOperations}
 import scalabank.loan.InterestRate
+
 import java.sql.{Connection, ResultSet}
 
 /**
  * Class representing the interest table in the database.
  *
  * @param connection The database connection to use.
+ * @param database The database reference.
  */
-class InterestTable(val connection: Connection) extends DatabaseOperations[(String, InterestRate), String]:
-  if !tableExists("interestRate", connection) then
-    val query = "CREATE TABLE IF NOT EXISTS interestRate (id VARCHAR(30) PRIMARY KEY, rate DOUBLE)"
-    connection.createStatement().execute(query)
-    populateDB()
+class InterestTable(override val connection: Connection, override val database: Database) extends DatabaseOperations[(String, InterestRate), String]:
+
+  private val tableCreated = 
+    if !tableExists("interestRate", connection) then
+      val query = "CREATE TABLE IF NOT EXISTS interestRate (id VARCHAR(30) PRIMARY KEY, rate DOUBLE)"
+      connection.createStatement().execute(query)
+      true
+    else false
+
+  override def initialize(): Unit =
+    if tableCreated then
+      populateDB()
 
   def insert(rowToInsert: (String, InterestRate)): Unit =
     val query = "INSERT INTO interestRate (id, rate) VALUES (?, ?)"

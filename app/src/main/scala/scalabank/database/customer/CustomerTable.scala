@@ -1,20 +1,32 @@
 package scalabank.database.customer
 
-import scalabank.database.{DatabaseOperations, PopulateEntityTable}
+import scalabank.database.{AbstractCache, Database, DatabaseOperations, PopulateEntityTable}
 import scalabank.entities.Customer
 
 import java.sql.{Connection, ResultSet}
+import scala.collection.mutable.Map as MutableMap
 
 /**
  * Class representing the customer table in the database.
  *
  * @param connection The database connection to use.
+ * @param database The database reference.
  */
-class CustomerTable(val connection: Connection) extends DatabaseOperations[Customer, String]:
-  if !tableExists("customer", connection) then
-    val query = "CREATE TABLE IF NOT EXISTS customer (cf VARCHAR(16) PRIMARY KEY, name VARCHAR(255), surname VARCHAR(255), birthYear INT)"
-    connection.createStatement.execute(query)
-    populateDB(2)
+class CustomerTable(override val connection: Connection, override val database: Database) extends AbstractCache[Customer, String] with DatabaseOperations[Customer, String]:
+  import database.*
+
+  private val fetchedCustomers = cache
+
+  private val tableCreated =
+    if !tableExists("customer", connection) then
+      val query = "CREATE TABLE IF NOT EXISTS customer (cf VARCHAR(16) PRIMARY KEY, name VARCHAR(255), surname VARCHAR(255), birthYear INT)"
+      connection.createStatement.execute(query)
+      true
+    else false
+
+  override def initialize(): Unit =
+    if tableCreated then
+      populateDB(2)
 
   def insert(entity: Customer): Unit =
     val query = "INSERT INTO customer (cf, name, surname, birthYear) VALUES (?, ?, ?, ?)"
@@ -26,7 +38,17 @@ class CustomerTable(val connection: Connection) extends DatabaseOperations[Custo
     stmt.executeUpdate
 
   private def createCustomer(resultSet: ResultSet) =
-    Customer(resultSet.getString("cf"), resultSet.getString("name"), resultSet.getString("surname"), resultSet.getInt("birthYear"))
+    val cf = resultSet.getString("cf")
+    fetchedCustomers.get(cf) match
+      case Some(c) => c
+      case None =>
+        val customer = Customer(cf, resultSet.getString("name"), resultSet.getString("surname"), resultSet.getInt("birthYear"))
+        fetchedCustomers.put(cf, customer)
+        appointmentTable.findByCustomerCf(cf).foreach:
+          a => customer.addAppointment(a)
+        bankAccountTable.findByCustomerCf(cf).foreach:
+          acc => customer.addBankAccount(acc)
+        customer
 
   def findById(cf: String): Option[Customer] =
     val query = "SELECT * FROM customer WHERE cf = ?"
@@ -54,14 +76,18 @@ class CustomerTable(val connection: Connection) extends DatabaseOperations[Custo
     stmt.setInt(3, entity.birthYear)
     stmt.setString(4, entity.cf)
     stmt.executeUpdate
+    fetchedCustomers.remove(entity.cf)
 
   def delete(cf: String): Unit =
     val query = "DELETE FROM customer WHERE cf = ?"
     val stmt = connection.prepareStatement(query)
     stmt.setString(1, cf)
     stmt.executeUpdate
+    fetchedCustomers.remove(cf)
 
   private def populateDB(numberOfEntries: Int): Unit =
     PopulateEntityTable.createInstancesDB[Customer](numberOfEntries, 
       (cf, name, surname, birthYear) => Customer(cf, name, surname, birthYear)
     ).foreach(insert)
+    val customerFixed = Customer("BDE", "Andrea", "Bedei", 2001)
+    insert(customerFixed)

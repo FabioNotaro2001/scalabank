@@ -1,6 +1,6 @@
 package scalabank.bankAccount
 
-import scalabank.currency.FeeManager
+import scalabank.currency.{CurrencyConverter, FeeManager}
 import scalabank.currency.MoneyADT.Money
 import java.time.LocalDateTime
 
@@ -12,23 +12,14 @@ import java.time.LocalDateTime
  * @param receiverBankAccount the bank account to which the money is transferred.
  * @param value the amount of money being transferred.
  */
-class MoneyTransfer(senderBankAccount: BankAccount, override val receiverBankAccount: BankAccount, override val value: Money) extends Movement:
-
-  private val emissionDate = LocalDateTime.now()
-
-  /**
-   * Gets the date and time when the money transfer was initiated.
-   *
-   * @return the date and time of the money transfer.
-   */
-  override def date: LocalDateTime = emissionDate
+case class MoneyTransfer(override val senderBankAccount: BankAccount, override val receiverBankAccount: BankAccount, var value: Money, override val fee: Money, override val date: LocalDateTime = LocalDateTime.now()) extends Movement:
 
   /**
    * Provides a string representation of the money transfer.
    *
    * @return a string describing the money transfer.
    */
-  override def toString: String = s"Money transfer of $value at ${date.format(super.dateFormatter)} between bank account ${senderBankAccount.id} and ${receiverBankAccount.id}"
+  override def toString: String = s"[${date.format(super.dateFormatter)}] Money transfer of $value between bank account ${senderBankAccount.id} and ${receiverBankAccount.id}"
 
   /**
    * Executes the money transfer operation.
@@ -38,8 +29,13 @@ class MoneyTransfer(senderBankAccount: BankAccount, override val receiverBankAcc
    * @return true if the operation is successful, false otherwise.
    */
   override def doOperation(): Boolean =
-    val feePerMoneyTransfer = senderBankAccount.bankAccountType.feePerOperation
-    val amountWithFee = FeeManager.calculateAmountWithFee(value, feePerMoneyTransfer)
+    val amountWithFee = FeeManager.calculateAmountWithFee(value, fee)
+    val currencyOfSender = senderBankAccount.currency
+    val currencyOfReceiver = receiverBankAccount.currency
+
+    if currencyOfSender.code != currencyOfReceiver.code then
+      val converter = CurrencyConverter()
+      value = converter.convert(value, currencyOfSender, currencyOfReceiver)
     if senderBankAccount.balance >= amountWithFee then
       senderBankAccount.setBalance(senderBankAccount.balance - amountWithFee)
       receiverBankAccount.setBalance(receiverBankAccount.balance + value)
