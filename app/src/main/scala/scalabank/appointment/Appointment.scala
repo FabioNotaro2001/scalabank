@@ -4,6 +4,7 @@ import scalabank.entities.{Customer, Employee}
 import scalabank.logger.{Logger, LoggerDependency, LoggerImpl}
 
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 /**
  * Represents an appointment a customer can schedule
@@ -39,10 +40,17 @@ trait AppointmentComponent:
   protected case class AppointmentImpl(override val customer: Customer, override val employee: Employee, override val description: String, override val date: LocalDateTime, override val duration: Int) extends Appointment:
     require(customer != null, "The customer must be defined")
     require(employee != null, "The employee must be defined")
-    require(date != null && date.isAfter(LocalDateTime.now), "Date of appointment has to be valid and in the future")
     require(duration > 0, "Duration of the appointment must be positive")
     loggerDependency.logger.log(loggerDependency.logger.getPrefixFormatter().getCreationPrefix + this)
 
 object Appointment extends LoggerDependency with AppointmentComponent:
   override val logger: Logger = LoggerImpl()
   def apply(customer: Customer, employee: Employee, description: String, date: LocalDateTime, duration: Int): Appointment = AppointmentImpl(customer, employee, description, date, duration)
+
+private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+
+extension (appointment: Appointment)
+  def toStringFromCustomerSide: String =
+    s"Appointment with employee ${appointment.employee.cf}, at ${appointment.date.format(dateFormatter)}, of duration ${appointment.duration} minutes. Reason: '${appointment.description}'"
+  def toStringFromEmployeeSide: String =
+    s"Appointment with customer ${appointment.customer.cf}, at ${appointment.date.format(dateFormatter)}, of duration ${appointment.duration} minutes. Reason: '${appointment.description}'"

@@ -9,7 +9,7 @@ import scalabank.entities.Employee.EmployeePosition
 
 @RunWith(classOf[JUnitRunner])
 class EmployeeTest extends AnyFlatSpec with Matchers:
-  val db: Database = Database("jdbc:h2:mem:test3;DB_CLOSE_DELAY=-1")
+  val db: Database = Database("jdbc:h2:mem:Employee;DB_CLOSE_DELAY=-1")
   val employee: Employee = Employee("EMP12345L67T890M", "Mario", "Rossi", 1990, EmployeePosition.Cashier, 2015)
 
   "EmployeeDatabase" should "insert and find an employee" in :

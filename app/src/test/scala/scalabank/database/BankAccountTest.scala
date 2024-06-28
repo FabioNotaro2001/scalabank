@@ -15,14 +15,13 @@ import java.sql.{Connection, DriverManager}
 
 @RunWith(classOf[JUnitRunner])
 class BankAccountTest extends AnyFlatSpec with Matchers:
-  private val connection: Connection = DriverManager.getConnection("jdbc:h2:mem:test10;DB_CLOSE_DELAY=-1")
-  private val customerTable = new CustomerTable(connection)
-  private val bankAccountTable = new BankAccountTable(connection, customerTable)
+  private val database = Database("jdbc:h2:mem:bankAccount;DB_CLOSE_DELAY=-1")
+  import database.*
 
   "BankAccountTable" should "insert and retrieve a bank account correctly" in:
     val customers = customerTable.findAll()
     val customer = customers.head
-    val accountType = BankAccountType("Checking", 0.01.toMoney)
+    val accountType = BankAccountType("Checking", 1.toMoney, 0.toMoney, 1.toMoney, 0.04)
     val balance = BigDecimal(1000).toMoney
     val currency = Currency("USD", "$")
     val state = StateBankAccount.Active
@@ -34,7 +33,7 @@ class BankAccountTest extends AnyFlatSpec with Matchers:
   it should "update a bank account correctly" in:
     val customers = customerTable.findAll()
     val customer = customers.head
-    val accountType = BankAccountType("Checking", 0.01.toMoney)
+    val accountType = BankAccountType("Checking", 1.toMoney, 0.toMoney, 1.toMoney, 0.04)
     val balance = BigDecimal(1000).toMoney
     val currency = Currency("USD", "$")
     val state = StateBankAccount.Active
@@ -49,7 +48,7 @@ class BankAccountTest extends AnyFlatSpec with Matchers:
   it should "delete a bank account correctly" in:
     val customers = customerTable.findAll()
     val customer = customers.head
-    val accountType = BankAccountType("Checking", 0.01.toMoney)
+    val accountType = BankAccountType("Checking", 0.01.toMoney, 0.toMoney, 0.01.toMoney, 0.5)
     val balance = BigDecimal(1000).toMoney
     val currency = Currency("USD", "$")
     val state = StateBankAccount.Active
@@ -62,7 +61,7 @@ class BankAccountTest extends AnyFlatSpec with Matchers:
   it should "find all bank accounts" in:
     val customers = customerTable.findAll()
     val customer = customers.head
-    val accountType = BankAccountType("Checking", 0.01.toMoney)
+    val accountType = BankAccountType("Checking", 1.toMoney, 0.toMoney, 1.toMoney, 0.04)
     val balance = BigDecimal(1000).toMoney
     val currency = Currency("USD", "$")
     val state = StateBankAccount.Active
