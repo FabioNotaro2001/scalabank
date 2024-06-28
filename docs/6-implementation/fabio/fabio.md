@@ -222,3 +222,41 @@ case class MoneyTransfer(override val senderBankAccount: BankAccount, override v
 ## Integrazione con il database
 Una volta inserito il database, a cavallo tra il secondo e terzo sprint, alcuni miei componenti lo avrebbero potuto usare per risultare maggiormente generali, flessibili e riusabili.
 
+In particolare il database è risultato utile per i componenti InterestProvider e MoneyTransfer.
+
+Per quanto riguarda InterestProvider, abbiamo scelto di leggere i tassi d'interesse dal database, simulando un approccio ragionevole e comune nell'ambito bancario. 
+
+Pertanto al database è stata preliminarmente aggiunta una tabella contenente i tassi d'interesse, il cui contenuto è il seguente:
+
+| ID      | Rate |
+|:--------|:----:|
+| default | 0.04 |
+| young   | 0.03 |
+|  old    | 0.05 |
+
+Per fare in modo che InterestProvider estraesse tali interessi dal database è stato necessario aggiungergli il metodo setInterestValues(), con cui è possibile passargli una mappa contenente gli interessi desiderati.
+```
+object InterestProvider:
+  private var _interestValues: Map[String, InterestRate] = Map()
+  
+  def setInterestValues(interestValues: Map[String, InterestRate]): Unit =
+    require(interestValues.contains("default") && interestValues.contains("young") && interestValues.contains("old"))
+    _interestValues = interestValues
+
+  private class InterestProviderImpl(interestValues: Map[String, InterestRate]) extends InterestProvider:
+    override def getDefaultInterest: InterestRate = interestValues("default")
+
+    override def getInterestForYoungCustomer: InterestRate = interestValues("young")
+
+    override def getInterestForOldCustomer: InterestRate = interestValues("old")
+```
+
+E' stato dunque sufficiente, all'atto della creazione della GUI, interrogare la tabella sopra riportata, convertire i risultati della query sotto forma di mappa e richiamare il metodo setInterestValues() dell'InterestProvider:
+```
+object WindowStateImpl extends WindowState:
+  object GUI:
+  def run(): Unit =
+    ...
+    InterestProvider.setInterestValues(database.interestTable.findAll().toMap)
+    ...    
+```
