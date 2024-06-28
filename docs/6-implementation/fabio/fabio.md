@@ -1,8 +1,8 @@
 # DOCUMENTAZIONE IMPLEMENTATIVA NOTARO
 Le mie principali responsabilità sono state:
 - sviluppo del logger e gestione delle sue dipendenze
-- modellazione dei mutui
-- modellazione e gestione di trasferimenti tra conti correnti.
+- modellazione dei mutui e loro simulazione
+- modellazione e gestione di trasferimenti tra conti correnti (bonifici).
 
 Nelle sezioni seguenti sono riportati e descritti gli aspetti implementativi ritenuti rilevanti per ogni compito da me svolto.
 
@@ -195,3 +195,29 @@ object LoanCalculator extends LoggerDependency with LoanCalculatorComponent:
 
   def apply(): LoanCalculator = LoanCalculatorImpl()
 ```
+
+## Implementazione dei bonifici
+L'implementazione dei trasferimenti tra conti corrente non ha richiesto l'utilizzo di meccanismi particolarmente avanzati, tuttavia nella presente sezione mi preme evidenziare due dipendenze che non erano emerse in fase di design dettagliato e che pertanto hanno richiesto una gestione corretta e rispettosa dei principi di buona programmazione visti a lezione:
+- dipendenza verso il FeeManager &rarr; come di solito accade, un bonifico comporta anche il pagamento di una piccola fee a carico del mittente, pertanto è stato necessario richiamare il metodo FeeManager.calculateAmountWithFee() per sapere con esattezza la quantità da prelevare dal conto corrente di partenza compreso il costo dell'operazione di bonifico
+- dipendenza verso il Converter &rarr; tale dipendenza risulta fondamentale nel caso particolare di bonifico tra conti correnti contenenti denaro di valuta differente (ad esempio un bonifico da un conto in euro verso un conto in sterline), in cui per calcolare correttamente l'ammontare che deve giungere nel conto destinazione occorre prima sfruttare l'apposito convertitore di valuta.
+
+In considerazione di quanto detto sopra, il cuore dell'implementazione relativa ai bonifici bancari può essere riassunta dal frammento do codice Scala sotto riportato:
+```
+case class MoneyTransfer(override val senderBankAccount: BankAccount, override val receiverBankAccount: BankAccount, var value: Money, ...) extends Movement:
+  override def doOperation(): Boolean =
+    val amountWithFee = FeeManager.calculateAmountWithFee(value, fee)
+    val currencyOfSender = senderBankAccount.currency
+    val currencyOfReceiver = receiverBankAccount.currency
+
+    if currencyOfSender.code != currencyOfReceiver.code then
+      val converter = CurrencyConverter()
+      value = converter.convert(value, currencyOfSender, currencyOfReceiver)
+    if senderBankAccount.balance >= amountWithFee then
+      // Update bank account balances.
+      ...
+      true
+    else false
+```
+
+## Integrazione con il database
+Una volta inserito il database...come sono cambiati mutui e bonifici?
