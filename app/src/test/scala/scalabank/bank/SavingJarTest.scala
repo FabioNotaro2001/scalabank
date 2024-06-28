@@ -18,11 +18,12 @@ class SavingJarTest extends AnyFunSuite:
   val bank: Bank.PhysicalBank = PhysicalBank(PhysicalBankInformation("Cesena Bank", "via Roma 3", "12345678"))
   bank.addBankAccountType("Base BankAccount", 2.toMoney, 0.toMoney, 2.toMoney, 0.5)
   customer.registerBank(bank)
+  val bankAccountType: BankAccountType = bank.getBankAccountTypes.head
+  val currency: Currency = Currency("EUR", "€")
 
   test("Deposit should fail if balance of bankAccount is insufficient"):
-    customer.addBankAccount(bank.getBankAccountTypes.head, Currency(code = "EUR", symbol = "€"))
-    val bankAccount: BankAccount = customer.bankAccounts.last
-    val savingJar = SavingsJar(0.05, 100.toMoney, Currency("EUR", "€"), customer.bankAccounts.last)
+    val bankAccount = bank.createBankAccount(customer, bankAccountType, currency)
+    val savingJar = SavingsJar(0.05, 100.toMoney, currency, customer.bankAccounts.last)
 
     bankAccount.balance shouldBe 0.toMoney
     assertThrows[IllegalArgumentException]:
@@ -31,9 +32,8 @@ class SavingJarTest extends AnyFunSuite:
     bankAccount.balance shouldBe 0.toMoney
 
   test("SavingJarImpl should initialize with correct initial values"):
-    customer.addBankAccount(bank.getBankAccountTypes.head, Currency(code = "EUR", symbol = "€"))
-    val bankAccount: BankAccount = customer.bankAccounts.last
-    val savingJar = SavingsJar(0.05, 100.toMoney, Currency("EUR", "€"), customer.bankAccounts.last)
+    val bankAccount = bank.createBankAccount(customer, bankAccountType, currency)
+    val savingJar = SavingsJar(0.05, 100.toMoney, currency, customer.bankAccounts.last)
 
     savingJar.annualInterest shouldBe 0.05
     savingJar.currency.code shouldBe "EUR"
@@ -43,9 +43,8 @@ class SavingJarTest extends AnyFunSuite:
 
 
   test("Deposit should increase balance of savingJar and decrease balance of bankAccount correctly"):
-    customer.addBankAccount(bank.getBankAccountTypes.head, Currency(code = "EUR", symbol = "€"))
-    val bankAccount: BankAccount = customer.bankAccounts.last
-    val savingJar = SavingsJar(0.05, 100.toMoney, Currency("EUR", "€"), customer.bankAccounts.last)
+    val bankAccount = bank.createBankAccount(customer, bankAccountType, currency)
+    val savingJar = SavingsJar(0.05, 100.toMoney, currency, customer.bankAccounts.last)
 
     bankAccount.deposit(200.toMoney)
     savingJar.deposit(50.toMoney) shouldBe true
@@ -54,9 +53,8 @@ class SavingJarTest extends AnyFunSuite:
 
 
   test("Withdraw should decrease balance of savingJar and increase balance of bankAccount correctly"):
-    customer.addBankAccount(bank.getBankAccountTypes.head, Currency(code = "EUR", symbol = "€"))
-    val bankAccount: BankAccount = customer.bankAccounts.last
-    val savingJar = SavingsJar(0.05, 100.toMoney, Currency("EUR", "€"), customer.bankAccounts.last)
+    val bankAccount = bank.createBankAccount(customer, bankAccountType, currency)
+    val savingJar = SavingsJar(0.05, 100.toMoney, currency, customer.bankAccounts.last)
 
     bankAccount.deposit(200.toMoney)
     savingJar.deposit(50.toMoney)
@@ -66,18 +64,16 @@ class SavingJarTest extends AnyFunSuite:
 
 
   test("Withdraw should fail if balance is insufficient"):
-    customer.addBankAccount(bank.getBankAccountTypes.head, Currency(code = "EUR", symbol = "€"))
-    val bankAccount: BankAccount = customer.bankAccounts.last
-    val savingJar = SavingsJar(0.05, 100.toMoney, Currency("EUR", "€"), customer.bankAccounts.last)
+    val bankAccount = bank.createBankAccount(customer, bankAccountType, currency)
+    val savingJar = SavingsJar(0.05, 100.toMoney, currency, customer.bankAccounts.last)
 
     assertThrows[IllegalArgumentException]:
       savingJar.withdraw(200.toMoney) shouldBe false
     savingJar.balance shouldBe 0.toMoney
 
   test("ApplyYearInterest should calculate interest correctly"):
-    customer.addBankAccount(bank.getBankAccountTypes.head, Currency(code = "EUR", symbol = "€"))
-    val bankAccount: BankAccount = customer.bankAccounts.last
-    val savingJar = SavingsJar(0.05, 100.toMoney, Currency("EUR", "€"), customer.bankAccounts.last)
+    val bankAccount = bank.createBankAccount(customer, bankAccountType, currency)
+    val savingJar = SavingsJar(0.05, 100.toMoney, currency, customer.bankAccounts.last)
 
     bankAccount.deposit(100.toMoney)
     savingJar.deposit(100.toMoney)
@@ -87,15 +83,14 @@ class SavingJarTest extends AnyFunSuite:
 /*
   //non si riesce a confrontare per errori macchina, inoltre non troncabile poichè MoneyADT todo
   test("AnnualProjection should calculate projected balance for given years"):
-    val savingJar = SavingsJar(0.5, 100.toMoney, Currency("EUR", "€"))
+    val savingJar = SavingsJar(0.5, 100.toMoney, currency)
     val monthsLeft = 12 - LocalDate.now().getMonthValue + 1
     val res = (((monthsLeft * 100) * 1.005 + (12 * 100)) * 1.005 + (12 * 100)) * 1.005
     savingJar.annualProjection(3).setScale(2) shouldBe res.toMoney.setScale(2)
 */
   test("ChangeCurrency should convert balance correctly with conversion fee"):
-    customer.addBankAccount(bank.getBankAccountTypes.head, Currency(code = "EUR", symbol = "€"))
-    val bankAccount: BankAccount = customer.bankAccounts.last
-    val savingJar = SavingsJar(0.05, 100.toMoney, Currency("EUR", "€"), customer.bankAccounts.last)
+    val bankAccount = bank.createBankAccount(customer, bankAccountType, currency)
+    val savingJar = SavingsJar(0.05, 100.toMoney, currency, customer.bankAccounts.last)
 
     bankAccount.deposit(100.toMoney)
     savingJar.deposit(100.toMoney)
