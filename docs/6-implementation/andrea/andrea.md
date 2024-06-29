@@ -32,7 +32,7 @@ Il trait `StaffMember` e `AppointmentBehaviour` rappresentano un membro dello st
 `StaffMember` essendo un mixin esso fornisce funzionalità comuni a tutti i membri dello staff. È un'implementazione generica che utilizza un parametro di tipo `T` che estende `StaffPosition`. 
 Questa classe eredita da `Person`.
 
-``` scala 3
+```scala 3
 trait AppointmentBehaviour:
   private var appointments: List[Appointment] = List()
   def getAppointments: Iterable[Appointment] = appointments
@@ -46,7 +46,7 @@ trait AppointmentBehaviour:
       case app => app
 ```
 
-``` scala 3
+```scala 3
 trait StaffMember[T <: StaffPosition] extends Person with AppointmentBehaviour:
   def hiringYear: Int
   def position: T
@@ -109,7 +109,7 @@ Il trait `Manager` rappresenta un manager e fornisce funzionalità aggiuntive pe
 - **Export** Utilizzo della delegazione su un oggetto `Person`.
 
 Riportiamo alcuni metodi:
-``` scala 3
+```scala 3
 extension (managers: List[Manager])
     def totalProjectsManaged: Int =
       @tailrec
