@@ -14,7 +14,7 @@ Riporto lo schema UML per la factory della persona.
 Invece è stato utilizzato un template method per quanto concerne la gestione delle diverse tipologie di dipendenti. In particolare è stata creata prima l'interfaccia `StaffPosition` la quale è un mixin, il quale contiene implementati i metodi comuni ed estende Person. A questo punto le classi `Employee` e `Manager` estendono `StaffPosition`.
 Riporto lo schema UML per il template method della gestione dei dipendenti. Si noti che (T) è un trait, (E) è un'enumerazione, (C) è una classe, (T, C) vuol dire che è stato creato il trait e la classe relativa utilizzando il pattern factory come descritto sopra per la classe `Persona`.
 
-![UML Persona](img/template.png)
+![UML Dipendenti](img/template.png)
 
 ### Person
 
@@ -132,20 +132,31 @@ Il trait `StaffPosition` rappresenta una posizione occupata da un membro dello s
 
 In questa parte, descriveremo l'implementazione dei file all'interno del package `scalabank.currency`. Ho utilizzato i principi KISS (Keep It Simple, Stupid) e DRY (Don't Repeat Yourself) per mantenere il codice semplice, leggibile e riutilizzabile. Inoltre, sono stati applicati vari pattern di progettazione per migliorare la struttura e la manutenibilità del codice.
 
-![UML Persona](img/money.png)
+![UML Money](img/money.png)
 
 ### Currency
 
 Il trait `Currency` rappresenta una valuta con un codice e un simbolo.
 
-#### Meccanismi utilizzati:
+### FeeManager
 
-- **Encapsulation:** Uso di metodi per accedere agli attributi `code` e `symbol`.
-- **Factory Method:** Metodo `apply` per creare istanze di `Currency` con la case class privata `CurrencyImpl`.
+L'oggetto `FeeManager` nel package è un singleton che fornisce metodi per gestire le commissioni, `fee`, su importi di denaro. Utilizza il tipo `Money` definito in MoneyADT.Money.
 
 ### CurrencyConverter
 
 Il trait `CurrencyConverter` rappresenta un convertitore di valute con metodi per la conversione e l'applicazione di commissioni. Per la realizzazione, ho utilizzato un'API esterna interrogando il server di YAHOO, al fine di avere ogni volta i dati aggiornati delle valute.
+
+```scala 3
+private case class OnlineCurrencyConverter() extends CurrencyConverter:
+  private val exchangeRateProvider = ExchangeRateProvider()
+
+  override def convert(amount: Money, from: Currency, to: Currency): Money =
+    Await.result(exchangeRateProvider.getExchangeRate(from.code, to.code).map(_ => amount), 5.second)
+
+  override def convertWithFee(amount: Money, from: Currency, to: Currency)(using feePercentage: BigDecimal): Money =
+    val convertedAmount = convert(amount, from, to)
+    FeeManager.applyPercentualFee(convertedAmount, feePercentage)
+```
 
 #### Meccanismi utilizzati:
 
@@ -156,11 +167,23 @@ Il trait `CurrencyConverter` rappresenta un convertitore di valute con metodi pe
 
 Il trait `ExchangeRateProvider` rappresenta un provider di tassi di cambio. Ho dovuto appoggiarmi a una classe diversa perché la risposta del server di YAHOO richiede la scomposizione della risposta attraverso una libreria apposita per formati JSON. Per questo motivo è nata questa classe, in modo da rispettare i principi DRY e SRP. Essa scompone la richiesta e restituisce il valore richiesto.
 
+```scala 3
+private case class ExchangeRateProviderImpl() extends ExchangeRateProvider:
+    private val backend = HttpURLConnectionBackend()
+
+    override def getExchangeRate(from: String, to: String): Future[BigDecimal] =
+      val url = s"https://query1.finance.yahoo.com/v8/finance/chart/${from}${to}=X"
+      for
+        response <- fetchExchangeRate(url)
+        rate <- parseExchangeRate(response)
+      yield rate
+```
+
 #### Meccanismi utilizzati:
 
 - **Asynchronous Programming:** Uso di `Future` per operazioni asincrone.
 - **Encapsulation:** Metodi privati per ottenere e parsare i tassi di cambio.
-- **For-yield:** Al fine di scomporre il JSON arrivato.
+- **For yield:** Al fine di scomporre il JSON arrivato.
 
 ### MoneyADT
 
@@ -217,12 +240,12 @@ override def compare(x: Money, y: Money): Int = x.compare(y)
 - **Extension Methods:** Metodi di estensione per operazioni aritmetiche e formattazione, al fine di limitare le operazioni possibili.
 
 ### Principi KISS e DRY
-
+In questa seconda parte ho cercato di rispettare i seguenti principi:
 - **KISS (Keep It Simple, Stupid):** Ho mantenuto il codice semplice e leggibile, evitando complessità inutili. Ad esempio, l'uso di `Future` per operazioni asincrone semplifica la gestione delle chiamate di rete.
-- **DRY (Don't Repeat Yourself):** Ho evitato la duplicazione del codice utilizzando metodi di estensione e case class private per implementazioni specifiche. Ad esempio, i metodi di estensione per `Money` prevengono la duplicazione di logica comune.
+- **DRY (Don't Repeat Yourself):** Ho evitato la duplicazione del codice utilizzando metodi di estensione e case class private per implementazioni specifiche.
 
 ### Pattern di Progettazione
-
+In questa seconda parte si sono utilizzati i seguenti pattern di progettazione:
 - **Factory Method:** Usato per creare istanze di `Currency`, `CurrencyConverter` e `ExchangeRateProvider`.
 - **Type Opacity:** Usato per il tipo `Money` per garantire la sicurezza dei tipi.
 - **Asynchronous Programming:** Uso di `Future` per operazioni di rete non bloccanti.
