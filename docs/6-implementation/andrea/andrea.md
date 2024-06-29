@@ -1,12 +1,12 @@
 # Documentazione Implementativa
 
-Nella prima parte mi sono occupato dello staff della banca in particolare, una volta creata la classe Persona in collaborazione con Mazzotti, sono passato a modellare le varie entità presenti nel contesto bancario.
+Nella prima parte mi sono occupato dello staff della banca. In particolare, una volta creata la classe Persona in collaborazione con Mazzotti, sono passato a modellare le varie entità presenti nel contesto bancario.
 
 ## Parte 1
 
 ## Struttura generale
 
-In particolare si è deciso di utilizzare il pattern factory per le se seguenti classi: `Person`, `Employee`, `Manager`, `Project`.
+In particolare si è deciso di utilizzare il pattern factory per le seguenti classi: `Person`, `Employee`, `Manager`, `Project`.
 Riporto lo schema UML per la factory della persona.
 
 ![UML Persona](img/person.png)
@@ -266,7 +266,7 @@ In questa seconda parte si sono utilizzati i seguenti pattern di progettazione:
 
 - **Single Responsibility Principle:** Ogni classe è responsabile di un singolo compito, come la gestione di una specifica tabella del database.
 - **Open/Closed Principle:** Il codice è strutturato in modo che le nuove funzionalità possano essere aggiunte senza modificare il codice esistente.
-- **Liskov Substitution Principle:** Le classi derivate possono essere sostituite alle loro basi senza alterare il funzionamento del programma.
+- **Liskov Substitutability Principle:** Le classi derivate possono essere sostituite alle loro basi senza alterare il funzionamento del programma.
 
 ### Implementazione
 
