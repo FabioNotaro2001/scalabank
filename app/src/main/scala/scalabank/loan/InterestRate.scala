@@ -9,8 +9,13 @@ import scala.annotation.targetName
  * @throws AssertionError if `interestValue` is not greater than 0.
  */
 case class InterestRate(interestValue: Double):
-  assert(interestValue > 0)
+  assert(interestValue > 0, "Interest rate must be greater than 0")
 
+  /**
+   * Returns a string representation of the interest rate in percentage format.
+   *
+   * @return the interest rate as a percentage string.
+   */
   override def toString: String = s"${interestValue * 100}%"
 
 /**

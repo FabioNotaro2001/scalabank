@@ -3,7 +3,7 @@ package scalabank.loan
 import scalabank.loan.*
 
 /**
- * Provides default interest rates and rates based on specified parameters that must be take into account.
+ * Provides default interest rates and rates based on specified customer categories.
  */
 trait InterestProvider:
   /**
@@ -32,8 +32,16 @@ trait InterestProvider:
  */
 object InterestProvider:
   private var _interestValues: Map[String, InterestRate] = Map()
+
+  /**
+   * Sets the interest values for different customer categories.
+   *
+   * @param interestValues a map containing interest rates for "default", "young", and "old" categories.
+   * @throws IllegalArgumentException if any required key is missing in the map.
+   */
   def setInterestValues(interestValues: Map[String, InterestRate]): Unit =
-    require(interestValues.contains("default") && interestValues.contains("young") && interestValues.contains("old"))
+    require(interestValues.contains("default") && interestValues.contains("young") && interestValues.contains("old"),
+      "Interest values map must contain keys: 'default', 'young', and 'old'.")
     _interestValues = interestValues
 
   /**
@@ -45,9 +53,14 @@ object InterestProvider:
 
   /**
    * Private implementation of the InterestProvider trait.
+   *
+   * @param interestValues a map containing interest rates for different categories.
+   * @throws IllegalArgumentException if any required key is missing in the map.
    */
   private class InterestProviderImpl(interestValues: Map[String, InterestRate]) extends InterestProvider:
-    require(interestValues.contains("default") && interestValues.contains("young") && interestValues.contains("old"))
+    require(interestValues.contains("default") && interestValues.contains("young") && interestValues.contains("old"),
+      "Interest values map must contain keys: 'default', 'young', and 'old'.")
+
     /**
      * Retrieves the default interest rate.
      *

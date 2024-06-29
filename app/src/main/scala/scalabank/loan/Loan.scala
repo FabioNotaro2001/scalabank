@@ -11,19 +11,19 @@ trait Loan:
   /**
    * The customer who has requested the loan.
    *
-   * @return the customer associated with this loan simulation.
+   * @return the customer associated with this loan.
    */
   def customer: Customer
 
   /**
    * The amount of money desired by the customer.
    *
-   * @return the principal amount of the loan simulation.
+   * @return the principal amount of the loan.
    */
   def requiredAmount: Money
 
   /**
-   * The number of payments to be made to repay the loan wished by the customer.
+   * The number of payments to be made to repay the loan.
    *
    * @return the total number of payments.
    */
@@ -57,8 +57,8 @@ object Loan:
   /**
    * Factory method to create a new `Loan` instance.
    *
-   * @param client the customer that requested the loan simulation.
-   * @param requiredAmount the principal amount of money request dy the customer.
+   * @param client the customer that requested the loan.
+   * @param requiredAmount the principal amount of money requested by the customer.
    * @param numberOfMonthlyPayments the number of monthly payments to be made.
    * @param interestRate the interest rate for the loan.
    * @return a new Loan instance.
@@ -69,7 +69,7 @@ object Loan:
   /**
    * Private implementation of the Loan trait.
    *
-   * @param customer the customer associated with the loan simulation.
+   * @param customer the customer associated with the loan.
    * @param requiredAmount the principal amount of the loan.
    * @param numberOfPayments the total number of payments.
    * @param interestRate the interest rate of the loan.
@@ -81,7 +81,7 @@ object Loan:
      *
      * @return the total repayment amount.
      */
-    override def totalAmount: Money =  requiredAmount * (1.0 + interestRate)
+    override def totalAmount: Money = requiredAmount * (1.0 + interestRate)
 
     /**
      * Calculates the amount of each payment.

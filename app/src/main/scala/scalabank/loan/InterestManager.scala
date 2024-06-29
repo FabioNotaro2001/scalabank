@@ -5,7 +5,7 @@ import scalabank.entities.Customer.OldCustomerImpl
 import scalabank.loan.*
 
 /**
- * Manages the determination of appropriate interest rates for customers.
+ * Trait for managing the determination of appropriate interest rates for customers.
  */
 trait InterestManager:
   /**

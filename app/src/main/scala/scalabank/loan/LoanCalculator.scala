@@ -13,7 +13,7 @@ trait LoanCalculator:
    * Calculates a loan for a customer.
    *
    * @param customer the customer requesting the loan simulation.
-   * @param requiredAmount the amount of money requested for the loan  simulation.
+   * @param requiredAmount the amount of money requested for the loan simulation.
    * @param numberOfPayments the number of payments in which the loan will be repaid.
    * @return a Loan representing the calculated loan details.
    * @throws AssertionError if numberOfPayments is not greater than 0.
@@ -25,6 +25,7 @@ trait LoanCalculator:
  */
 trait LoanCalculatorComponent:
   loggerDependency: LoggerDependency =>
+
   /**
    * Implementation of LoanCalculator that logs the loan calculation process.
    */
@@ -41,7 +42,7 @@ trait LoanCalculatorComponent:
      * @throws AssertionError if `numberOfPayments` is not greater than 0.
      */
     override def calculateLoan(customer: Customer, requiredAmount: Money, numberOfPayments: Int): Loan =
-      assert(numberOfPayments > 0)
+      assert(numberOfPayments > 0, "Number of payments must be greater than 0")
       val loanComputed = Loan(customer, requiredAmount, numberOfPayments, interestManager.findAppropriateInterestForCustomer(customer))
       loggerDependency.logger.log(logger.getPrefixFormatter.getLoanSimulationPrefix + loanComputed)
       loanComputed

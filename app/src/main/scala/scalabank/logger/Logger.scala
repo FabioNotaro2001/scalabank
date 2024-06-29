@@ -109,3 +109,4 @@ class LoggerImpl extends Logger:
      * @return the current PrefixFormatter instance.
      */
     def getPrefixFormatter: PrefixFormatter = prefixFormatter
+
