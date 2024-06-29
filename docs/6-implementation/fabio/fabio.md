@@ -253,10 +253,38 @@ object InterestProvider:
 
 E' stato dunque sufficiente, all'atto della creazione della GUI, interrogare la tabella sopra riportata, convertire i risultati della query sotto forma di mappa e richiamare il metodo setInterestValues() dell'InterestProvider:
 ```
-object WindowStateImpl extends WindowState:
-  object GUI:
+...
+object GUI:
   def run(): Unit =
     ...
     InterestProvider.setInterestValues(database.interestTable.findAll().toMap)
     ...    
 ```
+Il secondo componente che è stato adattato per poter interagire con il database è stato MoneyTransfer.
+
+Siccome MoneyTransfer estende il trait Movement, esso necessita (come tutti gli altri movimenti, ossia deposito e prestito) di interagire con il database sia in lettura (nella GUI occorre riportare per ongi conto corrente la lista dei suoi movimenti) che in scrittura (quando si effettua un nuovo bonifico, esso dev'essere salvato sul database).
+
+Per soddisfare tali requisiti è stato sufficiente aggiungere una tabella dedicata ai movimenti bancari, che ha i seguenti campi:
+
+| ReceiverBanAccount | SenderBankAccount | Amount | Date |
+|:-------------------|:-----------------:|:-------|:-----|
+| ...                |        ...        |...     |...   |
+
+Per poter scrivere e leggere sulla tabella è bastato dunque utilizzare i metodi che avevamo predisposto per interagire con le tabelle del database (operazione da effettuare sempre nel codice relativo alla GUI):
+```
+...
+object GUI:
+  def run(): Unit =
+    ...
+    case "Account-Transfer" =>
+      ...
+      addLastMovementToDb(account.get)
+                                
+      _ <- updateList(
+        "Op-List",
+        account.get.movements.map(_.toString).toArray
+      )
+      ...                          
+```
+
+Si noti dunque che in questo caso, a differenza di quello precedente di InterestProvider, interagiamo con il database non solo in lettura ma anche in scrittura.
