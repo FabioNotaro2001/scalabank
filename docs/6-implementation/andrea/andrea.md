@@ -12,11 +12,9 @@ Riporto lo schema UML per la factory della persona.
 ![UML Persona](img/person.png)
 
 Invece è stato utilizzato un template method per quanto concerne la gestione delle diverse tipologie di dipendenti. In particolare è stata creata prima l'interfaccia `StaffPosition` la quale è un mixin, il quale contiene implementati i metodi comuni ed estende Person. A questo punto le classi `Employee` e `Manager` estendono `StaffPosition`.
-Riporto lo schema UML per il template method della gestione dei dipendenti. Si noti che (T) è un trait, (C) è una classe, (T, C) vuol dire che è stato creato il trait e la classe relativa utilizzando il pattern factory come descritto sopra per la classe `Persona`.
+Riporto lo schema UML per il template method della gestione dei dipendenti. Si noti che (T) è un trait, (E) è un'enumerazione, (C) è una classe, (T, C) vuol dire che è stato creato il trait e la classe relativa utilizzando il pattern factory come descritto sopra per la classe `Persona`.
 
 ![UML Persona](img/template.png)
-
-Ora riporto una sintetica descrizione delle classi:
 
 ### Person
 
@@ -30,9 +28,35 @@ Il trait `Person` rappresenta una persona con informazioni di base e relativi co
 
 ### StaffMember
 
-Il trait `StaffMember` rappresenta un membro dello staff con dettagli sulla posizione e metodi per calcolare i salari e gestire gli appuntamenti.
-Essendo un mixin esso fornisce funzionalità comuni a tutti i membri dello staff. È un'implementazione generica che utilizza un parametro di tipo `T` che estende `StaffPosition`. 
+Il trait `StaffMember` e `AppointmentBehaviour` rappresentano un membro dello staff con dettagli sulla posizione e metodi per calcolare i salari e gestire gli appuntamenti.
+`StaffMember` essendo un mixin esso fornisce funzionalità comuni a tutti i membri dello staff. È un'implementazione generica che utilizza un parametro di tipo `T` che estende `StaffPosition`. 
 Questa classe eredita da `Person`.
+
+``` scala 3
+trait AppointmentBehaviour:
+  private var appointments: List[Appointment] = List()
+  def getAppointments: Iterable[Appointment] = appointments
+  def addAppointment(appointment: Appointment): Unit =
+    appointments = appointments :+ appointment
+  def removeAppointment(appointment: Appointment): Unit =
+    appointments = appointments.filterNot(_ == appointment)
+  def updateAppointment(appointment: Appointment)(newAppointment: Appointment): Unit =
+    appointments = appointments.map:
+      case app if app == appointment => newAppointment
+      case app => app
+```
+
+``` scala 3
+trait StaffMember[T <: StaffPosition] extends Person with AppointmentBehaviour:
+  def hiringYear: Int
+  def position: T
+  def salary: Double = position.salary
+  def annualSalary: Double = position.salary * 12
+  def yearsOfService: Int = LocalDate.now.getYear - hiringYear
+  def annualNetSalary(using taxRate: Double): Double =
+    val taxes = annualSalary * taxRate
+    annualSalary - taxes
+```
 
 #### Meccanismi utilizzati:
 
@@ -41,7 +65,6 @@ Questa classe eredita da `Person`.
 - **Mixin** Il trait avendo sia metodi implementati che non è un mixin.
 - **Currying** Per il passaggio di valori in `updateAppointment`.
 - **List** Per la lista è stato deciso di usare una lista immutabile, usando una var.
-
 
 ### Employee
 
@@ -54,6 +77,19 @@ Il trait `Employee` rappresenta un dipendente che estende `AbstractStaffMember` 
 - **Factory Method:** Metodo `apply` per creare istanze di `Employee` con la case class `EmployeeImpl`.
 - **For-yield** Utilizzo di for-yield per i metodi `allEmployeesSalary` e `totalAnnualSalary`.
 - **Export** Utilizzo della delegazione su un oggetto `Person`.
+
+Riportiamo alcuni metodi:
+
+``` scala 3
+extension (employees: List[Employee])
+  def allEmployeesSalary: List[Double] =
+    for
+      e <- employees
+    yield e.annualSalary
+  
+  def totalAnnualSalary: Double =
+    (for e <- employees yield e.annualSalary).sum
+```
 
 ### Manager
 
@@ -69,13 +105,24 @@ Il trait `Manager` rappresenta un manager e fornisce funzionalità aggiuntive pe
 - **Enumerazione:** `ManagerPosition` è un'enumerazione che definisce diverse posizioni manageriali e i relativi salari.
 - **Factory Method:** Metodo `apply` per creare istanze di `Manager` con la case class `ManagerImpl`.
 - **Extension Methods** Per definire i metodi `projectBudget` e `totalProjectBudgets` su un manager e `totalProjectsManaged` su una lista di manager.
-- **Tail_recursion** Per calcolare `totalProjectsManaged` per contre il numero di progetti fra tutti i manager.
+- **Tail recursion** Per calcolare `totalProjectsManaged` per contre il numero di progetti fra tutti i manager.
 - **Export** Utilizzo della delegazione su un oggetto `Person`.
+
+Riportiamo alcuni metodi:
+``` scala 3
+extension (managers: List[Manager])
+    def totalProjectsManaged: Int =
+      @tailrec
+      def countProjects(managers: List[Manager], acc: Int = 0): Int =
+        managers match
+          case Nil => acc
+          case head :: tail => countProjects(tail, acc + head.projects.size)
+      countProjects(managers)
+```
 
 ### Project
 
 Il trait `Project` rappresenta un progetto con un nome, un budget e un team di lavoro.
-
 
 ### StaffPosition
 
