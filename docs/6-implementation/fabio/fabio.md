@@ -198,8 +198,8 @@ object LoanCalculator extends LoggerDependency with LoanCalculatorComponent:
 
 ## Implementazione dei bonifici
 L'implementazione dei trasferimenti tra conti corrente non ha richiesto l'utilizzo di meccanismi particolarmente avanzati, tuttavia nella presente sezione mi preme evidenziare due dipendenze che non erano emerse in fase di design dettagliato e che pertanto hanno richiesto una gestione corretta e rispettosa dei principi di buona programmazione visti a lezione:
-- dipendenza verso il FeeManager &rarr; come di solito accade, un bonifico comporta anche il pagamento di una piccola fee a carico del mittente, pertanto è stato necessario richiamare il metodo FeeManager.calculateAmountWithFee() per sapere con esattezza la quantità da prelevare dal conto corrente di partenza compreso il costo dell'operazione di bonifico
-- dipendenza verso il Converter &rarr; tale dipendenza risulta fondamentale nel caso particolare di bonifico tra conti correnti contenenti denaro di valuta differente (ad esempio un bonifico da un conto in euro verso un conto in sterline), in cui per calcolare correttamente l'ammontare che deve giungere nel conto destinazione occorre prima sfruttare l'apposito convertitore di valuta.
+- dipendenza verso il `FeeManager` &rarr; come di solito accade, un bonifico comporta anche il pagamento di una piccola fee a carico del mittente, pertanto è stato necessario richiamare il metodo `FeeManager.calculateAmountWithFee()` per sapere con esattezza la quantità da prelevare dal conto corrente di partenza compreso il costo dell'operazione di bonifico
+- dipendenza verso il `Converter` &rarr; tale dipendenza risulta fondamentale nel caso particolare di bonifico tra conti correnti contenenti denaro di valuta differente (ad esempio un bonifico da un conto in euro verso un conto in sterline), in cui per calcolare correttamente l'ammontare che deve giungere nel conto destinazione occorre prima sfruttare l'apposito convertitore di valuta.
 
 In considerazione di quanto detto sopra, il cuore dell'implementazione relativa ai bonifici bancari può essere riassunta dal frammento do codice Scala sotto riportato:
 ```
@@ -222,9 +222,9 @@ case class MoneyTransfer(override val senderBankAccount: BankAccount, override v
 ## Integrazione con il database
 Una volta inserito il database, a cavallo tra il secondo e terzo sprint, alcuni miei componenti lo avrebbero potuto usare per risultare maggiormente generali, flessibili e riusabili.
 
-In particolare il database è risultato utile per i componenti InterestProvider e MoneyTransfer.
+In particolare il database è risultato utile per i componenti `InterestProvider` e `MoneyTransfer`.
 
-Per quanto riguarda InterestProvider, abbiamo scelto di leggere i tassi d'interesse dal database, simulando un approccio ragionevole e comune nell'ambito bancario. 
+Per quanto riguarda `InterestProvider`, abbiamo scelto di leggere i tassi d'interesse dal database, simulando un approccio ragionevole e comune nell'ambito bancario. 
 
 Pertanto al database è stata preliminarmente aggiunta una tabella contenente i tassi d'interesse, il cui contenuto è il seguente:
 
@@ -234,7 +234,7 @@ Pertanto al database è stata preliminarmente aggiunta una tabella contenente i 
 | young   | 0.03 |
 |  old    | 0.05 |
 
-Per fare in modo che InterestProvider estraesse tali interessi dal database è stato necessario aggiungergli il metodo setInterestValues(), con cui è possibile passargli una mappa contenente gli interessi desiderati.
+Per fare in modo che `InterestProvider` estraesse tali interessi dal database è stato necessario aggiungergli il metodo `setInterestValues()`, con cui è possibile passargli una mappa contenente gli interessi desiderati.
 ```
 object InterestProvider:
   private var _interestValues: Map[String, InterestRate] = Map()
@@ -251,7 +251,7 @@ object InterestProvider:
     override def getInterestForOldCustomer: InterestRate = interestValues("old")
 ```
 
-E' stato dunque sufficiente, all'atto della creazione della GUI, interrogare la tabella sopra riportata, convertire i risultati della query sotto forma di mappa e richiamare il metodo setInterestValues() dell'InterestProvider:
+E' stato dunque sufficiente, all'atto della creazione della GUI, interrogare la tabella sopra riportata, convertire i risultati della query sotto forma di mappa e richiamare il metodo `setInterestValues()` dell'`InterestProvider`:
 ```
 ...
 object GUI:
@@ -260,9 +260,9 @@ object GUI:
     InterestProvider.setInterestValues(database.interestTable.findAll().toMap)
     ...    
 ```
-Il secondo componente che è stato adattato per poter interagire con il database è stato MoneyTransfer.
+Il secondo componente che è stato adattato per poter interagire con il database è stato `MoneyTransfer`.
 
-Siccome MoneyTransfer estende il trait Movement, esso necessita (come tutti gli altri movimenti, ossia deposito e prestito) di interagire con il database sia in lettura (nella GUI occorre riportare per ongi conto corrente la lista dei suoi movimenti) che in scrittura (quando si effettua un nuovo bonifico, esso dev'essere salvato sul database).
+Siccome `MoneyTransfer` estende il trait `Movement`, esso necessita (come tutti gli altri movimenti, ossia deposito e prestito) di interagire con il database sia in lettura (nella GUI occorre riportare per ongi conto corrente la lista dei suoi movimenti) che in scrittura (quando si effettua un nuovo bonifico, esso dev'essere salvato sul database).
 
 Per soddisfare tali requisiti è stato sufficiente aggiungere una tabella dedicata ai movimenti bancari, che ha i seguenti campi:
 
@@ -287,4 +287,4 @@ object GUI:
       ...                          
 ```
 
-Si noti dunque che in questo caso, a differenza di quello precedente di InterestProvider, interagiamo con il database non solo in lettura ma anche in scrittura.
+Si noti dunque che in questo caso, a differenza di quello precedente di `InterestProvider`, interagiamo con il database non solo in lettura ma anche in scrittura.
