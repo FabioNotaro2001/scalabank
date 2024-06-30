@@ -16,8 +16,8 @@ trait SavingsJar:
   def changeCurrency(newCurrency: Currency, conversionFee: BigDecimal): Unit
   def deposit(amount: Money): Boolean
   def withdraw(amount: Money): Boolean
-  def applyMonthlyDeposit(): Unit
-  def applyYearInterest(): Unit
+  def applyMonthlyDeposit(): Boolean
+  def applyYearInterest(): Boolean
   def annualProjection(year: Int): Money
 
 case class SavingJarImpl(var _annualInterest: Double,
@@ -62,11 +62,15 @@ case class SavingJarImpl(var _annualInterest: Double,
     case _ => throw IllegalArgumentException()
 
 
-  override def applyYearInterest(): Unit =
-    _balance = _balance * (1 + annualInterest / 100)
+  override def applyYearInterest(): Boolean =
+    val newBalance = _balance * (1 + annualInterest / 100)
+    if newBalance >= 0.toMoney then
+      _balance = newBalance
+      return true
+    return false
 
-  override def applyMonthlyDeposit(): Unit =
-    withdraw(monthlyDeposit)
+  override def applyMonthlyDeposit(): Boolean =
+    deposit(monthlyDeposit)
 
   override def annualProjection(year: Int): Money =
     var projectedBalance = _balance
