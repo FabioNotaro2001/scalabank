@@ -15,7 +15,19 @@ I componenti che compongono il package entities sono dunque:
 - esiste poi anche il trait Promotable, per esprimere che è possibile che un Employee venga promosso ad una nuova posizione
 - esiste infine anche il trait+implementazione Project che esprime in quali progetti è impegnato ciascun membro dello staff &rarr; si noti che ogni progetto ha un manager come supervisore e una lista di impiegati coinvolti.
 
-## Design di dettaglio delle operaizoni bancarie
+## Design di dettaglio della banca
+La banca è un componente fondamentale del nostro framework, in quanto è il cuore che contiene alcune entità fondamentali quali clienti, impiegati e appuntamenti.
+
+Per modellare il concetto di banca è stato speso diverso tempo per analizzare se fosse meglio inserire il riferimento della banca alle varie altre entità (cliente e impiegato) o il contrario, ovvero inserire i riferimenti degli impiegati e deiclienti all'interno della banca.
+
+Abbiamo optato per l'ultima strategia (inserire nella banca delle liste per contenere clienti, impiegati, appuntamenti...) siccome da un'attenta analisi è emerso che saranno più frequenti le operazioni che vanno dalla banca alle entità che contiene (ad esempio ricerca di clienti della banca, filtraggio dei suoi impiegati...).
+
+Il diagramma delle classi UML relativo alla banca è riportato di seguito:
+
+![uml bank](img/UMLBanca.png)
+
+
+## Design di dettaglio delle operazioni bancarie
 Per soddisfare i requisiti emersi nella fase di analisi riguardanti le operazioni bancarie è stato progettato il seguente diagramma delle classi:
 ![uml operations](img/UMLOperazioni.png)
 Dallo schema si nota che abbiamo ritenuto ragionevole inserire anche un trait comune Movement che racchiudesse tutti gli aspetti condivisi tra tali operazioni bancarie.
@@ -41,6 +53,14 @@ I componenti presenti sono dunque:
 - la classe InterestManagerImpl dovrà però avere un campo dedicato ad un altro componente noto come InterestProvider, il quale contiene il valore di tutti i vari tassi d'interesse disponibili &rarr; tale trait+classe può essere vista come una sorta di container che mette a disposizione (magari previa interrogazione di database) tutti i tassi d'interesse possibili
 - il trait Loan, che è anche il tipo di ritorno del metodo calculateLoan() del trait LoanCalculator, rappresenta come suggerisce il nome un prestituo/mutuo, dunque conterrà dei metodi per interagire con vari parametri rilevanti come il numero di rate o l'ammontare di una rata
 - il trait Loan, per funzionare correttamente, necessita di interagire con altre componenti della libreria quali Money (per rappresentare valori e quantità monetarie al posto di Int, evitando di fatto la primitive type obsession), Customer e InterestRate.
+
+## Design di dettaglio degli appuntamenti
+Un ulteriore requisito emerso nella fase di requirements engineering/analysis era la possibilità di fissare appuntamenti tra clienti e impiegati per discutere di un argomento.
+
+Dalla progettazione di questo componente è emerso il seguente diagramma UML:
+
+![uml appointments](img/UMLAppuntamento.png)
+
 ## Design di dettaglio del logger
 Il design dettagliato del logger ha subito numerose ristrutturazioni incrementali durante tutta la fase di design, siccome partendo dalla soluzione più facile ci si è resi conto che tale componente poteva essere ulteriormente rifinito per applicarvi pattern di progettazione e principi (descritti più dettagliatamente nel capitolo dedicato all'implementazione).
 ![uml logger](img/UMLLogger.png)
