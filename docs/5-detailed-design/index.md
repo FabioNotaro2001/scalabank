@@ -26,6 +26,13 @@ Il diagramma delle classi UML relativo alla banca è riportato di seguito:
 
 ![uml bank](img/UMLBanca.png)
 
+## Design di dettaglio del conto bancario
+Il diagramma delle classi relativo alla progettazione del conto corrente è il seguente:
+![uml bank account](img/UMLConto.png)
+Si noti, come raffinamento dei requisiti, che:
+- un cliente può avere uno o più conti corrente
+- un conto corrente tiene traccia tramite una qualche collezione (probabilmente una lista è più che adatta) dei suoi movimenti
+- un conto corrente può avere (uso degli Options) un saving jar, il quale è un'astrazione per una sorta di salvadanaio che annualmente produce degli inetressi.
 
 ## Design di dettaglio delle operazioni bancarie
 Per soddisfare i requisiti emersi nella fase di analisi riguardanti le operazioni bancarie è stato progettato il seguente diagramma delle classi:
