@@ -126,34 +126,34 @@ trait CustomerComponent:
                                _name: String,
                                _surname: String,
                                _birthYear: Int) extends AbstractCustomer(_cf: String, _name: String, _surname: String, _birthYear: Int):
-    
+
     override def fidelity(using calc: FidelityCalculator): FidelityLevel = calc.calculateFidelityLevel(bankAccounts.map(ba => ba.fidelity.points).sum, true)
-    
+
     loggerDependency.logger.log(logger.getPrefixFormatter.getCreationPrefix + this)
 
   case class OldCustomerImpl(_cf: String,
                              _name: String,
                              _surname: String,
                              _birthYear: Int) extends AbstractCustomer(_cf: String, _name: String, _surname: String, _birthYear: Int):
-    
+
     override def fidelity(using calc: FidelityCalculator): FidelityLevel = calc.calculateFidelityLevel(bankAccounts.map( ba => ba.fidelity.points).sum, true)
-    
+
     loggerDependency.logger.log(logger.getPrefixFormatter.getCreationPrefix + this)
 
   case class BaseCustomerImpl(_cf: String,
                               _name: String,
                               _surname: String,
                               _birthYear: Int) extends AbstractCustomer(_cf: String, _name: String, _surname: String, _birthYear: Int):
-    
+
     override def fidelity(using calc: FidelityCalculator): FidelityLevel = calc.calculateFidelityLevel(bankAccounts.map( ba => ba.fidelity.points).sum, false)
-    
+
     loggerDependency.logger.log(logger.getPrefixFormatter.getCreationPrefix + this)
 
 /**
  * Companion object for the Customer trait.
  */
 object Customer extends LoggerDependency with CustomerComponent:
-  
+
   override val logger: Logger = LoggerImpl()
 
   def apply(cf: String, name: String, surname: String, birthYear: Int): Customer = Person(cf, name, surname, birthYear) match

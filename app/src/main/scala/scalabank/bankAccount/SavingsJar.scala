@@ -95,7 +95,7 @@ trait SavingsJar:
 case class SavingJarImpl(var _annualInterest: Double,
                          var _monthlyDeposit: Money,
                          var _currency: Currency,
-                         val bankAccount: BankAccount) extends SavingsJar:
+                         bankAccount: BankAccount) extends SavingsJar:
 
   private var _balance: Money = 0.toMoney
 
