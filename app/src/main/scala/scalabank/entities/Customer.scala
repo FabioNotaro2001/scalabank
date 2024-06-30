@@ -7,13 +7,55 @@ import scalabank.currency.Currency
 import scalabank.bankAccount.BankAccount
 import scalabank.bank.{Bank, BankAccountType}
 
+/**
+ * Trait representing a customer of a bank
+ */
 trait Customer extends Person with AppointmentBehaviour:
+
+  /**
+   * Calculates the fidelity level of the customer based on their bank accounts and a fidelity calculator.
+   *
+   * @return the fidelity level of the customer.
+   */
   def fidelity(using FidelityCalculator): FidelityLevel
+
+  /**
+   * @return the bank the customer is registered with, if any.
+   */
   def bank: Option[Bank]
+
+  /**
+   * Registers the customer with a specified bank.
+   *
+   * @param bank the bank to register with.
+   */
   def registerBank(bank: Bank): Unit
+
+  /**
+   * Deregisters the customer from their current bank.
+   *
+   * @param bank the bank to deregister from.
+   */
   def deregisterBank(bank: Bank): Unit
+
+  /**
+   * Adds an existing bank account to the customer's list of bank accounts.
+   *
+   * @param bankAccount the bank account to add.
+   */
   def addBankAccount(bankAccount: BankAccount): Unit
+
+  /**
+   * Creates and adds a new bank account of a specified type and currency to the customer's list of bank accounts.
+   *
+   * @param bankAccountType the type of the bank account to create.
+   * @param currency        the currency of the bank account to create.
+   */
   def addBankAccount(bankAccountType: BankAccountType, currency: Currency): Unit
+
+  /**
+   * @return the list of bank accounts associated with the customer.
+   */
   def bankAccounts: Iterable[BankAccount]
 
 abstract class AbstractCustomer(_cf: String,
@@ -46,10 +88,22 @@ abstract class AbstractCustomer(_cf: String,
 
   override def bankAccounts: Iterable[BankAccount] = _bankAccounts
 
-
+/**
+ * Trait representing a fidelity calculator.
+ */
 trait FidelityCalculator:
+  /**
+   * Calculates the fidelity level based on the given points and age group.
+   *
+   * @param points       the fidelity points.
+   * @param isYoungOrOld whether the customer is considered young or old.
+   * @return the fidelity level.
+   */
   def calculateFidelityLevel(points: Int, isYoungOrOld: Boolean): FidelityLevel
 
+/**
+ * Given implementation of the FidelityCalculator.
+ */
 given defaultFidelityCalculator: FidelityCalculator with
   def calculateFidelityLevel(points: Int, isYoungOrOld: Boolean): FidelityLevel = isYoungOrOld match
     case true => points match
@@ -63,6 +117,9 @@ given defaultFidelityCalculator: FidelityCalculator with
       case p if p >= 500 => FidelityLevel.Silver
       case _ => FidelityLevel.Bronze
 
+/**
+ * Component trait for customer, including logging and different customer types.
+ */
 trait CustomerComponent:
   loggerDependency: LoggerDependency =>
   case class YoungCustomerImpl(_cf: String,
@@ -74,7 +131,6 @@ trait CustomerComponent:
     
     loggerDependency.logger.log(logger.getPrefixFormatter.getCreationPrefix + this)
 
-
   case class OldCustomerImpl(_cf: String,
                              _name: String,
                              _surname: String,
@@ -83,7 +139,6 @@ trait CustomerComponent:
     override def fidelity(using calc: FidelityCalculator): FidelityLevel = calc.calculateFidelityLevel(bankAccounts.map( ba => ba.fidelity.points).sum, true)
     
     loggerDependency.logger.log(logger.getPrefixFormatter.getCreationPrefix + this)
-
 
   case class BaseCustomerImpl(_cf: String,
                               _name: String,
@@ -94,8 +149,11 @@ trait CustomerComponent:
     
     loggerDependency.logger.log(logger.getPrefixFormatter.getCreationPrefix + this)
 
-
+/**
+ * Companion object for the Customer trait.
+ */
 object Customer extends LoggerDependency with CustomerComponent:
+  
   override val logger: Logger = LoggerImpl()
 
   def apply(cf: String, name: String, surname: String, birthYear: Int): Customer = Person(cf, name, surname, birthYear) match

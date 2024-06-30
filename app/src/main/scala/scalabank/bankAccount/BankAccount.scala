@@ -10,8 +10,6 @@ import scala.collection.SeqView
 import scala.collection.immutable.List
 import scala.reflect.ClassTag
 
-import scalabank.currency.MoneyADT.toMoney
-
 /**
  * Represents the state of a bank account.
  */
@@ -111,10 +109,22 @@ trait BankAccount:
      */
     def addMovement(movement: Movement): Unit
 
+    /**
+     * @return an optional savings jar associated with the account
+     */
     def savingsJar: Option[SavingsJar]
 
+    /**
+     * Creates a savings jar for the account with specified monthly deposit and interest rate.
+     *
+     * @param monthlyDeposit the amount of money to be deposited monthly
+     * @param annualInterest the annual interest rate (default is bankAccountType.interestSavingJar)
+     */
     def createSavingJar(monthlyDeposit: Money, annualInterest: Double = bankAccountType.interestSavingJar): Unit
 
+    /**
+     * @return the fidelity program associated with the account
+     */
     def fidelity: Fidelity
 
 object BankAccount extends LoggerDependency with BankAccountComponent:
