@@ -1,5 +1,5 @@
 # Sprint Planning
-La tabella sottostante riporta lo sprint backlog relativo al terzo sprint.
+La tabella sottostante riporta lo sprint backlog relativo al terzo ed ultimo sprint.
 <table>
   <thead>
     <tr>

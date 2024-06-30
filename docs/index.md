@@ -8,6 +8,6 @@
 - [Design di dettaglio](5-detailed-design/index.md)
 - [Implementazione](6-implementation/index.md)
 - [Testing](7-testing/index.md)
-- [Retrospettiva](8-retrospective/index.md)
+- [Retrospettiva](8-retrospettiva/index.md)
 
 La documentazione relativa alla metodologia di sviluppo è disponibile [qui](process/index.md).

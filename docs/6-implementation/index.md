@@ -10,6 +10,6 @@ L'implementazione "esplode" il design, ma solo laddove pensiate che serva dire q
 
 ## [Giacomo Leo Bertuccioli](giacomo/giacomo.md)
 
-[Back to index](../index.md) |
-[Previous Chapter](../5-detailed-design/index.md) |
-[Next Chapter](../7-testing/index.md)
+[TORNA ALL'INDICE](../index.md) |
+[PRECEDENTE CAPITOLO](../5-detailed-design/index.md) |
+[PROSSIMO CAPITOLO](../7-testing/index.md)

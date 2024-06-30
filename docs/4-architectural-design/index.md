@@ -27,6 +27,6 @@ Nell'elenco che segue si descrivono un po' più in dettaglio i package che sonos
 
 Grazie al diagramma dei package prodotto durante la fase di design architetturale, è stato possibile per il team avere una vista complessiva e globale del progetto, in modo anche da poter meglio organizzare i vari sprint e suddividere equamente il lavoro tra i membri del gruppo.
 
-[Back to index](../index.md) |
-[Previous Chapter](../3-requirements/index.md) |
-[Next Chapter](../5-detailed-design/index.md)
+[TORNA ALL'INDICE](../index.md) |
+[PRECEDENTE CAPITOLO](../3-requirements/index.md) |
+[PROSSIMO CAPITOLO](../5-detailed-design/index.md)

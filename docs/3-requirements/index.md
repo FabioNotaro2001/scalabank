@@ -64,6 +64,6 @@ I principali vincoli di produzione sono:
 - 6.2 impiego di Scala come linguaggio di programmazione
 - 6.2 utilizzo di Scalatest per testing, quanto più possibile sotto forma di Domain Specific Language.
 
-[Back to index](../index.md) | 
-[Previous Chapter](../2-development-process/index.md) | 
-[Next Chapter](../4-architectural-design/index.md)
+[TORNA ALL'INDICE](../index.md) | 
+[PRECEDENTE CAPITOLO](../2-development-process/index.md) | 
+[PROSSIMO CAPITOLO](../4-architectural-design/index.md)

@@ -8,5 +8,5 @@ Si noti che la retrospettiva è l'unica sezione che può citare aneddoti di cosa
 ## Migliorie e sviluppi futuri
 
 
-[Back to index](../index.md) |
-[Previous Chapter](../7-testing/index.md)
+[TORNA ALL'INDICE](../index.md) |
+[PRECEDENTE CAPITOLO](../7-testing/index.md)

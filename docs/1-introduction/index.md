@@ -19,5 +19,5 @@ Il framework è concentrato in gran parte sulla modellazione delle entità e del
 
 Le caratteristiche ritenute indicative della buona riuscita del progetto sono da considerare la facilità d'implementazione di un'interfaccia grafica partendo dalla libreria base, il funzionamento corretto di tutti i moduli che compongono la libreria e l'organizzazione del codice in modo che sia chiaro, ben documentato e facilmente riusabile.
 
-[Back to index](../index.md) | 
-[Next Chapter](../2-development-process/index.md)
+[TORNA ALL'INDICE](../index.md) | 
+[PROSSIMO CAPITOLO](../2-development-process/index.md)

@@ -103,6 +103,6 @@ Come si nota dal diagramma seguente, i componenti necessari alla conversione di 
 - La classe CurrencyImpl è l'implementazione del trait sopra descritto
 - Infine è presente un object MoneyADT, che mette a disposizione tutte le funzionalità utili a lavorare in modo corretto con valori e quantità monetarie.
 
-[Back to index](../index.md) |
-[Previous Chapter](../4-architectural-design/index.md) |
-[Next Chapter](../6-implementation/index.md)
+[TORNA ALL'INDICE](../index.md) |
+[PRECEDENTE CAPITOLO](../4-architectural-design/index.md) |
+[PROSSIMO CAPITOLO](../6-implementation/index.md)

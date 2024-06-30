@@ -69,6 +69,6 @@ L'unico particolare strumento utilizzato è Gradle, noto per automatizzare e sem
 
 
 
-[Back to index](../index.md) | 
-[Previous Chapter](../1-introduction/index.md) | 
-[Next Chapter](../3-requirements/index.md)
+[TORNA ALL'INDICE](../index.md) | 
+[PRECEDENTE CAPITOLO](../1-introduction/index.md) | 
+[PROSSIMO CAPTIOLO](../3-requirements/index.md)

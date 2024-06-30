@@ -10,9 +10,7 @@ Tali differenze sono riportate nell'elenco seguente:
 
 L'elenco seguente riporta invece il _Product Backlog_ e tutta la documentazione (artefatti e verbali) prodotta per i vari Sprint:
 
-- [Product Backlog](0-product-backlog.md)
-- [First Sprint](1-sprint.md)
-- [Second Sprint](2-sprint.md)
-- [Third Sprint](3-sprint.md)
-- [Fourth Sprint](4-sprint.md)
-- [Fifth Sprint](5-sprint.md)
+- [PRODUCT BACKLOG](0-product-backlog.md)
+- [PRIMO SPRINT](1-sprint.md)
+- [SECONDO SPRINT](2-sprint.md)
+- [TERZO SPRINT](3-sprint.md)
