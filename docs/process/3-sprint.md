@@ -17,32 +17,32 @@ La tabella sottostante riporta lo sprint backlog relativo al terzo ed ultimo spr
   <tbody>
     <tr>
       <td rowspan="2">l'utente può modellare operazioni di risparmio e investimenti tramite il salvadanaio dei clienti</td>
-      <td>creazione e modellazione del salvadanaio/risparmi</td>
+      <td>creazione e modellazione del salvadanaio</td>
       <td>Mazzotti</td>
       <td>3</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
+      <td>3</td>
+      <td>2</td>
+      <td>1</td>
       <td>0</td>
       <td>0</td>
     </tr>
     <tr>
-      <td>creazione e modellazione di investimenti</td>
+      <td>creazione e modellazione dei prelievi e depositi del salvadanio</td>
       <td>Mazzotti</td>
       <td>3</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
+      <td>3</td>
+      <td>3</td>
+      <td>2</td>
+      <td>1</td>
       <td>0</td>
     </tr>
     <tr>
       <td rowspan="3">l'utente può modellare operazioni bancarie tra conti (trasferimenti, bonifici...)</td>
       <td>progettazione e creazione dell'entità bonifico</td>
       <td>Notaro</td>
-      <td>3</td>
-      <td>0</td>
-      <td>0</td>
+      <td>2</td>
+      <td>2</td>
+      <td>1</td>
       <td>0</td>
       <td>0</td>
       <td>0</td>
@@ -50,9 +50,9 @@ La tabella sottostante riporta lo sprint backlog relativo al terzo ed ultimo spr
     <tr>
       <td>aggiunta della funzione che permette ad un cliente di fare un bonifico</td>
       <td>Notaro, Mazzotti</td>
-      <td>3</td>
-      <td>0</td>
-      <td>0</td>
+      <td>2</td>
+      <td>2</td>
+      <td>1</td>
       <td>0</td>
       <td>0</td>
       <td>0</td>
@@ -60,10 +60,10 @@ La tabella sottostante riporta lo sprint backlog relativo al terzo ed ultimo spr
     <tr>
       <td>collegamento del logger al bonifico</td>
       <td>Notaro</td>
-      <td>2</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
       <td>0</td>
       <td>0</td>
     </tr>
@@ -72,8 +72,8 @@ La tabella sottostante riporta lo sprint backlog relativo al terzo ed ultimo spr
       <td>gestione dei prelievi</td>
       <td>Bedei</td>
       <td>2</td>
-      <td>0</td>
-      <td>0</td>
+      <td>2</td>
+      <td>1</td>
       <td>0</td>
       <td>0</td>
       <td>0</td>
@@ -82,7 +82,7 @@ La tabella sottostante riporta lo sprint backlog relativo al terzo ed ultimo spr
       <td>applicazione di eventuali fee alle operazioni</td>
       <td>Bedei</td>
       <td>2</td>
-      <td>0</td>
+      <td>1</td>
       <td>0</td>
       <td>0</td>
       <td>0</td>
@@ -92,7 +92,7 @@ La tabella sottostante riporta lo sprint backlog relativo al terzo ed ultimo spr
       <td>generalizzazione del concetto di fee</td>
       <td>Bedei, Mazzotti</td>
       <td>3</td>
-      <td>0</td>
+      <td>1</td>
       <td>0</td>
       <td>0</td>
       <td>0</td>
@@ -102,7 +102,7 @@ La tabella sottostante riporta lo sprint backlog relativo al terzo ed ultimo spr
       <td>gestione dei depositi</td>
       <td>Bedei</td>
       <td>2</td>
-      <td>0</td>
+      <td>1</td>
       <td>0</td>
       <td>0</td>
       <td>0</td>
@@ -112,9 +112,9 @@ La tabella sottostante riporta lo sprint backlog relativo al terzo ed ultimo spr
       <td>saldo movimenti del conto</td>
       <td>Bedei, Notaro, Mazzotti</td>
       <td>4</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
+      <td>3</td>
+      <td>2</td>
+      <td>1</td>
       <td>0</td>
       <td>0</td>
     </tr>
@@ -123,7 +123,7 @@ La tabella sottostante riporta lo sprint backlog relativo al terzo ed ultimo spr
       <td>terminazione della parte della GUI dedicata al login</td>
       <td>Bertuccioli</td>
       <td>1</td>
-      <td>0</td>
+      <td>1</td>
       <td>0</td>
       <td>0</td>
       <td>0</td>
@@ -133,19 +133,19 @@ La tabella sottostante riporta lo sprint backlog relativo al terzo ed ultimo spr
       <td>terminazione della parte della GUI dedicata al dipendente</td>
       <td>Bertuccioli, Bedei</td>
       <td>2</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
+      <td>2</td>
+      <td>2</td>
+      <td>2</td>
+      <td>2</td>
       <td>0</td>
     </tr>
     <tr>
       <td>terminazione della parte della GUI dedicata al cliente</td>
       <td>Bertuccioli, Bedei, Mazzotti, Notaro</td>
       <td>6</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
+      <td>6</td>
+      <td>4</td>
+      <td>2</td>
       <td>0</td>
       <td>0</td>
     </tr>
@@ -156,20 +156,16 @@ La tabella sottostante riporta lo sprint backlog relativo al terzo ed ultimo spr
 Come si nota dallo sprint backlog, l'obiettivo principale del terzo ed ultimo sprint è portare a termine il progetto, non solo finendo di implementare i concetti mancanti ma anche inserendoli nella GUI per verificare la correttezza e buona qualità del codice prodotto.
 
 # Terminazione dello sprint
-La terminazione dello sprint è avvenuta in data 19/06/2024.
+La terminazione del terzo ed ultimo sprint è avvenuta in data 30/06/2024.
 
 # Sprint Review
-Il team si ritiene soddisfatto di essere riuscito a completare tutti i task previsti per questo sprint.
+Il team si ritiene soddisfatto non solo di essere riuscito a modellare anche i componenti finali e mancanti (prelievi, depositi, bonifici, salvadanaio), ma anche e soprattutto di essere riuscito a mettere assieme tutti i componenti nella GUI, realizzando di fatto un prototipo di quella che potrebbe essere un'applicazione bancaria realistica realizzata grazie al nostro framework.
 
-Il team è inoltre molto felice di essere riuscito a migliorare la propria efficienza, ovvero a rispettare il tempo previsto per completare questo sprint.
+In quest'ultimo sprint si è sentita un po' la stanchezza, sicccome per effettuare taluni interventi (magari anche semplici) è stato necessario più tempo del previsto, non solo per l'intervento in sè ma magari anche per coordinarlo ed organizzarlo.
 
-Una particolarità di questo sprint è stata che due membri del gruppo sono riusciti a portarsi avanti con il lavoro, implementando più entità di quanto previsto.
-
-In particolare Bertuccioli, avendo terminato in fretta l'implementazione delle filiali, si è adoperato per portarsi avanti con l'implementazione anche degli appuntamenti. Come conseguenza di ciò, il suo ultimo sprint prevederà (come si può notare nell'apposita sezione) un impegno per completare la GUI introducendovi le funzionalità necessarie.
-
-Similmente è avvenuto per Bedei che, avendo terminato prima del previsto l'implementazione della conversione di valute, è riuscito nel presente sprint anche ad implementare un database siccome ne è emersa la necessità e comodità per molti concetti (tassi d'interesse, persone...).
+Nonostante ciò lo sprint ha rispettato pienamente quelle che erano le nostre attese, sia sulle tempistiche che sul lavoro svolto, pertanto il gruppo si ritiene molto soddisfatto di quanto realizzato.
 
 # Sprint Retrospective
-In ottica di miglioramento ulteriore dell'efficienza e della sincronizzazione del lavoro di gruppo, durante la sprint retrospective si è discusso di probabili ulteriori strategie per evitare i merge conflict.
+Come accennato anche nella sezione precedente, il team concorda nell'affermare che la stanchezza avveritita nel terzo sprint non deve compromettere i prossimi e cruciali giorni di lavoro, nel quale bisognerà organizzare appuntamenti e ritrovi anche più fitti e lunghi per portare a termine attività fondamentali quali la terminazione e rilettura completa della relazione, la creazione del JAR e la verifica del rispetto di tutte le regole imposte per consegnare il progetto.
 
-Inoltre, siccome il progetto si sta avvicinando alla sua deadline e dunque alla parte finale, il gruppo ritiene ragionevole incrementare la frequenza degli incontri (daily scrum giornalieri) per migliorare così la sincronizzazione dei vari flussi di lavoro e fare in modo che ogni membro del team sia maggiormente aggiornato sullo stato dei lavori altrui.
+Il team è anche concorde nell'affermare che si è assistito, cosa prevedibile ma non scontata, ad un miglioramento notevole rispetto agli sprint precedenti per quanto concerne la sincronizzazione delle attività e la gestione delle dipendenza tra i task.
