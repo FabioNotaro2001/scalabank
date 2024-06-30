@@ -100,10 +100,10 @@ trait Bank:
    * @param nameType          the name of the bank account type
    * @param feeWithdraw       the fee for withdrawals
    * @param feeDeposit        the fee for deposits
-   * @param feeMoneyTransfert the fee for money transfers
+   * @param feeMoneyTransfer the fee for money transfers
    * @param interestSavingJar the interest rate for the saving jar
    */
-  def addBankAccountType(nameType: String, feeWithdraw: Money, feeDeposit: Money, feeMoneyTransfert: Money, interestSavingJar: Double): Unit
+  def addBankAccountType(nameType: String, feeWithdraw: Money, feeDeposit: Money, feeMoneyTransfer: Money, interestSavingJar: Double): Unit
 
   /**
    * Retrieves all available bank account types.
@@ -147,8 +147,8 @@ abstract class AbstractBankImpl[T <: BankInformation](override val bankInformati
     customer.addBankAccount(acc)
     acc
 
-  override def addBankAccountType(nameType: String, feeWithdraw: Money, feeDeposit: Money, feeMoneyTransfert: Money, interestSavingJar: Double): Unit = 
-    val bankAccountType = BankAccountType(nameType, feeWithdraw, feeDeposit, feeMoneyTransfert, interestSavingJar: Double)
+  override def addBankAccountType(nameType: String, feeWithdraw: Money, feeDeposit: Money, feeMoneyTransfer: Money, interestSavingJar: Double): Unit = 
+    val bankAccountType = BankAccountType(nameType, feeWithdraw, feeDeposit, feeMoneyTransfer, interestSavingJar: Double)
     bankAccountTypes.addOne(bankAccountType)
 
   override def getBankAccountTypes: Iterable[BankAccountType] = bankAccountTypes.view

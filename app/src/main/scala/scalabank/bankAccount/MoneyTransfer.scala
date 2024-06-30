@@ -31,9 +31,9 @@ case class MoneyTransfer(
     s"[${date.format(super.dateFormatter)}] Money transfer of $value between bank account ${senderBankAccount.id} and ${receiverBankAccount.id}"
 
   /**
-   * Executes the money transfer operation.
+   * Executes the money transfer operation. <br\><br\>
    *
-   * Deducts the transfer value plus the fee from the sender bank account's balance and adds the transfer value to the receiver bank account's balance.
+   * Deducts the transfer value plus the fee from the sender bank account's balance and adds the transfer value to the receiver bank account's balance. <br\> <br\>
    * If the sender's and receiver's currencies differ, the transfer value is converted using the currency converter.
    *
    * @return true if the operation is successful (i.e., the sender has enough balance), false otherwise.

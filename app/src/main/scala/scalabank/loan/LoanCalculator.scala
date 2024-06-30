@@ -31,16 +31,7 @@ trait LoanCalculatorComponent:
    */
   case class LoanCalculatorImpl() extends LoanCalculator:
     private val interestManager = InterestManager()
-
-    /**
-     * Calculates and logs a loan for a customer.
-     *
-     * @param customer the customer requesting the loan.
-     * @param requiredAmount the amount of money requested for the loan.
-     * @param numberOfPayments the number of payments in which the loan will be repaid.
-     * @return a `Loan` representing the calculated loan details.
-     * @throws AssertionError if `numberOfPayments` is not greater than 0.
-     */
+    
     override def calculateLoan(customer: Customer, requiredAmount: Money, numberOfPayments: Int): Loan =
       assert(numberOfPayments > 0, "Number of payments must be greater than 0")
       val loanComputed = Loan(customer, requiredAmount, numberOfPayments, interestManager.findAppropriateInterestForCustomer(customer))

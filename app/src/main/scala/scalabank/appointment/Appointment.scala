@@ -50,7 +50,16 @@ object Appointment extends LoggerDependency with AppointmentComponent:
 private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
 
 extension (appointment: Appointment)
+  /**
+   * Converts the appointment to a string with relevant information for the customer
+   * @return the appointment's string representation
+   */
   def toStringFromCustomerSide: String =
     s"Appointment with employee ${appointment.employee.cf}, at ${appointment.date.format(dateFormatter)}, of duration ${appointment.duration} minutes. Reason: '${appointment.description}'"
+
+  /**
+   * Converts the appointment to a string with relevant information for the employee
+   * @return the appointment's string representation
+   */
   def toStringFromEmployeeSide: String =
     s"Appointment with customer ${appointment.customer.cf}, at ${appointment.date.format(dateFormatter)}, of duration ${appointment.duration} minutes. Reason: '${appointment.description}'"

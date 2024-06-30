@@ -10,7 +10,7 @@ object FeeManager:
    * @param feePercentage The fee percentage.
    * @return The amount after the fee is applied.
    */
-  def applyPercentualFee(amount: Money, feePercentage: BigDecimal): Money =
+  def applyPercentageFee(amount: Money, feePercentage: BigDecimal): Money =
     amount - (amount * feePercentage / 100)
 
   /**
@@ -32,12 +32,12 @@ object FeeManager:
   def calculateAmountWithFee(amount: Money, fee: Money): Money = amount + fee
 
   /**
-   * Add percentual fee to the amount.
+   * Add percentage fee to the amount.
    *
    * @param amount The amount.
-   * @param feePercentage    The percentual fee.
+   * @param feePercentage    The percentage fee.
    * @return The amount after the add of the fee.
    */
-  def calculateAmountWithPercentualFee(amount: Money, feePercentage: BigDecimal): Money =
+  def calculateAmountWithPercentageFee(amount: Money, feePercentage: BigDecimal): Money =
     amount + (amount * feePercentage / 100)
 

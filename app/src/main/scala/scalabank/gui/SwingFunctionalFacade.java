@@ -151,6 +151,14 @@ class SwingFunctionalFacade {
          */
         Frame updateList(String name, Vector<String> contents);
 
+        /**
+         * Creates a spacer inside a panel
+         * @param width the width of the spacer
+         * @param height the height of the spacer
+         * @param panel the container in which the spacer is inserted
+         * @param constraints the constraints on the spacer
+         * @return the frame itself
+         */
         Frame addSpacer(int width, int height, String panel, Object constraints);
 
         /**

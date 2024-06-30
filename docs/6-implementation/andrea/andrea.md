@@ -155,7 +155,7 @@ private case class OnlineCurrencyConverter() extends CurrencyConverter:
 
   override def convertWithFee(amount: Money, from: Currency, to: Currency)(using feePercentage: BigDecimal): Money =
     val convertedAmount = convert(amount, from, to)
-    FeeManager.applyPercentualFee(convertedAmount, feePercentage)
+    FeeManager.applyPercentageFee(convertedAmount, feePercentage)
 ```
 
 #### Meccanismi utilizzati:

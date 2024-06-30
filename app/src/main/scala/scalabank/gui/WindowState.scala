@@ -157,6 +157,17 @@ trait WindowState:
   def show(): State[Window, Unit]
 
   /**
+   * Creates a spacer inside a panel
+   *
+   * @param width       the width of the spacer
+   * @param height      the height of the spacer
+   * @param panel       the container in which the spacer is inserted
+   * @param constraints the constraints on the spacer
+   * @return the updated state
+   */
+  def addSpacer(width: Int, height: Int, panel: String, constraints: Any): State[Window, Unit]
+
+  /**
    * Executes a command
    * @param cmd the command to be executed
    * @return the updated state
