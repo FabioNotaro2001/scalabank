@@ -14,7 +14,7 @@ class FeeTest extends AnyFlatSpec with BeforeAndAfterEach:
   "FeeManager" should "apply a percentage fee correctly" in:
     val amount: Money = 1000.toMoney
     val feePercentage: BigDecimal = 10
-    val result = FeeManager.applyPercentualFee(amount, feePercentage)
+    val result = FeeManager.applyPercentageFee(amount, feePercentage)
     result shouldEqual 900.toMoney
 
   it should "apply a fixed fee correctly" in:
@@ -32,15 +32,15 @@ class FeeTest extends AnyFlatSpec with BeforeAndAfterEach:
   it should "calculate amount with percentage fee correctly" in:
     val amount: Money = 1000.toMoney
     val feePercentage: BigDecimal = 10
-    val result = FeeManager.calculateAmountWithPercentualFee(amount, feePercentage)
+    val result = FeeManager.calculateAmountWithPercentageFee(amount, feePercentage)
     result shouldEqual 1100.toMoney
 
   it should "handle zero percentage fee correctly" in:
     val amount: Money = 1000.toMoney
     val feePercentage: BigDecimal = 0
-    val result = FeeManager.applyPercentualFee(amount, feePercentage)
+    val result = FeeManager.applyPercentageFee(amount, feePercentage)
     result shouldEqual amount
-    val resultWithAdd = FeeManager.calculateAmountWithPercentualFee(amount, feePercentage)
+    val resultWithAdd = FeeManager.calculateAmountWithPercentageFee(amount, feePercentage)
     resultWithAdd shouldEqual amount
 
   it should "handle zero fixed fee correctly" in:
@@ -54,7 +54,7 @@ class FeeTest extends AnyFlatSpec with BeforeAndAfterEach:
   it should "handle negative percentage fee correctly" in:
     val amount: Money = 1000.toMoney
     val feePercentage: BigDecimal = -10
-    val result = FeeManager.applyPercentualFee(amount, feePercentage)
+    val result = FeeManager.applyPercentageFee(amount, feePercentage)
     result shouldEqual 1100.toMoney
-    val resultWithAdd = FeeManager.calculateAmountWithPercentualFee(amount, feePercentage)
+    val resultWithAdd = FeeManager.calculateAmountWithPercentageFee(amount, feePercentage)
     resultWithAdd shouldEqual 900.toMoney

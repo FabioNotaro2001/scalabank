@@ -43,7 +43,7 @@ object MoneyADT:
 
   extension (money: Money)
     /**
-     * Adds two Money instances.
+     * Adds two Money instances together.
      *
      * @param moneyToAdd The Money instance to add.
      * @return A new Money instance representing the sum.
