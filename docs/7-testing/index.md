@@ -25,6 +25,7 @@ I vari test sono stati suddivisi cercando di coprire tutti i principali componen
 - operazione bancaria (deposito, prelievo e bonifico)
 - mutuo
 - logger
+
 e molti altri.
 
 ## Tecnologie di testing utilizzate
