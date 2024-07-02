@@ -1,4 +1,4 @@
-package scalabank.entities
+package scalabank.bankAccount
 
 /**
  * Enum representing the different levels of fidelity a customer can achieve.
