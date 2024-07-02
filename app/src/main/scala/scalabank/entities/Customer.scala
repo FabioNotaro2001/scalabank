@@ -4,14 +4,13 @@ import scalabank.entities.Person
 import scalabank.logger.{Logger, LoggerDependency, LoggerImpl}
 import scalabank.appointment.AppointmentBehaviour
 import scalabank.currency.Currency
-import scalabank.bankAccount.BankAccount
+import scalabank.bankAccount.{BankAccount, StateBankAccount}
 import scalabank.bank.{Bank, BankAccountType}
 
 /**
  * Trait representing a customer of a bank
  */
 trait Customer extends Person with AppointmentBehaviour:
-
   /**
    * Calculates the fidelity level of the customer based on their bank accounts and a fidelity calculator.
    *
@@ -69,14 +68,19 @@ abstract class AbstractCustomer(_cf: String,
   private val person = Person(_cf, _name, _surname, _birthYear)
 
   export person.*
-  
+
+  protected def points: Int = bankAccounts.map(_.fidelity.points).sum
+
   override def bank: Option[Bank] = _bank
 
   override def registerBank(bank: Bank): Unit = _bank match
     case None => _bank = Some(bank)
     case _ =>
 
-  override def deregisterBank(bank: Bank): Unit = _bank = None
+  override def deregisterBank(bank: Bank): Unit = bankAccounts match
+    case List() => _bank = None
+    case ba if ba.map(_.state).map(_.equals(StateBankAccount.Closed)).forall(_ == true) => _bank = None
+    case _ => throw IllegalStateException()
 
   override def addBankAccount(bankAccount: BankAccount): Unit =
     _bankAccounts = _bankAccounts :+ bankAccount
@@ -127,7 +131,7 @@ trait CustomerComponent:
                                _surname: String,
                                _birthYear: Int) extends AbstractCustomer(_cf: String, _name: String, _surname: String, _birthYear: Int):
 
-    override def fidelity(using calc: FidelityCalculator): FidelityLevel = calc.calculateFidelityLevel(bankAccounts.map(ba => ba.fidelity.points).sum, true)
+    override def fidelity(using calc: FidelityCalculator): FidelityLevel = calc.calculateFidelityLevel(points, true)
 
     loggerDependency.logger.log(logger.getPrefixFormatter.getCreationPrefix + this)
 
@@ -136,7 +140,7 @@ trait CustomerComponent:
                              _surname: String,
                              _birthYear: Int) extends AbstractCustomer(_cf: String, _name: String, _surname: String, _birthYear: Int):
 
-    override def fidelity(using calc: FidelityCalculator): FidelityLevel = calc.calculateFidelityLevel(bankAccounts.map( ba => ba.fidelity.points).sum, true)
+    override def fidelity(using calc: FidelityCalculator): FidelityLevel = calc.calculateFidelityLevel(points, true)
 
     loggerDependency.logger.log(logger.getPrefixFormatter.getCreationPrefix + this)
 
@@ -145,7 +149,7 @@ trait CustomerComponent:
                               _surname: String,
                               _birthYear: Int) extends AbstractCustomer(_cf: String, _name: String, _surname: String, _birthYear: Int):
 
-    override def fidelity(using calc: FidelityCalculator): FidelityLevel = calc.calculateFidelityLevel(bankAccounts.map( ba => ba.fidelity.points).sum, false)
+    override def fidelity(using calc: FidelityCalculator): FidelityLevel = calc.calculateFidelityLevel(points, false)
 
     loggerDependency.logger.log(logger.getPrefixFormatter.getCreationPrefix + this)
 
