@@ -247,7 +247,7 @@ object GUI:
 
   def run(): Unit =
     val loginView = for
-      _ <- setSize(600, 350)
+      _ <- setSize(800, 350)
       _ <- addView("Login", BorderLayout(0, 40))
       _ <- addPanel("Login-Title-Panel", FlowLayout(), "Login", BorderLayout.NORTH)
       _ <- addLabel("Login-Title", "Scalabank", "Login-Title-Panel", FlowLayout.CENTER)
