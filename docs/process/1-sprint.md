@@ -1,4 +1,4 @@
-# Sprint Planning
+# Sprint planning
 La tabella sottostante riporta lo sprint backlog relativo al primo sprint.
 <table>
   <thead>
@@ -141,20 +141,20 @@ La tabella sottostante riporta lo sprint backlog relativo al primo sprint.
   </tbody>
 </table>
 
-# Sprint Goal
+# Sprint goal
 Come si nota dallo sprint backlog, l'obiettivo principale del primo sprint è non solo predisporre le entità base che serviranno per le implementazioni delle varie funzionalità previste negli sprint successivi, ma contestualmente iniziare la realizzazione di importanti strumenti interattivi (al momento ancora piuttosto limitati) quali il logger e la GUI.
 
 # Terminazione dello sprint
 La terminazione dello sprint è avvenuta in data 07/06/2024.
 
-# Sprint Review
+# Sprint review
 Il team si ritiene soddisfatto di essere riuscito a completare tutti i task previsti.
 
 Sicuramente occorre lavorare e migliorare le tempistiche, siccome questo primo sprint ha richiesto più tempo del previsto (anche a causa di impegni universitari, lavorativi e personali sopraggiunti).
 
 Ad ogni modo il team si impegna ad essere più rapido nei prossimi sprint.
 
-# Sprint Retrospective
+# Sprint retrospective
 La retrospettiva dello sprint ha riguardato principalmente due punti:
-- il primo è che si è discussa e valutata una funzionalità che non era stata preventivata, ossia la fidelity del Customer (che aumenta e diminuisce in base alle operazioni eseguite dal cliente)
+- il primo è che si è discussa e valutata una funzionalità che non era stata preventivata, ossia la fidelity del `Customer` (che aumenta e diminuisce in base alle operazioni eseguite dal cliente)
 - inoltre si sono discusse alcune regole da seguire per modificare le classi altrui, in modo da evitare che uno sviluppatore si ritrovi una sua classe stravolta da un collega. 

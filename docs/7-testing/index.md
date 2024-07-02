@@ -1,9 +1,9 @@
-# Testing
+# TESTING
 
 ## Approccio di testing perseguito
 Il testing è stato un processo del progetto a cui abbiamo cercato di dare il giusto peso e la corretta attenzione.
 
-Come suggeritoci durante il corso e anticipato nella precedenti sezioni della relazione, il team di sviluppo ha cercato di adottare quanto più possibile il TDD, non solo perchè esso risulta essere particolarmente agile, ma anche e soprattutto siccome è uno strumento comprovato che migliora notevolmente la qualità del osftware sviluppato (infatti ricordiamo che il TDD è un importante strumento per sviluppare il codice, non soloper testarlo).
+Come suggeritoci durante il corso e anticipato nella precedenti sezioni della relazione, il team di sviluppo ha cercato di adottare quanto più possibile il TDD, non solo perchè esso risulta essere particolarmente agile, ma anche e soprattutto siccome è uno strumento comprovato che migliora notevolmente la qualità del software sviluppato (infatti ricordiamo che il TDD è un importante strumento per sviluppare il codice, non solo per testarlo).
 
 Appurati tutti i vantaggi teorici del TDD che ci sono stati presentati a lezione, il team ha cercato quanto più possibile di applicarlo (in particolare la variante con cicli red-green-refactor ripetuti e continui).
 
@@ -37,8 +37,6 @@ Tra le tecnologie di testing utilizzate occorre menzionare:
 Come anticipato nella sezione precedente, il tool Scoverage ci ha permesso di ottenere un report contenente la percentuale di linee di codice testate.
 
 L'immagine seguente riporta il risultato ottenuto:
-
-Cercate di dare una idea di quanto pensate che i vostri test automatizzati coprano il codice e dove: è importante per stimare il potenziale impatto di una modifica al software.
 ![testing](img/coverage1.png)
 Il report mostra una copertura di codice di poco superiore al 52%.
 
@@ -46,7 +44,7 @@ Tale risultato sembra essere molto deludente tuttavia, come accennato in precede
 
 In altre parole la sola GUI, che non è stata testata a fondo e seguendo il TDD per ovvi motivi, abbassa drasticamente la percentuale di test coverage siccome rappresenta circa un terzo del totale delle linee di codice della libreria.
 
-Per avere un risultato più preciso e che tenga conto solo del framework è stato possibile ignorare tutto il codice presente nel package della GUI, ottenenndo un risultato decisamente migliore, riportato nell'immagine sottostante:
+Per avere un risultato più preciso e che tenga conto solo del framework è stato possibile ignorare tutto il codice presente nel package della GUI, ottenendo un risultato decisamente migliore, riportato nell'immagine sottostante:
 ![testing](img/coverage2.png)
 
 La nuova ed ottima percentuale dell'89% ci sembra maggiormente indicativa degli sforzi perseguiti nel tentativo di seguire l'approccio consigliato dal TDD ed è senza dubbio un buon segno, molto significativo, circa la qualità del lavoro svolto e del codice sviluppato.
@@ -63,7 +61,8 @@ In generale siamo molto soddisfatti dei vantaggi che ci ha apportato l'approccio
 - sviluppo di software maggiormente prevedibile
 - riduzione dei technical debt.
 
-Oltre ai vantaggi sopra riportati che abbiamo potuto avvertire e confermare in prima persona grazie al progetto, il team si ritiene soddisfatto anche anche della percentuale di test coverage raggiunta, siccome ci aspettavamo una coverage molto minore (intorno al 75%).
+Oltre ai vantaggi sopra riportati che abbiamo potuto avvertire e confermare in prima persona grazie al progetto, il team si ritiene soddisfatto anche della percentuale di test coverage raggiunta, siccome ci aspettavamo una coverage molto minore (intorno al 75%).
+
 [TORNA ALL'INDICE](../index.md) |
 [PRECEDENTE CAPITOLO](../6-implementation/index.md) |
 [PROSSIMO CAPITOLO](../8-retrospettiva/index.md)

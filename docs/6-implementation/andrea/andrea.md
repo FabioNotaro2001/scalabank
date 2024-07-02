@@ -1,4 +1,4 @@
-# Documentazione Implementativa
+# DOCUMENTAZIONE IMPLEMENTATIVA BEDEI
 
 Nella prima parte mi sono occupato dello staff della banca. In particolare, una volta creata la classe Persona in collaborazione con Mazzotti, sono passato a modellare le varie entità presenti nel contesto bancario.
 

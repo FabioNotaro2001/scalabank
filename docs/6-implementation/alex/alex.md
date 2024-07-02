@@ -1,4 +1,4 @@
-# Documentazione Implementativa
+# DOCUMENTAZIONE IMPLEMENTATIVA MAZZOTTI
 
 Durante lo sviluppo dell'applicazione, mi sono occupato principalmente delle funzionalità relative ai Clienti, ai Conti Correnti e al Salvadanaio. 
 

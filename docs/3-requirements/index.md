@@ -1,11 +1,4 @@
-# Requisiti e specifica di sistema
-<!--Requisiti e specifica (nelle varie tipologie, ossia: 1) business, 2) modello di dominio, 3) funzionali [ 3.1) utente, e 3.2) di sistema ], 4) non funzionali, 5) di implementazione)
-
-Vista la mole di lavoro dietro al progetto, difficile pensare che i requirement occupino meno di 5-6 facciate: siano più sistematici possibile, e quindi fungano da specifica completa (si noti che ogni elemento -- statico/strutturale o dinamico/comportamentale -- di dominio va discusso nei requisiti).
-Le scelte tecnologiche non dovrebbero essere anticipate troppo per ovvi motivi: prima le prendete prima impattano tutta la parte successiva e quindi diventano più difficilmente riconsiderabili (comunque in linea di principio ogni scelta ha una sua posizione logica precisa, e potrebbe essere nei requirement, nel design o nell'implementazione, a voi la scelta).
-Attenzione in particolare ai requirement non funzionali: 1) non siano troppo vaghi altrimenti sono inverificabili, e quindi praticamente inutili; 2) se il sistema è distribuito, è inevitable dire esattamente cosa vi aspettate (in retrospettiva, cosa ottenete) in termini di di robustezza a cambiamenti/guasti (quali?, come?), e scalabilità (in quale dimensione? fino a che punto?).
-
-Si noti anche che la sezione di "Requisiti e Specifica" deve in modo completo e rigoroso descrivere il funzionamento "esterno" del sistema.-->
+# REQUISITI E SPECIFICA DEL SISTEMA
 Nel presente capitolo sono riportati, suddivisi ed enumerati i requisiti del sistema.
 
 Si noti che, esattamente come prevede la filosofia su cui si basa Scrum, la presente sezione è il frutto di un lavoro iterativo e continuo: l'individuazione e definizione dei requisiti è da considerarsi come un processo più che come un prodotto, in ragione del fatto che i requisiti cambiano col tempo e l'avanzamento dello sviluppo consente di identificarne sempre di nuovi.
@@ -23,6 +16,7 @@ L'elenco seguente riporta i requisiti di business emersi:
 
 ## Requisiti riguardanti la modellazione del dominio
 Lo sviluppo di una libreria, come facile immaginare, comporta la progettazione e modellazione di un vasto numero di entità presenti nel dominio di interesse.
+
 Di seguito si riporta l'elenco dei requisiti riguardanti specificatamente la modellazione del dominio e delle sue entità:
 - 2.1 modellazione del conto corrente ed alcune sue possibili varianti
 - 2.2 rappresentazione delle persone del dominio, divise tra clienti e personale bancario
@@ -35,9 +29,10 @@ Di seguito si riporta l'elenco dei requisiti riguardanti specificatamente la mod
 I requisiti funzionali per l'utente si concentrano su quali sono le funzionalità che il sistema offre e che sono direttamente sfruttabili dall'utente finale.
 
 Ricordiamo che il nostro progetto propone come utente finale/cliente un'entità piuttosto particolare: trattasi in generale di studenti, informatici o più in generale sviluppatori interessati ad utilizzare la nostra libreria per sviluppare una generica applicazione bancaria, sia essa realistica o puramente sperimentale/didattica.
+
 Pertanto, nella stesura dei requisiti funzionali per l'utente (ma in realtà anche per altre tipologie di requisiti) è stato necessario mettersi nei panni dell'utente finale e cercare di individuare le sue aspettative ed i suoi bisogni.
-Tale cambio di prospettiva è stato molto stimolante da attuare, siccome solitamente nei progetti precedenti (così come spesso accade nei prodotti reali) il cliente è esterno, propone dei requisiti che sì vanno compresi, disambiguati e spesso estrapolati in quanto non chiaramente identificabili.
-Nel nostro caso, invece si è aggiunto un ulteriore livello di astrazione e dunque di difficoltà, in quanto si è reso necessario che il team di sviluppo si tramutasse in cliente, in modo da individuarne le necessità e i bisogni legati allo sviluppo della libreria e formalizzarli in un'indagine quanto più dettagliata e ben strutturata possibile.
+
+Tale cambio di prospettiva è stato molto stimolante da attuare, siccome solitamente nei progetti precedenti (così come spesso accade nei prodotti reali) il cliente è esterno, propone dei requisiti che sì vanno compresi, disambiguati e spesso estrapolati in quanto non chiaramente identificabili, ma nel nostro caso, invece si è aggiunto un ulteriore livello di astrazione e dunque di difficoltà, in quanto si è reso necessario che il team di sviluppo si tramutasse in cliente, in modo da individuarne le necessità e i bisogni legati allo sviluppo della libreria e formalizzarli in un'indagine quanto più dettagliata e ben strutturata possibile.
 
 L'elenco seguente riporta dunque quali requisiti funzionali per l'utente sono emersi durante la fase di analisi sopra menzionata:
 - 3.1 l'utente può modellare, rappresentare, estendere e combinare a piacere tutte le entità rilevanti nel dominio d'interesse (e dunque riportate nella sezione precedente) &rarr; si noti che il soddisfacimento di tale requisito è di fondamentale importanza per valutare e verificare la qualità del prodotto finale, pertanto ad esso è strettamente correlato un ulteriore requisito funzionale di seguito riportato &rarr;
@@ -47,14 +42,16 @@ L'elenco seguente riporta dunque quali requisiti funzionali per l'utente sono em
 - 3.4 l'utente può inserire personale del dominio (ovvero clienti e personale bancario) e verificarne tutte le informazioni salienti
 - 3.5 all'utente finale è anche permesso aggiungere e verificare gli appuntamenti di un dato cliente
 - 3.6 l'utente può modellare diverse tipologie di proposta di mutuo, verificare quali sono compatibili con il profilo di un dato cliente e creare così un prospetto che includa orizzonte temporale, importo complessivo, interessi e rata da pagare
-- 3.7 per quanto concerne le valute, l'utente deve poter lavorare agilmente con la valuta che preferisce e potenzialmente dovrebbe anche essere messso nelle condizioni di lavorare con multiple valute nella medesima applicazione &rarr; l'operazione di conversione è pertanto ritenuta di fondamentale interesse
+- 3.7 per quanto concerne le valute, l'utente deve poter lavorare agilmente con la valuta che preferisce e potenzialmente dovrebbe anche essere messo nelle condizioni di lavorare con multiple valute nella medesima applicazione &rarr; l'operazione di conversione è pertanto ritenuta di fondamentale interesse
 - 3.8 infine l'utente può sfruttare e consultare un logger, strumento fondamentale per la verifica di correttezza delle sue applicazioni in quanto tiene traccia e riporta in ordine esatto i principali eventi accaduti (inserimento di una persona, operazione su conto corrente, inserimento di un appuntamento...).
 
-Per meglio comprendere i requisiti funzionali evidenziati, si faccia riferimento al/ai diagrammi dei casi d'uso sotto riportati:
+Per meglio comprendere i requisiti funzionali evidenziati, si faccia riferimento al diagramma dei casi d'uso sotto riportati:
 ![diagramma casi](img/UseCaseDiagram.png)
 
 ## Requisiti non funzionali
-I requisiti non funzionali coprono invece le qualità che è possibile attribuire al sistema. Per quanto riguarda la nostra libreria, i requisiti non funzionali individuati sono:
+I requisiti non funzionali coprono invece le qualità che è possibile attribuire al sistema. 
+
+Per quanto riguarda la nostra libreria, i requisiti non funzionali individuati sono:
 - 5.1 usabilità &rarr; come emerso anche in punti precedenti, è fondamentale che l'utilizzo del framework sia chiaro, semplice e comprensibile agli utenti finali
 - 5.2 estendibilità del framework (intesa come semplicità di aggiunta di concetti, entità e funzionalità a quelle offerte inizialmente).
 

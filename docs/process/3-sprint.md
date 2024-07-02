@@ -1,4 +1,4 @@
-# Sprint Planning
+# Sprint planning
 La tabella sottostante riporta lo sprint backlog relativo al terzo ed ultimo sprint.
 <table>
   <thead>
@@ -152,20 +152,20 @@ La tabella sottostante riporta lo sprint backlog relativo al terzo ed ultimo spr
   </tbody>
 </table>
 
-# Sprint Goal
+# Sprint goal
 Come si nota dallo sprint backlog, l'obiettivo principale del terzo ed ultimo sprint è portare a termine il progetto, non solo finendo di implementare i concetti mancanti ma anche inserendoli nella GUI per verificare la correttezza e buona qualità del codice prodotto.
 
 # Terminazione dello sprint
 La terminazione del terzo ed ultimo sprint è avvenuta in data 30/06/2024.
 
-# Sprint Review
+# Sprint review
 Il team si ritiene soddisfatto non solo di essere riuscito a modellare anche i componenti finali e mancanti (prelievi, depositi, bonifici, salvadanaio), ma anche e soprattutto di essere riuscito a mettere assieme tutti i componenti nella GUI, realizzando di fatto un prototipo di quella che potrebbe essere un'applicazione bancaria realistica realizzata grazie al nostro framework.
 
 In quest'ultimo sprint si è sentita un po' la stanchezza, sicccome per effettuare taluni interventi (magari anche semplici) è stato necessario più tempo del previsto, non solo per l'intervento in sè ma magari anche per coordinarlo ed organizzarlo.
 
 Nonostante ciò lo sprint ha rispettato pienamente quelle che erano le nostre attese, sia sulle tempistiche che sul lavoro svolto, pertanto il gruppo si ritiene molto soddisfatto di quanto realizzato.
 
-# Sprint Retrospective
+# Sprint retrospective
 Come accennato anche nella sezione precedente, il team concorda nell'affermare che la stanchezza avveritita nel terzo sprint non deve compromettere i prossimi e cruciali giorni di lavoro, nel quale bisognerà organizzare appuntamenti e ritrovi anche più fitti e lunghi per portare a termine attività fondamentali quali la terminazione e rilettura completa della relazione, la creazione del JAR e la verifica del rispetto di tutte le regole imposte per consegnare il progetto.
 
 Il team è anche concorde nell'affermare che si è assistito, cosa prevedibile ma non scontata, ad un miglioramento notevole rispetto agli sprint precedenti per quanto concerne la sincronizzazione delle attività e la gestione delle dipendenza tra i task.

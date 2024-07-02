@@ -1,4 +1,4 @@
-# Sprint Planning
+# Sprint planning
 La tabella sottostante riporta lo sprint backlog relativo al secondo sprint.
 <table>
   <thead>
@@ -109,7 +109,7 @@ La tabella sottostante riporta lo sprint backlog relativo al secondo sprint.
       <td>0</td>
     </tr>
     <tr>
-      <td rowspan="3">l'utente può modellare e gestire prospetti di mutui</td>
+      <td rowspan="3">l'utente può modellare e gestire prospetti di mutui e prestiti</td>
       <td>definizione dell'interfaccia mutuo</td>
       <td>Notaro</td>
       <td>2</td>
@@ -142,24 +142,26 @@ La tabella sottostante riporta lo sprint backlog relativo al secondo sprint.
   </tbody>
 </table>
 
-# Sprint Goal
+# Sprint goal
 Come si nota dallo sprint backlog, l'obiettivo principale del secondo sprint è aumentare ed arricchire i concetti e le funzionalità offerte dal framework, nonchè iniziare a collegare tra di loro le prime entità.
 
 # Terminazione dello sprint
 La terminazione dello sprint è avvenuta in data 19/06/2024.
 
-# Sprint Review
+# Sprint review
 Il team si ritiene soddisfatto di essere riuscito a completare tutti i task previsti per questo sprint.
 
 Il team è inoltre molto felice di essere riuscito a migliorare la propria efficienza, ovvero a rispettare il tempo previsto per completare questo sprint.
 
 Una particolarità di questo sprint è stata che due membri del gruppo sono riusciti a portarsi avanti con il lavoro, implementando più entità di quanto previsto.
 
-In particolare Bertuccioli, avendo terminato in fretta l'implementazione delle filiali, si è adoperato per portarsi avanti con l'implementazione anche degli appuntamenti. Come conseguenza di ciò, il suo ultimo sprint prevederà (come si può notare nell'apposita sezione) un impegno per completare la GUI introducendovi le funzionalità necessarie.
+In particolare Bertuccioli, avendo terminato in fretta l'implementazione delle filiali, si è adoperato per portarsi avanti con l'implementazione anche degli appuntamenti. 
+
+Come conseguenza di ciò, il suo ultimo sprint prevederà (come si può notare nell'apposita sezione) un impegno per completare la GUI, introducendovi le funzionalità necessarie.
 
 Similmente è avvenuto per Bedei che, avendo terminato prima del previsto l'implementazione della conversione di valute, è riuscito nel presente sprint anche ad implementare un database siccome ne è emersa la necessità e comodità per molti concetti (tassi d'interesse, persone...).
 
-# Sprint Retrospective
+# Sprint retrospective
 In ottica di miglioramento ulteriore dell'efficienza e della sincronizzazione del lavoro di gruppo, durante la sprint retrospective si è discusso di probabili ulteriori strategie per evitare i merge conflict.
 
 Inoltre, siccome il progetto si sta avvicinando alla sua deadline e dunque alla parte finale, il gruppo ritiene ragionevole incrementare la frequenza degli incontri (daily scrum giornalieri) per migliorare così la sincronizzazione dei vari flussi di lavoro e fare in modo che ogni membro del team sia maggiormente aggiornato sullo stato dei lavori altrui.

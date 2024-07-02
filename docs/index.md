@@ -1,4 +1,4 @@
-# PPS23-24: ScalaBankFramework
+# PPS23-24: SCALABANK FRAMEWORK
 
 ## Sommario:
 - [Introduzione](1-introduction/index.md)

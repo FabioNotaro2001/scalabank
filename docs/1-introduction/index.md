@@ -1,8 +1,5 @@
-# Introduzione
-<!--Non si faccia mancare all'inizio una descrizione anche sommaria di cosa il sistema implementato realizza, 
-con alcuni indicazioni  su quali caratteristiche potranno decretare se il progetto ha prodotto un buon risultato.-->
-
-Il presente progetto mira a realizzare un framework bancario con annesso esempio di applicazione tramite un processo di sviluppo basato su Scrum.
+# INTRODUZIONE
+Il presente progetto mira a realizzare un framework bancario con annesso esempio di applicazione (con anche interfaccia grafica) tramite un processo di sviluppo basato su Scrum.
 
 L'idea del progetto è nata al fine di offrire alla comunità di sviluppatori una libreria Scala riguardante il dominio delle banche che sia quanto più possibile completa e corretta.
 
