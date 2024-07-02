@@ -4,6 +4,7 @@ import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers._
 import org.junit.runner.RunWith
 import org.scalatestplus.junit.JUnitRunner
+import scalabank.bankAccount.Fidelity
 
 @RunWith(classOf[JUnitRunner])
 class FidelityTest extends AnyFunSuite:

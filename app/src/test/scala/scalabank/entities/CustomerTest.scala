@@ -10,6 +10,7 @@ import scalabank.currency.Currency
 import scalabank.entities.defaultFidelityCalculator
 import scalabank.entities.*
 import scalabank.bankAccount.BankAccount
+import scalabank.bankAccount.FidelityLevel
 
 import java.time.LocalDateTime
 import scalabank.currency.MoneyADT.toMoney

@@ -5,6 +5,7 @@ import scalabank.currency.MoneyADT.Money
 import scalabank.currency.{Currency, CurrencyConverter, FeeManager, MoneyADT}
 import scalabank.logger.{Logger, LoggerDependency, LoggerImpl}
 import scalabank.entities.*
+import scalabank.bankAccount.Fidelity
 
 import scala.collection.SeqView
 import scala.collection.immutable.List

@@ -6,6 +6,7 @@ import scalabank.appointment.AppointmentBehaviour
 import scalabank.currency.Currency
 import scalabank.bankAccount.{BankAccount, StateBankAccount}
 import scalabank.bank.{Bank, BankAccountType}
+import scalabank.bankAccount.FidelityLevel
 
 /**
  * Trait representing a customer of a bank
