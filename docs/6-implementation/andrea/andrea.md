@@ -11,7 +11,7 @@ Riporto lo schema UML per la factory della persona.
 
 ![UML Persona](img/person.png)
 
-Invece è stato utilizzato un template method per quanto concerne la gestione delle diverse tipologie di dipendenti. In particolare è stata creata prima l'interfaccia `StaffPosition` la quale è un mixin, il quale contiene implementati i metodi comuni ed estende Person. A questo punto le classi `Employee` e `Manager` estendono `StaffPosition`.
+Invece è stato utilizzato un template method per quanto concerne la gestione delle diverse tipologie di dipendenti. In particolare è stata creata prima l'interfaccia `StaffPosition`, il quale contiene implementati i metodi comuni ed estende Person. A questo punto le classi `Employee` e `Manager` estendono `StaffPosition`.
 Riporto lo schema UML per il template method della gestione dei dipendenti. Si noti che (T) è un trait, (E) è un'enumerazione, (C) è una classe, (T, C) vuol dire che è stato creato il trait e la classe relativa utilizzando il pattern factory come descritto sopra per la classe `Persona`.
 
 ![UML Dipendenti](img/template.png)
@@ -29,7 +29,7 @@ Il trait `Person` rappresenta una persona con informazioni di base e relativi co
 ### StaffMember
 
 Il trait `StaffMember` e `AppointmentBehaviour` rappresentano un membro dello staff con dettagli sulla posizione e metodi per calcolare i salari e gestire gli appuntamenti.
-`StaffMember` essendo un mixin esso fornisce funzionalità comuni a tutti i membri dello staff. È un'implementazione generica che utilizza un parametro di tipo `T` che estende `StaffPosition`. 
+`StaffMember` fornisce funzionalità comuni a tutti i membri dello staff. È un'implementazione generica che utilizza un parametro di tipo `T` che estende `StaffPosition`. 
 Questa classe eredita da `Person`.
 
 ```scala 3
@@ -62,7 +62,6 @@ trait StaffMember[T <: StaffPosition] extends Person with AppointmentBehaviour:
 
 - **Generics:** Utilizzo di generics al fine di poter generalizzare la posizione lavorativa di uno `StaffMember`, la quale si differenzia a seconda della tipologia di impiegato.
 - **Bounded type parameter** Utilizzo di bounded type parameter `[T <: StaffPosition]`. Più specificamente un upper bound, in cui T è un parametro di tipo che può essere sostituito con qualsiasi tipo che sia un sottotipo di StaffPosition. In questo modo limito i tipi di position.
-- **Mixin** Il trait avendo sia metodi implementati che non è un mixin.
 - **Currying** Per il passaggio di valori in `updateAppointment`.
 - **List** Per la lista è stato deciso di usare una lista immutabile, usando una var.
 
@@ -309,52 +308,65 @@ trait DatabaseOperations[T, I]:
       finally
         resultSet.close()
 ```
+Tutte le tabelle sono dei Companion Object.
 
-#### Classe `PersonTable`
+#### `PersonTable`
 
 - Crea e popola la tabella `person` se non esiste.
 - Implementa le operazioni CRUD per la tabella `person`.
 
-#### Classe `EmployeeTable`
+#### `EmployeeTable`
 
 - Crea e popola la tabella `employee` se non esiste.
 - Implementa le operazioni CRUD per la tabella `employee`.
 
-#### Classe `CustomerTable`
+#### `CustomerTable`
 
 - Crea e popola la tabella `customer` se non esiste.
 - Implementa le operazioni CRUD per la tabella `customer`.
 
-#### Classe `BankAccountTable`
+#### `BankAccountTable`
 
 - Crea e popola la tabella `bankAccount` se non esiste.
 - Implementa le operazioni CRUD per la tabella `bankAccount`.
 
-#### Classe `AppointmentTable`
+#### `AppointmentTable`
 
 - Crea e popola la tabella `appointment` se non esiste.
 - Implementa le operazioni CRUD per la tabella `appointment`.
 - Fornisce metodi per trovare appuntamenti per codice fiscale di cliente o dipendente.
 
-#### Classe `BankAccountTypeTable`
+#### `BankAccountTypeTable`
 
 - Crea e popola la tabella `bankAccountTypeTable` se non esiste.
 - Implementa le operazioni CRUD per la tabella `bankAccountTypeTable`.
 
-#### Classe `MovementTable`
+#### `MovementTable`
 
 - Crea e popola la tabella `movement` se non esiste.
 - Implementa le operazioni CRUD per la tabella `appointment`.
 - Fornisce metodi per trovare i movimenti di un sender o di un receiver.
 
-#### Classe `CurrencyTable`
+#### `CurrencyTable`
 
 - Crea e popola la tabella `cureencyTable` se non esiste.
 - Implementa le operazioni CRUD per la tabella `currencyTable`.
 
-# Popolamento delle Tabelle
+#### Popolamento delle Tabelle
 
 - **Random Data Generation:** La classe `PopulateEntityTable` crea istanze casuali per popolare le tabelle inizialmente, migliorando il testing e la simulazione di scenari realistici.
+
+#### Cache
+In aggiunta è stato inserito anche un meccanismo di caching, per non richiedere sempre le istanze al DB.
+
+```scala 3
+trait HasCache:
+  def clearCache(): Unit
+
+abstract class AbstractCache[T, I] extends HasCache:
+  protected val cache: MutableMap[I, T] = MutableMap()
+  override def clearCache(): Unit = cache.clear()
+```
 
 ## Parte 4
 
@@ -407,7 +419,7 @@ def filterMovements[T <: Movement : ClassTag]: SeqView[T] =
 - **Tipo Generico:** `T` è un tipo generico che deve essere un sottotipo di `Movement`.
 - **ClassTag:** Utilizza `ClassTag` per permettere il filtraggio in fase di esecuzione.
 - **collect:** Il metodo `collect` filtra e mappa gli elementi della lista _`movements` che corrispondono al tipo specificato.
-- **view:** Restituisce una vista dei movimenti filtrati per evitare la creazione di una nuova lista e migliorare l'efficienza.
+- **view:** Restituisce una vista dei movimenti filtrati per evitare la creazione di una nuova lista e migliorare l'efficienza. La view si può considerare come in wrapper dinamico e immutabile.
 
 
 Per tutte le seguenti implementazioni si è deciso di utilizzare un approccio TDD.
