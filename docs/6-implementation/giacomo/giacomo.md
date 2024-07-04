@@ -28,7 +28,7 @@ public interface Frame {
 }
 ```
 - `WindowState`, scritta in Scala, che rispecchia `Frame` e fa uso di monadi
-```scala 3
+```scala
 trait WindowState:
   type Window
   def initialWindow: Window
@@ -48,7 +48,7 @@ mentre il trait `WindowState` è implementato da `WindowStateImpl`, che si appog
 L'uso di monadi (nello specifico mediante la classe `State`) consente, in Scala,
 di realizzare delle pipeline di chiamate a metodi usando il costrutto `for-yield` per snellire il codice, come si può vedere nel seguente esempio:
 
-```scala 3
+```scala
 val emplAppointmentsView = for
 _ <- addView("Empl-Appointments", BorderLayout(0, 10))
 _ <- addButton("Empl-Appts-Back", "<", "Empl-Appointments", BorderLayout.WEST)
@@ -78,7 +78,7 @@ Le interfacce principali che ho realizzato per implementare banche e appuntament
 - `Bank` include metodi per l'aggiunta di clienti e dipendenti e metodi per creare, modificare ed eliminare appuntamenti.
 Inoltre, contiene un addizionale metodo per reperire informazioni sulla banca. L'interfaccia non include metodi per la modifica
 di tali informazioni, ma se necessario queste possono modificate creando un'implementazione mutabile dell'intefaccia `BankInformation`.
-```scala 3
+```scala
 trait BankInformation
 
 trait Bank:
@@ -91,7 +91,7 @@ trait Bank:
 ```
 - `Appointment` prevede metodi per l'accesso ai dati dell'appuntamento, nello specifico cliente, dipendente, descrizione,
 data e durata prevista dell'appuntamento.
-```scala 3
+```scala
 trait Appointment:
   def customer: Customer
   def employee: Employee
@@ -116,7 +116,7 @@ si limitano a generare un'eccezione del tipo `UnsupportedOperationException`.
 
 Di seguito si può vedere come sono realizzate le filiali:
 
-```scala 3
+```scala
 abstract class AbstractBankImpl[T <: BankInformation](override val bankInformation: T) extends Bank:
   protected val employees: ListBuffer[Employee] = ListBuffer()
   protected val customers: ListBuffer[Customer] = ListBuffer()
@@ -126,7 +126,7 @@ abstract class AbstractBankImpl[T <: BankInformation](override val bankInformati
   override def addCustomer(customer: Customer): Unit =
     customers.addOne(customer)
 ```
-```scala 3
+```scala
 trait BankComponent:
   loggerDependency: LoggerDependency =>
     
@@ -159,7 +159,7 @@ trait BankComponent:
 Il companion object di `Bank` funge da Static Factory per la creazione di istanze delle filiali e definisce il logger che
 le classi utilizzano al loro interno, come da pattern Cake.
 
-```scala 3
+```scala
 object Bank extends LoggerDependency with BankComponent:
   override val logger: Logger = LoggerImpl()
 
@@ -183,7 +183,7 @@ per renderla funzionante, implementando i comportamenti dovuti alla pressione di
 
 La gestione degli eventi lanciati dall'interfaccia è fatta mediante monadi, come si può vedere dal seguente esempio:
 
-```scala 3
+```scala
 case "User-Home-Appointments" =>
     for
       _ <- updateList("Appt-List", customer.get.getAppointments.map(_.toStringFromCustomerSide).toArray)

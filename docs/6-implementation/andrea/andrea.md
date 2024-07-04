@@ -32,7 +32,7 @@ Il trait `StaffMember` e `AppointmentBehaviour` rappresentano un membro dello st
 `StaffMember` fornisce funzionalità comuni a tutti i membri dello staff. È un'implementazione generica che utilizza un parametro di tipo `T` che estende `StaffPosition`. 
 Questa classe eredita da `Person`.
 
-```scala 3
+```scala
 trait AppointmentBehaviour:
   private var appointments: List[Appointment] = List()
   def getAppointments: Iterable[Appointment] = appointments
@@ -46,7 +46,7 @@ trait AppointmentBehaviour:
       case app => app
 ```
 
-```scala 3
+```scala
 trait StaffMember[T <: StaffPosition] extends Person with AppointmentBehaviour:
   def hiringYear: Int
   def position: T
@@ -79,7 +79,7 @@ Il trait `Employee` rappresenta un dipendente che estende `AbstractStaffMember` 
 
 Riportiamo alcuni metodi:
 
-``` scala 3
+``` scala
 extension (employees: List[Employee])
   def allEmployeesSalary: List[Double] =
     for
@@ -108,7 +108,7 @@ Il trait `Manager` rappresenta un manager e fornisce funzionalità aggiuntive pe
 - **Export** Utilizzo della delegazione su un oggetto `Person`.
 
 Riportiamo alcuni metodi:
-```scala 3
+```scala
 extension (managers: List[Manager])
     def totalProjectsManaged: Int =
       @tailrec
@@ -145,7 +145,7 @@ L'oggetto `FeeManager` nel package è un singleton che fornisce metodi per gesti
 
 Il trait `CurrencyConverter` rappresenta un convertitore di valute con metodi per la conversione e l'applicazione di commissioni. Per la realizzazione, ho utilizzato un'API esterna interrogando il server di YAHOO, al fine di avere ogni volta i dati aggiornati delle valute.
 
-```scala 3
+```scala
 private case class OnlineCurrencyConverter() extends CurrencyConverter:
   private val exchangeRateProvider = ExchangeRateProvider()
 
@@ -166,7 +166,7 @@ private case class OnlineCurrencyConverter() extends CurrencyConverter:
 
 Il trait `ExchangeRateProvider` rappresenta un provider di tassi di cambio. Ho dovuto appoggiarmi a una classe diversa perché la risposta del server di YAHOO richiede la scomposizione della risposta attraverso una libreria apposita per formati JSON. Per questo motivo è nata questa classe, in modo da rispettare i principi DRY e SRP. Essa scompone la richiesta e restituisce il valore richiesto.
 
-```scala 3
+```scala
 private case class ExchangeRateProviderImpl() extends ExchangeRateProvider:
     private val backend = HttpURLConnectionBackend()
 
@@ -200,20 +200,20 @@ L'oggetto `MoneyADT` rappresenta un modo sicuro e flessibile per lavorare con va
 Il codice presentato definisce l'ADT `Money` utilizzando un tipo opaco, che nasconde l'implementazione interna (un `BigDecimal`) e fornisce un'interfaccia sicura e controllata per le operazioni sul denaro. Ecco una panoramica delle componenti principali:
 
 ##### Estrazione del valore
-```scala 3
+```scala
 def unapply(money: Money): Option[BigDecimal] = Some(money)
 ```
 Questo metodo permette di estrarre il valore interno di un'istanza di Money come BigDecimal.
 
 ##### Conversione da tipi di dati comuni a Money
-```scala 3
+```scala
 extension (amount: Double | Int | Float | String | BigDecimal)
   def toMoney: Money = ...
 ```
 Questa estensione permette di creare istanze di Money da vari tipi di dati, assicurando che il valore sia non negativo.
 
 ##### Operazioni aritmetiche e di confronto
-```scala 3
+```scala
 extension (money: Money)
 def +(moneyToAdd: Money): Money = money + moneyToAdd
 def -(moneyToGet: Money): Money = money - moneyToGet
@@ -228,7 +228,7 @@ Queste estensioni definiscono le operazioni aritmetiche (addizione, sottrazione,
 Questa implementazione permette di ordinare istanze di `Money` in collezioni ordinate (`SortedSet`, `SortedMap`) o utilizzare funzioni di ordinamento (`sorted`, `max`, `min`) in modo naturale, grazie alla definizione implicita dell'ordine.
 La dichiarazione:
 
-```scala 3
+```scala
 given Ordering[Money] with
 override def compare(x: Money, y: Money): Int = x.compare(y)
 ```
@@ -250,7 +250,7 @@ In questa seconda parte si sono utilizzati i seguenti pattern di progettazione:
 - **Asynchronous Programming:** Uso di `Future` per operazioni di rete non bloccanti.
 - **Encapsulation:** Uso di metodi privati e case class per nascondere i dettagli di implementazione e fornire un'interfaccia pulita.
 
-## Parte 3
+## Parte
 
 ### Struttura del Database
 
@@ -271,7 +271,7 @@ In questa seconda parte si sono utilizzati i seguenti pattern di progettazione:
 
 #### Trait `Database`
 L'interfaccia `Database` definisce le tabelle principali:
-```scala 3
+```scala
 trait Database:
   def personTable: PersonTable
   def employeeTable: EmployeeTable
@@ -292,7 +292,7 @@ trait Database:
 - Tipo `T` è il tipo dell'entità.
 - Tipo `I` è il tipo dell'identificatore dell'entità.
 
-```scala 3
+```scala
 trait DatabaseOperations[T, I]:
   def initialize(): Unit
   def insert(entity: T): Unit
@@ -359,7 +359,7 @@ Tutte le tabelle sono dei Companion Object.
 #### Cache
 In aggiunta è stato inserito anche un meccanismo di caching, per non richiedere sempre le istanze al DB.
 
-```scala 3
+```scala
 trait HasCache:
   def clearCache(): Unit
 
@@ -387,7 +387,7 @@ abstract class AbstractCache[T, I] extends HasCache:
 ### Implementazione
 #### Trait `Movement`
 Il trait `Movement` definisce l'interfaccia per i movimenti bancari:
-```scala 3
+```scala
 trait Movement:
   def value: Money
   def date: LocalDateTime
@@ -411,7 +411,7 @@ trait Movement:
 
 #### Metodo `filterMovements` in `BankAccount`
 Il metodo `filterMovements` permette di filtrare i movimenti del conto bancario in base al tipo specificato. È un metodo generico che utilizza `ClassTag` per ottenere una vista dei movimenti di un determinato tipo. Questo aumenta la flessibilità del sistema e consente di recuperare facilmente solo i movimenti desiderati.
-```scala 3
+```scala
 import scala.reflect.ClassTag
 def filterMovements[T <: Movement : ClassTag]: SeqView[T] =
     _movements.collect { case m: T => m }.view

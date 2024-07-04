@@ -30,7 +30,7 @@ Il `Customer` rappresenta il cliente di una banca. In questo trait sono definiti
 
 Il `Customer` è una specializzazione di `Person` e utilizza il trait `AppointmentBehaviour`. Quest'ultimo è combinato con `Customer` tramite with, permettendo d'integrare i comportamenti di `AppointmentBehaviour` all'interno di `Customer`.
 
-```scala 3
+```scala
 trait Customer extends Person with AppointmentBehaviour:
 ```
 
@@ -57,7 +57,7 @@ Il trait `FidelityCalculator` specifica il comportamento di come è calcolata la
 ## Meccanismi e pattern utilizzati
 
 - **Pattern Factory** Il Pattern Factory è utilizzato con il metodo `apply` per creare istanze di `Customer`. Rispetto a un'implementazione tradizionale vista a lezione, ho optato per una soluzione con delle differenze: a seconda del valore passato come `birthYear`, viene creata un'istanza di `YoungCustomerImpl`, `BaseCustomerImpl` o `OldCustomerImpl`. Questo approccio nasconde l'implementazione delle classi concrete all'esterno, quindi è restituita un' implementazione del trait `Customer`.
-```scala 3
+```scala
 def apply(cf: String, name: String, surname: String, birthYear: Int): Customer = Person(cf, name, surname, birthYear) match
   case person if person.age < 35 =>
     val customer = YoungCustomerImpl(cf, name, surname, birthYear)
@@ -72,12 +72,12 @@ def apply(cf: String, name: String, surname: String, birthYear: Int): Customer =
 Da notare che viene creata un istanza di `Person`, questa ci è utile per calcolare l'età.
 
 - **Pattern Strategy** Il Pattern Strategy è realizzato utilizzando il meccanismo dei given. Il calcolo della `fidelity` è incapsulato in una implementazioni di `FidelityCalculator`. Questo permette di cambiare facilmente il comportamento del calcolo della `fidelity` semplicemente fornendo una diversa implementazione di `FidelityCalculator`, senza dover modificare le classi `Customer`.
-```scala 3
+```scala
 given defaultFidelityCalculator: FidelityCalculator with
   def calculateFidelityLevel(points: Int, isYoungOrOld: Boolean): FidelityLevel = ...
 ```
 Grazie alla given si indica di utilizzare, in questo caso, la `defaultFidelityCalculator`.
-```scala 3
+```scala
 override def fidelity(using calc: FidelityCalculator): FidelityLevel = calc.calculateFidelityLevel(points, false)
 ```
 In questo modo utilizzo l'algoritmo passato nella given.
@@ -112,7 +112,7 @@ Una specifica, che ci siamo dati noi, è la possibilità di avere diverse tipolo
 
 Nella creazione di un conto corrente, quindi, il cliente, dovrà scegliere una tipologia di conto corrente, che la banca a cui è registrato mette a disposizione.
 
-```scala 3
+```scala
 def addBankAccount(bankAccountType: BankAccountType, currency: Currency): Unit
 ```
 
@@ -140,7 +140,7 @@ Nella classe dei `Customer` è presente il metodo `Fidelity` che attraverso una 
 
 Il calcolo è eseguito sommando tutti punteggi delle `Fidelity` dei conti correnti presenti.
 
-```scala 3
+```scala
 protected def points: Int = bankAccounts.map(_.fidelity.points).sum
 ```
 
@@ -152,7 +152,7 @@ protected def points: Int = bankAccounts.map(_.fidelity.points).sum
 - **Enumerazioni** Utilizzo per lo stato di un `BankAccount`.
 
 - **Given** Utilizzo per il cambio di valuta.
-```scala 3
+```scala
 override def changeCurrency(newCurrency: Currency, conversionFee: BigDecimal): Unit =
   val converter = CurrencyConverter()
   balance = converter.convertWithFee(balance, currency, newCurrency)(using conversionFee)
@@ -162,7 +162,7 @@ override def changeCurrency(newCurrency: Currency, conversionFee: BigDecimal): U
 
 - **Dependency Injection** Utilizzo nel `logger`.
 
-# Parte 3
+# Parte
 ## Struttura generale
 
 In questa ultima parte, ho sviluppato il concetto di salvadanio per un conto corrente.
@@ -184,7 +184,7 @@ In questo sono presenti tutti i metodi che possono rappresentare il suo comporta
 In particolare abbiamo depositi e prelievi, entrambi possono essere negati se il bilancio del conto corrente è minore di quanto si vuole depositare, e se il bilancio del salvadanaio è minore di quanto si vuole prelevare.
 
 Lo scambio di denaro tra salvadanaio e il corrispondente conto corrente avviene poichè nella creazione del salvadanaio gli si passa come riferimento il conto corrente (`bankAccount` nel codice seguente).
-```scala 3
+```scala
 override def deposit(amount: Money): Boolean = amount match
     case am if am <= bankAccount.balance =>
         if bankAccount.withdraw(amount, 0.toMoney) then
@@ -200,7 +200,7 @@ In deposit, infatti, si utilizza l'oggetto `bankAccount` per ottenere il bilanci
 Nel metodo della proiezione del bilancio del salvadanaio si utilizza il mese attuale per calcolare la proiezione di fine anno. Si sommano al bilancio attuale i depositi mancanti per arrivare alla fine dell'anno solare dopodichè si aggiunge l'interesse calcolato sul bilancio totale.
 
 Se year è maggiore di 1 si entra nel for in cui si sommano i 12 depositi di un anno.
-```scala 3
+```scala
 override def annualProjection(year: Int): Money =
     var projectedBalance = _balance
     val monthsLeft = 12 - LocalDate.now().getMonthValue + 1

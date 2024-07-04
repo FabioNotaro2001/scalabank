@@ -10,7 +10,7 @@ Appurati tutti i vantaggi teorici del TDD che ci sono stati presentati a lezione
 Come autovalutazione, occorre precisare che talvolta il TDD non è stato applicato correttamente o addirittura non è stato proprio applicato, a causa ad esempio del componente stesso di codice da testare (il caso più emblematico è forse quello della GUI, che poco si presta ad essere realizzata seguendo il TDD, ma che comunque ha subito attenti test di usabilità e correttezza degli input forniti).
 
 Come risultato dei nostri sforzi di testing sono stati scritti (e superati) un totale di 183 test:
-![testing](img/testing.png)
+![testing](img/testing.PNG)
 
 I vari test sono stati suddivisi cercando di coprire tutti i principali componenti del sistema, infatti esistono test per verificare la correttezza dei concetti di:
 - banca
@@ -37,7 +37,7 @@ Tra le tecnologie di testing utilizzate occorre menzionare:
 Come anticipato nella sezione precedente, il tool Scoverage ci ha permesso di ottenere un report contenente la percentuale di linee di codice testate.
 
 L'immagine seguente riporta il risultato ottenuto:
-![testing](img/coverage1.png)
+![testing](img/coverage1.PNG)
 Il report mostra una copertura di codice di poco superiore al 52%.
 
 Tale risultato sembra essere molto deludente tuttavia, come accennato in precedenza, su tale percentuale pesa molto il codice usato per implementare la GUI (che infatti ha una copertura del 2% pur rappresentando quasi un terzo delle linee totali di codice).
@@ -45,12 +45,12 @@ Tale risultato sembra essere molto deludente tuttavia, come accennato in precede
 In altre parole la sola GUI, che non è stata testata a fondo e seguendo il TDD per ovvi motivi, abbassa drasticamente la percentuale di test coverage siccome rappresenta circa un terzo del totale delle linee di codice della libreria.
 
 Per avere un risultato più preciso e che tenga conto solo del framework è stato possibile ignorare tutto il codice presente nel package della GUI, ottenendo un risultato decisamente migliore, riportato nell'immagine sottostante:
-![testing](img/coverage2.png)
+![testing](img/coverage2.PNG)
 
 La nuova ed ottima percentuale dell'89% ci sembra maggiormente indicativa degli sforzi perseguiti nel tentativo di seguire l'approccio consigliato dal TDD ed è senza dubbio un buon segno, molto significativo, circa la qualità del lavoro svolto e del codice sviluppato.
 
 Il tool Scoverage offre tra l'altro anche un report che descrive più in dettaglio la test coverage a livello dei singoli componenti:
-![testing](img/coverage3.png)
+![testing](img/coverage3.PNG)
 
 In generale siamo molto soddisfatti dei vantaggi che ci ha apportato l'approccio TDD, tra i quali ci preme evidenziare:
 - migliore qualità del codice
