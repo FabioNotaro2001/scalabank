@@ -78,6 +78,7 @@ Le interfacce principali che ho realizzato per implementare banche e appuntament
 - `Bank` include metodi per l'aggiunta di clienti e dipendenti e metodi per creare, modificare ed eliminare appuntamenti.
 Inoltre, contiene un addizionale metodo per reperire informazioni sulla banca. L'interfaccia non include metodi per la modifica
 di tali informazioni, ma se necessario queste possono modificate creando un'implementazione mutabile dell'intefaccia `BankInformation`.
+
 ```scala
 trait BankInformation
 
@@ -89,8 +90,10 @@ trait Bank:
   def updateAppointment(appointment: Appointment, description: Option[String], date: Option[LocalDateTime], duration: Option[Int]): Appointment
   def cancelAppointment(appointment: Appointment): Unit
 ```
+
 - `Appointment` prevede metodi per l'accesso ai dati dell'appuntamento, nello specifico cliente, dipendente, descrizione,
 data e durata prevista dell'appuntamento.
+
 ```scala
 trait Appointment:
   def customer: Customer
