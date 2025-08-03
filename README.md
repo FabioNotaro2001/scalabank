@@ -1,30 +1,85 @@
-# PPS-23-scalabank
+# Scalabank
 
-## Overview
-This project is a Scala library that focuses on providing robust functionality for banks.
+Scalabank is a Scala-based banking library developed as part of a Programming and Development Paradigms course. The project emphasizes clean code, modular design, and functional programming principles. While the library offers robust backend functionality, the graphical user interface (GUI) is minimal and serves primarily for demonstration purposes.
 
-The graphical user interface (GUI) of the application is extremely simple and only implements a few of the features
-offered by the library. 
+## Features
 
-As a library, our primary focus has been on the quality and performance of the code rather than the GUI implementation.
+- **Bank Account Management**: Create and manage multiple bank accounts.
+- **Transactions**: Perform deposits, withdrawals, and transfers between accounts.
+- **Interest Calculation**: Apply interest rates to accounts over time.
+- **Transaction History**: Maintain a log of all account activities.
+- **Concurrency Support**: Handle multiple transactions simultaneously with thread safety.
 
-## Getting Started
+## Prerequisites
 
-### Prerequisites
-To use this library, you will need:
- Scala 3
+Ensure you have the following installed:
 
-### Running the Application
-Download the latest release from the releases page.
-Open the provided JAR file to run the application.
+- [Scala 3](https://www.scala-lang.org/download/)
+- [Java Development Kit (JDK) 11 or higher](https://adoptopenjdk.net/)
+- [Gradle](https://gradle.org/install/)
 
-### Credentials
-The application comes with fixed users already present in the database. Use the following credentials to log in:
+## Installation
 
-#### Customer:
-- Username: BDE
+1. Clone the repository:
 
-#### Employee:
-- Username: NTR
+   ```bash
+   git clone https://github.com/FabioNotaro2001/scalabank.git
+   cd scalabank
 
-Once you pass the login, you will be able to test many functionalities of the provided framework throughout the GUI and its various buttons.
+Build the project using Gradle:
+./gradlew build
+
+To run the application:
+./gradlew run
+
+    This will start the application with the default settings.
+
+Usage
+
+After starting the application, you can interact with it through the console. The available commands include:
+
+    createAccount <name>: Creates a new account with the specified name.
+
+    deposit <accountId> <amount>: Deposits the specified amount into the given account.
+
+    withdraw <accountId> <amount>: Withdraws the specified amount from the given account.
+
+    transfer <fromAccountId> <toAccountId> <amount>: Transfers the specified amount from one account to another.
+
+    applyInterest <accountId>: Applies the current interest rate to the specified account.
+
+    exit: Exits the application.
+
+Example Session
+> createAccount Alice
+Account created: Alice
+
+> deposit 1 1000
+Deposited 1000 to account 1
+
+> withdraw 1 200
+Withdrew 200 from account 1
+
+> transfer 1 2 300
+Transferred 300 from account 1 to account 2
+
+> applyInterest 1
+Applied interest to account 1
+
+> exit
+Exiting application...
+
+Contributing
+
+Contributions are welcome! Please fork the repository, create a new branch, and submit a pull request with your proposed changes.
+License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+Acknowledgements
+
+    Scala - The programming language used for development.
+
+    Gradle - The build automation tool.
+
+    Java - The programming language used for backend services.
+    
