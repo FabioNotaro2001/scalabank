@@ -1,14 +1,14 @@
 # Scalabank
 
-Scalabank is a Scala-based banking library developed as part of a Programming and Development Paradigms course. The project emphasizes clean code, modular design, and functional programming principles. While the library offers robust backend functionality, the graphical user interface (GUI) is minimal and serves primarily for demonstration purposes.
+Scalabank is a Scala-based banking library developed as part of a Programming and Development Paradigms course. The project emphasizes clean code, modular design and functional programming principles. While the library offers robust backend functionality, the graphical user interface (GUI) is minimal and serves primarily for demonstration purposes.
 
 ## Features
 
-- **Bank Account Management**: Create and manage multiple bank accounts.
-- **Transactions**: Perform deposits, withdrawals, and transfers between accounts.
-- **Interest Calculation**: Apply interest rates to accounts over time.
-- **Transaction History**: Maintain a log of all account activities.
-- **Concurrency Support**: Handle multiple transactions simultaneously with thread safety.
+- **Bank Account Management** -> create and manage multiple bank accounts
+- **Transactions** -> perform deposits, withdrawals and transfers between accounts
+- **Interest Calculation** -> apply interest rates to accounts over time
+- **Transaction History** -> maintain a log of all account activities.
+- **Concurrency Support** -> handle multiple transactions simultaneously with thread safety.
 
 ## Prerequisites
 
@@ -82,4 +82,3 @@ Acknowledgements
     Gradle - The build automation tool.
 
     Java - The programming language used for backend services.
-    
